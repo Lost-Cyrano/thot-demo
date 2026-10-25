@@ -101,23 +101,27 @@
   </div>
   <div class="modal-overlay" id="modal-overlay" style="display:none;"><div class="modal" id="modal-content"></div></div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, deleteUser } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, getDocs, collection, updateDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+  <script>
+    /* ============================================================
+       VERSION DÉMO — pas de Firebase, tout en localStorage.
+       Clés :
+         thot_demo_db    → base JSON { U, A, I, P, ... }
+         thot_demo_user  → { nivol, role, loggedAt }
+       ============================================================ */
+    const DB_KEY = 'thot_demo_db';
+    const USER_KEY = 'thot_demo_user';
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyA1V3UybXWyyMmO9fBH7jhuVUSFL3mDBPo",
-      authDomain: "crf--thot.firebaseapp.com",
-      projectId: "crf--thot",
-      storageBucket: "crf--thot.firebasestorage.app",
-      messagingSenderId: "242106713414",
-      appId: "1:242106713414:web:76f4c6977264539ef85147",
-      measurementId: "G-NF6W8FS69P"
-    };
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    function readDb() {
+      const raw = localStorage.getItem(DB_KEY);
+      if (!raw) return null;
+      try { return JSON.parse(raw); } catch { return null; }
+    }
+    function saveDb(db) { localStorage.setItem(DB_KEY, JSON.stringify(db)); }
+    function readUser() {
+      const raw = localStorage.getItem(USER_KEY);
+      if (!raw) return null;
+      try { return JSON.parse(raw); } catch { return null; }
+    }
 
     let currentNivol = null;
     let currentInventory = null;
@@ -125,7 +129,7 @@
     let checkedItems = {};
     let userRole = null;
     let collapsedState = {};
-    let missingIndex = 0; // Pour cycler sur les objets manquants
+    let missingIndex = 0;
 
     const contentEl = document.getElementById('content');
     const headerTitle = document.getElementById('header-title');
@@ -134,26 +138,31 @@
     const modalOverlay = document.getElementById('modal-overlay');
     const modalContent = document.getElementById('modal-content');
 
+    // ---- URL helpers (inchangés) ----
     function getUrlParams() { return new URLSearchParams(window.location.search); }
     function updateUrlParam(key, value) { const params = getUrlParams(); if (value) params.set(key, value); else params.delete(key); window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`); }
     function removeUrlParam(key) { const params = getUrlParams(); params.delete(key); const newUrl = params.toString() ? `${window.location.pathname}?${params.toString()}` : window.location.pathname; window.history.replaceState({}, '', newUrl); }
     function getInvFromUrl() { return getUrlParams().get('inv'); }
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) { redirectToLogin(); return; }
-      currentNivol = user.displayName;
-      if (!currentNivol) { await deleteUser(user).catch(()=>{}); redirectToLogin(); return; }
-      try {
-        const adminSnap = await getDoc(doc(db, 'A', currentNivol));
-        if (adminSnap.exists()) userRole = 'admin';
-        else { const userSnap = await getDoc(doc(db, 'U', currentNivol)); if (userSnap.exists()) userRole = 'user'; }
-      } catch(e) { userRole = 'user'; }
+    // ---- Init (remplace onAuthStateChanged) ----
+    function init() {
+      const db = readDb();
+      if (!db) {
+        window.location.href = '../login.html?redirect=' + encodeURIComponent('./index.html');
+        return;
+      }
+      const u = readUser();
+      currentNivol = (u && u.nivol) ? u.nivol : 'DEMO00000000';
+
+      if (db.A && db.A[currentNivol]) userRole = 'admin';
+      else if (db.U && db.U[currentNivol]) userRole = 'user';
+      else userRole = (u && u.role) || 'user';
+
       updateBackButton();
       const invParam = getInvFromUrl();
-      if (invParam) await loadInventory(invParam); else await showInventoryList();
-    });
+      if (invParam) loadInventory(invParam); else showInventoryList();
+    }
 
-    function redirectToLogin() { const currentUrl = encodeURIComponent(window.location.href); window.location.href = `../login.html?redirect=${currentUrl}`; }
     function getHomeUrl() { return userRole === 'admin' ? '../admin.html' : '../user.html'; }
     function updateBackButton() {
       const invParam = getInvFromUrl();
@@ -166,11 +175,12 @@
       }
     }
 
-    document.getElementById('btn-logout').addEventListener('click', async () => {
-      const user = auth.currentUser;
-      if (user) { await deleteUser(user).catch(()=>{}); window.location.href = '../login.html'; }
+    document.getElementById('btn-logout').addEventListener('click', () => {
+      localStorage.removeItem(USER_KEY);
+      window.location.href = '../login.html';
     });
 
+    // ---- Helpers objets (inchangés) ----
     function isSubCategory(item) { return item && typeof item === 'object' && item._sub === true; }
     function countObjectsInCategory(categoryData) {
       let count = 0;
@@ -197,54 +207,70 @@
       return current;
     }
 
-    async function showInventoryList() {
+    // ---- Liste des inventaires ----
+    function showInventoryList() {
       headerTitle.textContent = 'Thot – Inventaires';
       progressContainer.style.display = 'none';
       updateBackButton();
+
+      const db = readDb();
+      const I = (db && db.I) || {};
       let html = '<div class="inventory-grid">';
-      try {
-        const snap = await getDocs(collection(db, 'I'));
-        if (snap.empty) html += '<p style="text-align:center;padding:20px;">Aucun inventaire trouvé.</p>';
-        else {
-          snap.forEach(docSnap => {
-            const data = docSnap.data();
-            const nom = data.nom || docSnap.id;
-            const totalObjets = countAllObjectsInInventory(data.objets || {});
-            let statusText = `${totalObjets} objet(s)`;
-            if (data.finaliseDate) { const d = new Date(data.finaliseDate); statusText = `📅 Dernier : ${d.toLocaleDateString('fr-FR')}`; }
-            html += `<div class="inventory-card" data-inv="${docSnap.id}">📋 ${nom}<div class="card-status">${statusText}</div></div>`;
-          });
-        }
-      } catch(e) { html += '<p style="text-align:center;padding:20px;">Erreur lors du chargement.</p>'; }
+      const ids = Object.keys(I).sort((a, b) => (I[a].nom || a).localeCompare(I[b].nom || b, 'fr'));
+      if (ids.length === 0) {
+        html += '<p style="text-align:center;padding:20px;">Aucun inventaire trouvé.</p>';
+      } else {
+        ids.forEach(invId => {
+          const data = I[invId] || {};
+          const nom = data.nom || invId;
+          const totalObjets = countAllObjectsInInventory(data.objets || {});
+          let statusText = `${totalObjets} objet(s)`;
+          if (data.finaliseDate) { const d = new Date(data.finaliseDate); statusText = `📅 Dernier : ${d.toLocaleDateString('fr-FR')}`; }
+          html += `<div class="inventory-card" data-inv="${invId}">📋 ${nom}<div class="card-status">${statusText}</div></div>`;
+        });
+      }
       html += '</div>';
       contentEl.innerHTML = html;
+
       document.querySelectorAll('.inventory-card').forEach(card => {
         card.addEventListener('click', () => { const invId = card.dataset.inv; updateUrlParam('inv', invId); loadInventory(invId); });
       });
     }
 
-    async function loadInventory(invId) {
-      try {
-        const docSnap = await getDoc(doc(db, 'I', invId));
-        if (!docSnap.exists()) { contentEl.innerHTML = '<p style="text-align:center;padding:20px;">Inventaire introuvable.</p>'; progressContainer.style.display = 'none'; return; }
-        inventoryData = docSnap.data();
-        currentInventory = invId;
-        updateBackButton();
-        checkedItems = {};
-        collapsedState = {};
-        missingIndex = 0;
-        if (inventoryData.checks && Array.isArray(inventoryData.checks)) { inventoryData.checks.forEach(key => { checkedItems[key] = true; }); }
-        renderInventory();
-      } catch(e) { contentEl.innerHTML = '<p style="text-align:center;padding:20px;">Erreur lors du chargement.</p>'; progressContainer.style.display = 'none'; }
+    // ---- Chargement d'un inventaire ----
+    function loadInventory(invId) {
+      const db = readDb();
+      if (!db || !db.I || !db.I[invId]) {
+        contentEl.innerHTML = '<p style="text-align:center;padding:20px;">Inventaire introuvable.</p>';
+        progressContainer.style.display = 'none';
+        return;
+      }
+      inventoryData = JSON.parse(JSON.stringify(db.I[invId]));
+      currentInventory = invId;
+      updateBackButton();
+      checkedItems = {};
+      collapsedState = {};
+      missingIndex = 0;
+      if (inventoryData.checks && Array.isArray(inventoryData.checks)) {
+        inventoryData.checks.forEach(key => { checkedItems[key] = true; });
+      }
+      renderInventory();
     }
 
+    // ---- Dates ----
     function getDateStatus(dateStr) { if (!dateStr) return null; const now = new Date(); const date = new Date(dateStr); const diffDays = Math.ceil((date - now) / (1000 * 60 * 60 * 24)); if (diffDays <= 0) return 'danger'; if (diffDays <= 60) return 'warning'; return 'ok'; }
     function getDateLabel(dateStr) { if (!dateStr) return ''; const status = getDateStatus(dateStr); const formatted = new Date(dateStr).toLocaleDateString('fr-FR'); if (status === 'danger') return `⚠️ ${formatted} — PÉRIMÉ`; if (status === 'warning') return `🟠 ${formatted} — Proche`; return `🟢 ${formatted}`; }
     function getDateClass(dateStr) { const status = getDateStatus(dateStr); if (status === 'danger') return 'date-danger'; if (status === 'warning') return 'date-warning'; return 'date-ok'; }
 
+    // ---- Progression / collapsed ----
     function countCheckedInPath(path, items) {
       let count = 0;
-      Object.keys(items).forEach(key => { if (key === '_sub') return; const item = items[key]; if (isSubCategory(item)) { const subPath = `${path}.${key}`; count += countCheckedInPath(subPath, item); } else { const checkKey = `${path}|${key}`; if (checkedItems[checkKey]) count++; } });
+      Object.keys(items).forEach(key => {
+        if (key === '_sub') return;
+        const item = items[key];
+        if (isSubCategory(item)) { const subPath = `${path}.${key}`; count += countCheckedInPath(subPath, item); }
+        else { const checkKey = `${path}|${key}`; if (checkedItems[checkKey]) count++; }
+      });
       return count;
     }
     function countTotalInPath(items) { return countObjectsInCategory(items); }
@@ -252,6 +278,7 @@
     function isCollapsed(path) { return collapsedState[path] === true; }
     function toggleCollapse(path) { collapsedState[path] = !collapsedState[path]; }
 
+    // ---- Rendu ----
     function renderInventory() {
       headerTitle.textContent = `📋 ${inventoryData.nom || currentInventory}`;
       progressContainer.style.display = 'block';
@@ -267,13 +294,23 @@
       const btnFindMissing = document.getElementById('btn-find-missing');
       const btnFinalize = document.getElementById('btn-finalize');
       const missingObjets = allObjets.filter(o => !checkedItems[`${o.cat}|${o.objName}`]);
-      if (missingObjets.length === 0) { btnFindMissing.classList.add('disabled'); btnFindMissing.textContent = '✅ Aucun objet manquant'; btnFindMissing.disabled = true; }
-      else { btnFindMissing.classList.remove('disabled'); btnFindMissing.textContent = `🔍 Chercher objet manquant (${missingObjets.length})`; btnFindMissing.disabled = false; }
+      if (missingObjets.length === 0) {
+        btnFindMissing.classList.add('disabled');
+        btnFindMissing.textContent = '✅ Aucun objet manquant';
+        btnFindMissing.disabled = true;
+      } else {
+        btnFindMissing.classList.remove('disabled');
+        btnFindMissing.textContent = `🔍 Chercher objet manquant (${missingObjets.length})`;
+        btnFindMissing.disabled = false;
+      }
       btnFinalize.disabled = false;
       btnFinalize.textContent = '✅ Finaliser l\'inventaire';
 
       let infoHtml = '';
-      if (inventoryData.finaliseDate) { const d = new Date(inventoryData.finaliseDate); infoHtml = `<div class="info-banner">📅 Dernier inventaire réalisé le ${d.toLocaleDateString('fr-FR')} à ${d.toLocaleTimeString('fr-FR')} par ${inventoryData.finalisePar || 'quelqu\'un'}.<br>Vous pouvez lancer un nouvel inventaire ci-dessous.</div>`; }
+      if (inventoryData.finaliseDate) {
+        const d = new Date(inventoryData.finaliseDate);
+        infoHtml = `<div class="info-banner">📅 Dernier inventaire réalisé le ${d.toLocaleDateString('fr-FR')} à ${d.toLocaleTimeString('fr-FR')} par ${inventoryData.finalisePar || 'quelqu\'un'}.<br>Vous pouvez lancer un nouvel inventaire ci-dessous.</div>`;
+      }
       let html = infoHtml;
       const categories = Object.keys(objets).sort((a,b)=>a.localeCompare(b,'fr',{sensitivity:'base'}));
       if (categories.length === 0) html += '<p style="text-align:center;padding:20px;">Aucun objet dans cet inventaire.</p>';
@@ -381,24 +418,28 @@
       });
     }
 
-    function escapeHtml(str) { return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function escapeHtml(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-    async function toggleCheck(cat, objName) {
+    // ---- Persistance ----
+    function persistInventory() {
+      const db = readDb();
+      if (!db) return;
+      if (!db.I) db.I = {};
+      db.I[currentInventory] = inventoryData;
+      saveDb(db);
+    }
+
+    // ---- Coche ----
+    function toggleCheck(cat, objName) {
       const checkKey = `${cat}|${objName}`;
       if (checkedItems[checkKey]) delete checkedItems[checkKey];
       else checkedItems[checkKey] = true;
-      try {
-        const allChecks = Object.keys(checkedItems);
-        await updateDoc(doc(db, 'I', currentInventory), { checks: allChecks });
-        inventoryData.checks = allChecks;
-        renderInventory();
-      } catch(e) {
-        if (checkedItems[checkKey]) delete checkedItems[checkKey];
-        else checkedItems[checkKey] = true;
-        alert('Erreur lors de la sauvegarde : ' + e.message);
-      }
+      inventoryData.checks = Object.keys(checkedItems);
+      persistInventory();
+      renderInventory();
     }
 
+    // ---- Modif date de péremption ----
     function openUpdateDateModal(cat, objName) {
       const obj = getObjetsAtPath(cat);
       if (!obj || !obj[objName]) return;
@@ -415,22 +456,22 @@
         </div>`;
       modalOverlay.style.display = 'flex';
       document.getElementById('modal-cancel').addEventListener('click', closeModal);
-      document.getElementById('modal-save').addEventListener('click', async () => {
+      document.getElementById('modal-save').addEventListener('click', () => {
         const newDate = document.getElementById('modal-new-date').value;
         if (!newDate) return alert('Veuillez sélectionner une date.');
-        try {
-          await updateDoc(doc(db, 'I', currentInventory), { [`objets.${cat}.${objName}.d`]: newDate });
-          await addLog(`Nouvelle date pour ${objName} (${cat}) : ${newDate}`);
-          let current = inventoryData.objets;
-          const parts = cat.split('.');
-          for (const part of parts) current = current[part];
-          current[objName].d = newDate;
-          closeModal();
-          renderInventory();
-        } catch(e) { alert('Erreur : ' + e.message); }
+        // Écriture dans l'arbre local
+        let current = inventoryData.objets;
+        const parts = cat.split('.');
+        for (const part of parts) current = current[part];
+        current[objName].d = newDate;
+        addLog(`Nouvelle date pour ${objName} (${cat}) : ${newDate}`);
+        persistInventory();
+        closeModal();
+        renderInventory();
       });
     }
 
+    // ---- Finalisation ----
     document.getElementById('btn-finalize').addEventListener('click', () => {
       const allObjets = getAllObjetsFromInventory(inventoryData.objets || {});
       const manquants = allObjets.filter(o => !checkedItems[`${o.cat}|${o.objName}`]).map(o => `${o.objName} (${o.cat})`);
@@ -447,18 +488,21 @@
         </div>`;
       modalOverlay.style.display = 'flex';
       document.getElementById('modal-cancel').addEventListener('click', closeModal);
-      document.getElementById('modal-confirm').addEventListener('click', async () => {
-        try {
-          await updateDoc(doc(db, 'I', currentInventory), { finalise: true, finaliseDate: new Date().toISOString(), finalisePar: currentNivol, manquants: manquants, checks: [] });
-          await addLog(`Finalisation de l'inventaire (${manquants.length} manquants)`);
-          closeModal();
-          // Retour à la liste des inventaires
-          removeUrlParam('inv');
-          showInventoryList();
-        } catch(e) { alert('Erreur : ' + e.message); }
+      document.getElementById('modal-confirm').addEventListener('click', () => {
+        inventoryData.finalise = true;
+        inventoryData.finaliseDate = new Date().toISOString();
+        inventoryData.finalisePar = currentNivol;
+        inventoryData.manquants = manquants;
+        inventoryData.checks = [];
+        addLog(`Finalisation de l'inventaire (${manquants.length} manquants)`);
+        persistInventory();
+        closeModal();
+        removeUrlParam('inv');
+        showInventoryList();
       });
     });
 
+    // ---- Chercher objet manquant ----
     document.getElementById('btn-find-missing').addEventListener('click', () => {
       const allObjets = getAllObjetsFromInventory(inventoryData.objets || {});
       const missing = allObjets.filter(o => !checkedItems[`${o.cat}|${o.objName}`]);
@@ -496,19 +540,18 @@
       return result;
     };
 
-    async function addLog(action) {
+    // ---- Logs ----
+    function addLog(action) {
       const log = { n: currentNivol, t: new Date().toISOString(), a: action };
-      try {
-        const snap = await getDoc(doc(db, 'I', currentInventory));
-        const currentLogs = snap.data().logs || [];
-        currentLogs.push(log);
-        const trimmed = currentLogs.slice(-50);
-        await updateDoc(doc(db, 'I', currentInventory), { logs: trimmed });
-      } catch(e) { console.error('Log error:', e); }
+      if (!inventoryData.logs) inventoryData.logs = [];
+      inventoryData.logs.push(log);
+      inventoryData.logs = inventoryData.logs.slice(-50);
     }
 
     function closeModal() { modalOverlay.style.display = 'none'; modalContent.innerHTML = ''; }
     modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+
+    init();
   </script>
 </body>
 </html>
