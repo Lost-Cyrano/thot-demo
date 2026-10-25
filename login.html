@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Thot – Connexion</title>
+  <title>Thot – Connexion (démo)</title>
   <style>
     /* Fond d'écran statique avec le logo, transparent */
     #bg-logo {
@@ -20,17 +20,93 @@
 
     body {
       font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-      max-width: 400px;
+      max-width: 440px;
       margin: 50px auto;
       padding: 0 20px;
       position: relative;
       background: transparent;
+      color: #333;
     }
+
+    h1 { margin-bottom: 20px; }
 
     .error { color: #c00; margin-top: 10px; }
     input, button { padding: 10px; width: 100%; margin: 5px 0; box-sizing: border-box; }
-    button { background: #e60000; color: white; border: none; cursor: pointer; }
+    button { background: #e60000; color: white; border: none; cursor: pointer; border-radius: 6px; }
     button:hover { background: #b30000; }
+
+    /* Switcher discret rôle */
+    .role-switch {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 12px 0 4px;
+      font-size: 0.8rem;
+      color: #888;
+    }
+    .role-switch label { cursor: pointer; }
+    .role-switch input[type="checkbox"] {
+      appearance: none;
+      width: 34px;
+      height: 18px;
+      background: #ccc;
+      border-radius: 999px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin: 0;
+      padding: 0;
+    }
+    .role-switch input[type="checkbox"]::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      transition: left 0.2s;
+    }
+    .role-switch input[type="checkbox"]:checked {
+      background: #e60000;
+    }
+    .role-switch input[type="checkbox"]:checked::after {
+      left: 18px;
+    }
+
+    /* Bloc d'explication */
+    .demo-info {
+      margin-top: 30px;
+      padding: 16px;
+      background: rgba(230, 0, 0, 0.05);
+      border-left: 3px solid #e60000;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      color: #555;
+      line-height: 1.5;
+    }
+    .demo-info strong {
+      display: block;
+      color: #e60000;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+    .demo-info p { margin: 0 0 8px; }
+    .demo-info p:last-child { margin-bottom: 0; }
+
+    /* Lien reset */
+    .reset-link {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.75rem;
+      color: #aaa;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .reset-link:hover { color: #e60000; text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -39,93 +115,102 @@
 
   <h1>Thot – Inventaires</h1>
   <form id="login-form">
-    <label for="nivol">NIVOL</label>
-    <input type="text" id="nivol" placeholder="ex: 01234567890A" required pattern="[0-9A-Za-z]{12}">
-    <button type="submit">Se connecter</button>
+    <label for="nivol">NIVOL (indicatif — toute saisie acceptée en démo)</label>
+    <input type="text" id="nivol" placeholder="ex: 01234567890A">
+    <button type="submit">Continuer</button>
   </form>
   <p id="message" class="error"></p>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-    import { getAuth, signInAnonymously, updateProfile, deleteUser } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+  <!-- Switcher discret pour choisir Administrateur / Utilisateur -->
+  <div class="role-switch">
+    <span>Utilisateur</span>
+    <input type="checkbox" id="role-admin-toggle" aria-label="Basculer entre utilisateur et administrateur">
+    <label for="role-admin-toggle">Administrateur</label>
+  </div>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyA1V3UybXWyyMmO9fBH7jhuVUSFL3mDBPo",
-      authDomain: "crf--thot.firebaseapp.com",
-      projectId: "crf--thot",
-      storageBucket: "crf--thot.firebasestorage.app",
-      messagingSenderId: "242106713414",
-      appId: "1:242106713414:web:76f4c6977264539ef85147",
-      measurementId: "G-NF6W8FS69P"
-    };
+  <!-- Bloc d'explication démo -->
+  <div class="demo-info">
+    <strong>Version de démonstration</strong>
+    <p>Cette version utilise uniquement des données fictives enregistrées localement dans le navigateur. Vous pouvez les modifier et tester les fonctionnalités ; ces changements ne sont visibles que sur cet appareil et dans ce navigateur. Effacer les données du site réinitialisera la démonstration.</p>
+    <p>Le parcours présenté s'inspire de la connexion par NIVOL utilisée à la Croix-Rouge française, mais il ne vérifie aucun NIVOL réel. Dans une version client, THOT peut utiliser la méthode choisie par l'organisation : compte Google, identifiant et mot de passe, matricule, téléphone ou autre solution. Pour cet exemple, n'importe quelle saisie permet de continuer.</p>
+  </div>
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+  <a class="reset-link" id="reset-demo">Réinitialiser la démonstration (effacer les données locales)</a>
+
+  <script>
+    const DB_KEY = 'thot_demo_db';
+    const DATA_URL = './data.json';
+
+    const form = document.getElementById('login-form');
+    const nivolInput = document.getElementById('nivol');
+    const messageEl = document.getElementById('message');
+    const roleToggle = document.getElementById('role-admin-toggle');
+    const resetLink = document.getElementById('reset-demo');
 
     // Récupérer le paramètre de redirection
     const urlParams = new URLSearchParams(window.location.search);
     const redirectUrl = urlParams.get('redirect');
 
-    const form = document.getElementById('login-form');
-    const nivolInput = document.getElementById('nivol');
-    const messageEl = document.getElementById('message');
+    /**
+     * Charge la base de démo :
+     * - si localStorage contient déjà les données, on les garde (l'utilisateur a pu modifier)
+     * - sinon on fetch ./data.json et on stocke
+     */
+    async function ensureDemoDb() {
+      const existing = localStorage.getItem(DB_KEY);
+      if (existing) return JSON.parse(existing);
+
+      const res = await fetch(DATA_URL, { cache: 'no-store' });
+      if (!res.ok) {
+        throw new Error(`Impossible de charger ${DATA_URL} (${res.status})`);
+      }
+      const data = await res.json();
+      localStorage.setItem(DB_KEY, JSON.stringify(data));
+      return data;
+    }
+
+    // Reset
+    resetLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (confirm('Effacer toutes les données locales de la démo et recharger la base d\'exemple ?')) {
+        localStorage.removeItem(DB_KEY);
+        messageEl.textContent = '';
+        messageEl.style.color = '#0a0';
+        messageEl.textContent = 'Données réinitialisées. Rechargement...';
+        setTimeout(() => window.location.reload(), 600);
+      }
+    });
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       messageEl.textContent = '';
 
-      const nivol = nivolInput.value.trim().toUpperCase();
-      if (!/^[0-9A-Z]{12}$/.test(nivol)) {
-        messageEl.textContent = 'Format de NIVOL invalide (12 caractères alphanumériques).';
-        return;
-      }
+      const nivol = (nivolInput.value || '').trim().toUpperCase();
 
       try {
-        // 1. Connexion anonyme
-        const userCredential = await signInAnonymously(auth);
-        const user = userCredential.user;
+        // Charger / initialiser la base locale
+        await ensureDemoDb();
 
-        // 2. Vérifier dans les collections A et U
-        const [userSnap, adminSnap] = await Promise.all([
-          getDoc(doc(db, 'U', nivol)),
-          getDoc(doc(db, 'A', nivol))
-        ]);
+        // En démo, toute saisie est acceptée (même vide).
+        // On conserve éventuellement le NIVOL saisi pour info.
+        localStorage.setItem('thot_demo_user', JSON.stringify({
+          nivol: nivol || 'DEMO00000000',
+          role: roleToggle.checked ? 'admin' : 'user',
+          loggedAt: new Date().toISOString()
+        }));
 
-        if (!userSnap.exists() && !adminSnap.exists()) {
-          await deleteUser(user);
-          messageEl.textContent = 'NIVOL non reconnu. Veuillez réessayer.';
-          return;
-        }
+        // Destination selon le switcher
+        let destinationUrl = roleToggle.checked ? './admin.html' : './user.html';
 
-        // 3. Stocker le NIVOL dans le profil Auth
-        await updateProfile(user, {
-          displayName: nivol
-        });
-
-        // 4. Déterminer la page de destination
-        let destinationUrl = '';
-
-        if (adminSnap.exists()) {
-          destinationUrl = './admin.html';
-        } else {
-          destinationUrl = './user.html';
-        }
-
-        // 5. Redirection : si un paramètre redirect est présent, on l'utilise, sinon page par défaut
+        // Redirection : si un paramètre redirect est présent, on l'utilise
         if (redirectUrl) {
-          window.location.href = decodeURIComponent(redirectUrl);
-        } else {
-          window.location.href = destinationUrl;
+          destinationUrl = decodeURIComponent(redirectUrl);
         }
 
+        window.location.href = destinationUrl;
       } catch (error) {
         console.error('Erreur:', error);
-        messageEl.textContent = 'Une erreur technique est survenue. Veuillez réessayer.';
-        if (auth.currentUser) {
-          try { await deleteUser(auth.currentUser); } catch (e) {}
-        }
+        messageEl.textContent = 'Erreur de chargement des données de démonstration. Vérifiez que data.json est présent à côté de login.html.';
       }
     });
   </script>
