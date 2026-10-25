@@ -3,216 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Thot – Connexion (démo)</title>
+  <title>Thot – Inventaires (démo)</title>
   <style>
-    /* Fond d'écran statique avec le logo, transparent */
-    #bg-logo {
-      position: fixed;
-      inset: 0;
-      background-image: url('./images/LogoThot.png');
-      background-repeat: no-repeat;
-      background-position: center center;
-      background-size: min(70vmin, 600px) auto;
-      opacity: 0.15;
-      z-index: -1;
-      pointer-events: none;
-    }
-
     body {
       font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-      max-width: 440px;
-      margin: 50px auto;
-      padding: 0 20px;
-      position: relative;
-      background: transparent;
-      color: #333;
-    }
-
-    h1 { margin-bottom: 20px; }
-
-    .error { color: #c00; margin-top: 10px; }
-    input, button { padding: 10px; width: 100%; margin: 5px 0; box-sizing: border-box; }
-    button { background: #e60000; color: white; border: none; cursor: pointer; border-radius: 6px; }
-    button:hover { background: #b30000; }
-
-    /* Switcher discret rôle */
-    .role-switch {
+      background: #f5f5f5;
+      color: #555;
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      margin: 12px 0 4px;
-      font-size: 0.8rem;
-      color: #888;
-    }
-    .role-switch label { cursor: pointer; }
-    .role-switch input[type="checkbox"] {
-      appearance: none;
-      width: 34px;
-      height: 18px;
-      background: #ccc;
-      border-radius: 999px;
-      position: relative;
-      cursor: pointer;
-      transition: background 0.2s;
       margin: 0;
-      padding: 0;
+      padding: 20px;
     }
-    .role-switch input[type="checkbox"]::after {
-      content: '';
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 14px;
-      height: 14px;
-      background: #fff;
-      border-radius: 50%;
-      transition: left 0.2s;
-    }
-    .role-switch input[type="checkbox"]:checked {
-      background: #e60000;
-    }
-    .role-switch input[type="checkbox"]:checked::after {
-      left: 18px;
-    }
-
-    /* Bloc d'explication */
-    .demo-info {
-      margin-top: 30px;
-      padding: 16px;
-      background: rgba(230, 0, 0, 0.05);
-      border-left: 3px solid #e60000;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      color: #555;
-      line-height: 1.5;
-    }
-    .demo-info strong {
-      display: block;
-      color: #e60000;
-      margin-bottom: 8px;
+    .loader {
+      text-align: center;
       font-size: 0.9rem;
     }
-    .demo-info p { margin: 0 0 8px; }
-    .demo-info p:last-child { margin-bottom: 0; }
-
-    /* Lien reset */
-    .reset-link {
-      display: block;
-      text-align: center;
-      margin-top: 20px;
-      font-size: 0.75rem;
-      color: #aaa;
-      text-decoration: none;
-      cursor: pointer;
+    .loader .spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid #eee;
+      border-top-color: #e60000;
+      border-radius: 50%;
+      margin: 0 auto 12px;
+      animation: spin 0.8s linear infinite;
     }
-    .reset-link:hover { color: #e60000; text-decoration: underline; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    a { color: #e60000; }
   </style>
 </head>
 <body>
-  <!-- Fond d'écran avec le logo -->
-  <div id="bg-logo" aria-hidden="true"></div>
-
-  <h1>Thot – Inventaires</h1>
-  <form id="login-form">
-    <label for="nivol">NIVOL (indicatif — toute saisie acceptée en démo)</label>
-    <input type="text" id="nivol" placeholder="ex: 01234567890A">
-    <button type="submit">Continuer</button>
-  </form>
-  <p id="message" class="error"></p>
-
-  <!-- Switcher discret pour choisir Administrateur / Utilisateur -->
-  <div class="role-switch">
-    <span>Utilisateur</span>
-    <input type="checkbox" id="role-admin-toggle" aria-label="Basculer entre utilisateur et administrateur">
-    <label for="role-admin-toggle">Administrateur</label>
+  <div class="loader">
+    <div class="spinner" aria-hidden="true"></div>
+    <div>Redirection vers la page de connexion…</div>
+    <noscript>
+      <p>JavaScript est désactivé. <a href="./login.html">Cliquez ici pour continuer.</a></p>
+    </noscript>
   </div>
-
-  <!-- Bloc d'explication démo -->
-  <div class="demo-info">
-    <strong>Version de démonstration</strong>
-    <p>Cette version utilise uniquement des données fictives enregistrées localement dans le navigateur. Vous pouvez les modifier et tester les fonctionnalités ; ces changements ne sont visibles que sur cet appareil et dans ce navigateur. Effacer les données du site réinitialisera la démonstration.</p>
-    <p>Le parcours présenté s'inspire de la connexion par NIVOL utilisée à la Croix-Rouge française, mais il ne vérifie aucun NIVOL réel. Dans une version client, THOT peut utiliser la méthode choisie par l'organisation : compte Google, identifiant et mot de passe, matricule, téléphone ou autre solution. Pour cet exemple, n'importe quelle saisie permet de continuer.</p>
-  </div>
-
-  <a class="reset-link" id="reset-demo">Réinitialiser la démonstration (effacer les données locales)</a>
 
   <script>
-    const DB_KEY = 'thot_demo_db';
-    const DATA_URL = './data.json';
-
-    const form = document.getElementById('login-form');
-    const nivolInput = document.getElementById('nivol');
-    const messageEl = document.getElementById('message');
-    const roleToggle = document.getElementById('role-admin-toggle');
-    const resetLink = document.getElementById('reset-demo');
-
-    // Récupérer le paramètre de redirection
+    // Conserve un éventuel paramètre ?redirect=
     const urlParams = new URLSearchParams(window.location.search);
-    const redirectUrl = urlParams.get('redirect');
+    const redirect = urlParams.get('redirect');
 
-    /**
-     * Charge la base de démo :
-     * - si localStorage contient déjà les données, on les garde (l'utilisateur a pu modifier)
-     * - sinon on fetch ./data.json et on stocke
-     */
-    async function ensureDemoDb() {
-      const existing = localStorage.getItem(DB_KEY);
-      if (existing) return JSON.parse(existing);
-
-      const res = await fetch(DATA_URL, { cache: 'no-store' });
-      if (!res.ok) {
-        throw new Error(`Impossible de charger ${DATA_URL} (${res.status})`);
-      }
-      const data = await res.json();
-      localStorage.setItem(DB_KEY, JSON.stringify(data));
-      return data;
+    let target = './login.html';
+    if (redirect) {
+      target += '?redirect=' + encodeURIComponent(redirect);
     }
-
-    // Reset
-    resetLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (confirm('Effacer toutes les données locales de la démo et recharger la base d\'exemple ?')) {
-        localStorage.removeItem(DB_KEY);
-        messageEl.textContent = '';
-        messageEl.style.color = '#0a0';
-        messageEl.textContent = 'Données réinitialisées. Rechargement...';
-        setTimeout(() => window.location.reload(), 600);
-      }
-    });
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      messageEl.textContent = '';
-
-      const nivol = (nivolInput.value || '').trim().toUpperCase();
-
-      try {
-        // Charger / initialiser la base locale
-        await ensureDemoDb();
-
-        // En démo, toute saisie est acceptée (même vide).
-        // On conserve éventuellement le NIVOL saisi pour info.
-        localStorage.setItem('thot_demo_user', JSON.stringify({
-          nivol: nivol || 'DEMO00000000',
-          role: roleToggle.checked ? 'admin' : 'user',
-          loggedAt: new Date().toISOString()
-        }));
-
-        // Destination selon le switcher
-        let destinationUrl = roleToggle.checked ? './admin.html' : './user.html';
-
-        // Redirection : si un paramètre redirect est présent, on l'utilise
-        if (redirectUrl) {
-          destinationUrl = decodeURIComponent(redirectUrl);
-        }
-
-        window.location.href = destinationUrl;
-      } catch (error) {
-        console.error('Erreur:', error);
-        messageEl.textContent = 'Erreur de chargement des données de démonstration. Vérifiez que data.json est présent à côté de login.html.';
-      }
-    });
+    window.location.replace(target);
   </script>
 </body>
 </html>
