@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thot – Administration</title>
+  <style>
+    :root {
+      --red: #e60000;
+      --red-hover: #b30000;
+      --bg: #f5f5f5;
+      --card-bg: #ffffff;
+      --border: #ddd;
+      --text: #333;
+      --text-light: #666;
+      --radius: 12px;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08);
+      --warning: #f5a623;
+      --danger: #e60000;
+      --ok: #4caf50;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .identity-bar {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    .identity-info {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.95rem;
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--red);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .identity-text .name { font-weight: 600; }
+    .identity-text .details { color: var(--text-light); font-size: 0.85rem; }
+
+    .header-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .btn-logout {
+      background: transparent;
+      color: var(--red);
+      border: 1.5px solid var(--red);
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-logout:hover { background: var(--red); color: #fff; }
+
+    .btn-inventory {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-inventory:hover { background: var(--red-hover); }
+
+    .section {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      background: #fafafa;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .section-header h2 { font-size: 1rem; font-weight: 600; }
+
+    .badge {
+      background: var(--red);
+      color: #fff;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .badge.warning { background: var(--warning); }
+    .badge.danger { background: var(--danger); }
+    .badge.ok { background: var(--ok); }
+
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .btn-sm {
+      background: transparent;
+      border: 1.5px solid #ccc;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-sm:hover { background: #eee; border-color: #aaa; }
+    .btn-sm.add { border-color: var(--red); color: var(--red); }
+    .btn-sm.add:hover { background: var(--red); color: #fff; }
+
+    .list { list-style: none; }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      border-bottom: 1px solid #f0f0f0;
+      flex-wrap: wrap;
+      gap: 10px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .list-item:hover { background: #fafafa; }
+    .list-item:last-child { border-bottom: none; }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      color: #666;
+    }
+    .user-avatar.danger { background: #fff0f0; color: var(--danger); }
+    .user-avatar.warning { background: #fff8f0; color: var(--warning); }
+    .user-avatar.ok { background: #e8f5e9; color: var(--ok); }
+
+    .user-name { font-weight: 600; font-size: 0.95rem; }
+    .user-nivol { color: var(--text-light); font-size: 0.8rem; }
+
+    .user-func {
+      font-size: 0.8rem;
+      background: #f0f0f0;
+      padding: 2px 8px;
+      border-radius: 10px;
+      color: #555;
+      white-space: nowrap;
+    }
+    .user-func.danger { background: #fff0f0; color: var(--danger); }
+    .user-func.warning { background: #fff8f0; color: var(--warning); }
+    .user-func.ok { background: #e8f5e9; color: var(--ok); }
+
+    .item-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+    .btn-icon {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+    .btn-icon:hover { background: #f0f0f0; }
+    .btn-icon.delete:hover { color: var(--red); background: #fff0f0; }
+
+    .show-more {
+      padding: 10px 18px;
+      text-align: center;
+      color: var(--red);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border-top: 1px solid #f0f0f0;
+      transition: background 0.2s;
+    }
+    .show-more:hover { background: #fafafa; }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+
+    .modal {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 24px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .modal h3 { font-size: 1.1rem; }
+    .modal input {
+      width: 100%;
+      padding: 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+    .modal .modal-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+
+    .btn { padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+    .btn-cancel { background: #eee; color: #333; }
+    .btn-save { background: var(--red); color: #fff; }
+    .btn-danger { background: #c00; color: #fff; }
+
+    @media (max-width: 480px) {
+      .identity-bar { flex-direction: column; align-items: flex-start; }
+      .header-buttons { width: 100%; justify-content: flex-end; }
+      .list-item { flex-direction: column; align-items: flex-start; }
+      .item-actions { align-self: flex-end; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="identity-bar">
+      <div class="identity-info">
+        <div class="avatar" id="avatar-initial"></div>
+        <div class="identity-text">
+          <div class="name" id="identity-name"></div>
+          <div class="details" id="identity-details"></div>
+        </div>
+      </div>
+      <div class="header-buttons">
+        <button class="btn-inventory" id="inventory-btn">Faire des vérifications</button>
+        <button class="btn-logout" id="logout-btn">Déconnexion</button>
+      </div>
+    </div>
+
+    <!-- Périmés -->
+    <div class="section">
+      <div class="section-header">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <h2>Périmés</h2>
+          <span class="badge danger" id="expired-count">0</span>
+        </div>
+      </div>
+      <ul class="list" id="expired-list"></ul>
+      <div class="show-more" id="expired-show-more" style="display:none;">Afficher plus</div>
+    </div>
+
+    <!-- Manquants -->
+    <div class="section">
+      <div class="section-header">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <h2>Manquants</h2>
+          <span class="badge warning" id="missing-count">0</span>
+        </div>
+      </div>
+      <ul class="list" id="missing-list"></ul>
+      <div class="show-more" id="missing-show-more" style="display:none;">Afficher plus</div>
+    </div>
+
+    <!-- Inventaires -->
+    <div class="section">
+      <div class="section-header">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <h2>Inventaires</h2>
+          <span class="badge" id="inventory-count">0</span>
+        </div>
+        <div class="actions" id="inventory-actions">
+          <button class="btn-sm" id="btn-manage-inventory">Modifier les inventaires</button>
+        </div>
+      </div>
+      <ul class="list" id="inventory-list"></ul>
+      <div class="show-more" id="inventory-show-more" style="display:none;">Afficher plus</div>
+    </div>
+
+    <!-- Incidents -->
+    <div class="section">
+      <div class="section-header">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <h2>Incidents</h2>
+          <span class="badge warning" id="incident-count">0</span>
+        </div>
+      </div>
+      <ul class="list" id="incident-list"></ul>
+      <div class="show-more" id="incident-show-more" style="display:none;">Afficher plus</div>
+    </div>
+
+    <!-- Alertes Automobiles -->
+    <div class="section">
+      <div class="section-header">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <h2>Alertes Automobiles</h2>
+          <span class="badge danger" id="auto-alert-count">0</span>
+        </div>
+      </div>
+      <ul class="list" id="auto-alert-list"></ul>
+      <div class="show-more" id="auto-alert-show-more" style="display:none;">Afficher plus</div>
+    </div>
+
+    <!-- Parc Automobile -->
+    <div class="section">
+      <div class="section-header">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <h2>Parc Automobile</h2>
+          <span class="badge" id="vehicle-count">0</span>
+        </div>
+        <div class="actions" id="vehicle-actions">
+          <button class="btn-sm" id="btn-manage-vehicles">Gérer les véhicules</button>
+        </div>
+      </div>
+      <ul class="list" id="vehicle-list"></ul>
+      <div class="show-more" id="vehicle-show-more" style="display:none;">Afficher plus</div>
+    </div>
+
+    <!-- Administrateurs -->
+    <div class="section">
+      <div class="section-header">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <h2>Administrateurs</h2>
+          <span class="badge" id="admin-count">0</span>
+        </div>
+        <div class="actions" id="admin-actions"></div>
+      </div>
+      <ul class="list" id="admin-list"></ul>
+      <div class="show-more" id="admin-show-more" style="display:none;">Afficher plus</div>
+    </div>
+
+    <!-- Bénévoles -->
+    <div class="section">
+      <div class="section-header">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <h2>Bénévoles</h2>
+          <span class="badge" id="user-count">0</span>
+        </div>
+        <div class="actions" id="user-actions"></div>
+      </div>
+      <ul class="list" id="user-list"></ul>
+      <div class="show-more" id="user-show-more" style="display:none;">Afficher plus</div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-overlay" style="display:none;">
+    <div class="modal" id="modal-content"></div>
+  </div>
+
+  <script src="./local-store.js"></script>
+  <script>
+    const { initializeLocalApp, getLocalSession, onDemoSessionChanged, clearDemoSession, getLocalStore, localDoc, readDoc, localCollection, readCollection, writeDoc, removeDoc, patchDoc } = window.THOTLocal;
+    
+    
+    
+
+    const app = initializeLocalApp({});
+    const auth = getLocalSession(app);
+    const db = getLocalStore(app);
+
+    const HIERARCHY = ['Géniteur', 'PUL', 'DLUS', 'MOT', 'Adjoint Urgence'];
+    const ITEMS_PER_PAGE = 2;
+
+    // ---- Hiérarchie ----
+    function getHierarchyLevel(fonction) {
+      const idx = HIERARCHY.indexOf(fonction);
+      return idx === -1 ? HIERARCHY.length : idx;
+    }
+    function isStrictlyAbove(myFonc, targetFonc) { return getHierarchyLevel(myFonc) < getHierarchyLevel(targetFonc); }
+    function isAboveOrEqual(myFonc, targetFonc) { return getHierarchyLevel(myFonc) <= getHierarchyLevel(targetFonc); }
+    function canAssignFunction(myFonc, functionToAssign) {
+      if (myFonc === 'Dieu') return true;
+      if (functionToAssign === 'Dieu') return false;
+      if (myFonc === 'PUL') return functionToAssign !== 'PUL';
+      if (functionToAssign === 'PUL') return false;
+      return isAboveOrEqual(myFonc, functionToAssign);
+    }
+
+    // ---- Dates ----
+    function getDateStatus(dateStr) {
+      if (!dateStr) return null;
+      const now = new Date();
+      const date = new Date(dateStr);
+      const diffDays = Math.ceil((date - now) / (1000 * 60 * 60 * 24));
+      if (diffDays <= 0) return 'danger';
+      if (diffDays <= 30) return 'warning';
+      return 'ok';
+    }
+    function getDaysUntil(dateStr) {
+      if (!dateStr) return Infinity;
+      return Math.ceil((new Date(dateStr) - new Date()) / (1000 * 60 * 60 * 24));
+    }
+    function getLastVerificationDate(data) {
+      const logs = data.logs || [];
+      if (logs.length === 0) return null;
+      return logs[logs.length - 1].t || null;
+    }
+    function parseMissingEntry(entry) {
+      if (typeof entry !== 'string') return { nom: String(entry), categorie: 'Inconnue' };
+      const match = entry.match(/^(.+?)\s*\((.+?)\)\s*$/);
+      if (match) return { nom: match[1].trim(), categorie: match[2].trim() };
+      return { nom: entry.trim(), categorie: 'Inconnue' };
+    }
+
+    // ---- État ----
+    let currentAdmin = null;
+    let admins = [], users = [], inventories = [], vehicles = [];
+    let expiredItems = [], missingItems = [], incidentItems = [], autoAlerts = [];
+
+    let adminShowAll = false, userShowAll = false, inventoryShowAll = false;
+    let expiredShowAll = false, missingShowAll = false, incidentShowAll = false;
+    let autoAlertShowAll = false, vehicleShowAll = false;
+
+    // ---- DOM ----
+    const avatarInitial = document.getElementById('avatar-initial');
+    const identityName = document.getElementById('identity-name');
+    const identityDetails = document.getElementById('identity-details');
+    const adminCount = document.getElementById('admin-count');
+    const userCount = document.getElementById('user-count');
+    const inventoryCount = document.getElementById('inventory-count');
+    const expiredCount = document.getElementById('expired-count');
+    const missingCount = document.getElementById('missing-count');
+    const incidentCount = document.getElementById('incident-count');
+    const autoAlertCount = document.getElementById('auto-alert-count');
+    const vehicleCount = document.getElementById('vehicle-count');
+    const adminList = document.getElementById('admin-list');
+    const userList = document.getElementById('user-list');
+    const inventoryList = document.getElementById('inventory-list');
+    const expiredList = document.getElementById('expired-list');
+    const missingList = document.getElementById('missing-list');
+    const incidentList = document.getElementById('incident-list');
+    const autoAlertList = document.getElementById('auto-alert-list');
+    const vehicleList = document.getElementById('vehicle-list');
+    const adminActions = document.getElementById('admin-actions');
+    const userActions = document.getElementById('user-actions');
+    const adminShowMore = document.getElementById('admin-show-more');
+    const userShowMore = document.getElementById('user-show-more');
+    const inventoryShowMore = document.getElementById('inventory-show-more');
+    const expiredShowMore = document.getElementById('expired-show-more');
+    const missingShowMore = document.getElementById('missing-show-more');
+    const incidentShowMore = document.getElementById('incident-show-more');
+    const autoAlertShowMore = document.getElementById('auto-alert-show-more');
+    const vehicleShowMore = document.getElementById('vehicle-show-more');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalContent = document.getElementById('modal-content');
+
+    // ---- Auth ----
+    onDemoSessionChanged(auth, async (user) => {
+      if (!user) { window.location.href = './login.html'; return; }
+      const nivol = user.displayName;
+      if (!nivol) { await clearDemoSession(user).catch(() => {}); window.location.href = './login.html'; return; }
+
+      try {
+        const adminSnap = await readDoc(localDoc(db, 'A', nivol));
+        if (!adminSnap.exists()) {
+          await clearDemoSession(user).catch(() => {});
+          window.location.href = './login.html';
+          return;
+        }
+        currentAdmin = {
+          nivol,
+          nom: adminSnap.data().I || 'Inconnu',
+          fonction: adminSnap.data().F || ''
+        };
+        const initial = (currentAdmin.nom.charAt(0) || '?').toUpperCase();
+        avatarInitial.textContent = initial;
+        identityName.textContent = currentAdmin.nom;
+        identityDetails.textContent = `NIVOL : ${currentAdmin.nivol}${currentAdmin.fonction ? ' - ' + currentAdmin.fonction : ''}`;
+        await loadAllData();
+      } catch (err) {
+        console.error(err);
+        if (auth.currentUser) await clearDemoSession(auth.currentUser).catch(() => {});
+        window.location.href = './login.html';
+      }
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      const user = auth.currentUser;
+      if (user) { await clearDemoSession(user).catch(() => {}); window.location.href = './login.html'; }
+    });
+    document.getElementById('inventory-btn').addEventListener('click', () => { window.location.href = './inventaire/index.html'; });
+    document.getElementById('btn-manage-inventory').addEventListener('click', () => { window.location.href = './inventaire/admin.html'; });
+    document.getElementById('btn-manage-vehicles').addEventListener('click', () => { window.location.href = './parc-auto/admin.html'; });
+
+    // ---- Chargement global ----
+    async function loadAllData() {
+      // === Inventaires ===
+      const invSnap = await readCollection(localCollection(db, 'I'));
+      inventories = []; expiredItems = []; missingItems = [];
+
+      invSnap.forEach(docSnap => {
+        const data = docSnap.data();
+        const invId = docSnap.id;
+        const invName = data.nom || invId;
+        const lastVerif = getLastVerificationDate(data);
+        inventories.push({ id: invId, nom: invName, lastVerification: lastVerif });
+
+        const objets = data.objets || {};
+        Object.keys(objets).forEach(cat => {
+          const items = objets[cat];
+          if (typeof items !== 'object' || items === null) return;
+          Object.keys(items).forEach(objName => {
+            const obj = items[objName];
+            if (typeof obj !== 'object' || obj === null) return;
+            if (obj.d) {
+              const status = getDateStatus(obj.d);
+              if (status === 'danger' || status === 'warning') {
+                expiredItems.push({
+                  nom: objName, date: obj.d, status,
+                  jours: getDaysUntil(obj.d),
+                  inventaireId: invId, inventaireNom: invName, categorie: cat
+                });
+              }
+            }
+          });
+        });
+
+        const manquantsArray = data.manquants || [];
+        if (Array.isArray(manquantsArray)) {
+          manquantsArray.forEach(entry => {
+            if (typeof entry === 'string') {
+              const parsed = parseMissingEntry(entry);
+              missingItems.push({
+                nom: parsed.nom, categorie: parsed.categorie,
+                inventaireId: invId, inventaireNom: invName, entryOriginal: entry
+              });
+            }
+          });
+        }
+      });
+      expiredItems.sort((a, b) => a.jours - b.jours);
+
+      // === Véhicules : incidents + alertes ===
+      const vehSnap = await readCollection(localCollection(db, 'P'));
+      vehicles = []; incidentItems = []; autoAlerts = [];
+
+      vehSnap.forEach(docSnap => {
+        const data = docSnap.data();
+        const vehId = docSnap.id;
+        const vehName = data.n || data.im || vehId;
+        const currentKm = data.km || 0;
+
+        vehicles.push({
+          id: vehId, nom: vehName,
+          immat: data.im || '',
+          incidents: (data.inc || []).length,
+          lastTotal: getLastTotalDisinfection(data)
+        });
+
+        // Incidents
+        (data.inc || []).forEach(inc => {
+          const prio = inc.p || 'Basse';
+          const prioLevel = prio === 'Haute' ? 0 : prio === 'Moyenne' ? 1 : 2;
+          incidentItems.push({
+            id: inc.id, titre: inc.t || '—', desc: inc.d || '',
+            priorite: prio, prioLevel,
+            date: inc.dt, par: inc.n,
+            vehiculeId: vehId, vehiculeNom: vehName
+          });
+        });
+
+        // Alertes auto : assurance, contrôle technique, nettoyage, désinfection, entretiens
+        // Assurance
+        if (data.ass) {
+          const s = getDateStatus(data.ass);
+          if (s === 'danger' || s === 'warning') {
+            autoAlerts.push({
+              label: 'Assurance', date: data.ass, status: s,
+              jours: getDaysUntil(data.ass),
+              vehiculeId: vehId, vehiculeNom: vehName, type: 'assurance'
+            });
+          }
+        }
+        // Contrôle technique
+        if (data.ct) {
+          const s = getDateStatus(data.ct);
+          if (s === 'danger' || s === 'warning') {
+            autoAlerts.push({
+              label: 'Contrôle technique', date: data.ct, status: s,
+              jours: getDaysUntil(data.ct),
+              vehiculeId: vehId, vehiculeNom: vehName, type: 'ct'
+            });
+          }
+        }
+        // Nettoyage (prochaine date calculée)
+        const nextClean = getNextCleanDate(data.dn, data.fn);
+        if (nextClean) {
+          const s = getDateStatus(nextClean);
+          if (s === 'danger' || s === 'warning') {
+            autoAlerts.push({
+              label: 'Nettoyage', date: nextClean, status: s,
+              jours: getDaysUntil(nextClean),
+              vehiculeId: vehId, vehiculeNom: vehName, type: 'nettoyage'
+            });
+          }
+        }
+        // Désinfection (prochaine date calculée)
+        const nextDisinfect = getNextCleanDate(data.dd, data.fd);
+        if (nextDisinfect) {
+          const s = getDateStatus(nextDisinfect);
+          if (s === 'danger' || s === 'warning') {
+            autoAlerts.push({
+              label: 'Désinfection', date: nextDisinfect, status: s,
+              jours: getDaysUntil(nextDisinfect),
+              vehiculeId: vehId, vehiculeNom: vehName, type: 'desinfection'
+            });
+          }
+        }
+        // Entretiens (date ou km)
+        (data.en || []).forEach(e => {
+          let d = null;
+          let label = `Entretien : ${e.type || '—'}`;
+          if (e.recType === 'km' && e.kmDeclencheur) {
+            const diff = e.kmDeclencheur - currentKm;
+            if (diff <= 1000) {
+              autoAlerts.push({
+                label, date: null, km: e.kmDeclencheur, kmDiff: diff,
+                status: diff <= 0 ? 'danger' : 'warning',
+                jours: diff <= 0 ? -1 : diff, // utilisé pour tri
+                vehiculeId: vehId, vehiculeNom: vehName, type: 'entretien_km'
+              });
+            }
+          } else if (e.date) {
+            const s = getDateStatus(e.date);
+            if (s === 'danger' || s === 'warning') {
+              autoAlerts.push({
+                label, date: e.date, status: s,
+                jours: getDaysUntil(e.date),
+                vehiculeId: vehId, vehiculeNom: vehName, type: 'entretien'
+              });
+            }
+          }
+        });
+      });
+
+      incidentItems.sort((a, b) => a.prioLevel - b.prioLevel);
+      autoAlerts.sort((a, b) => a.jours - b.jours);
+      vehicles.sort((a, b) => (a.nom || a.id).localeCompare(b.nom || b.id, 'fr'));
+
+      // === Admins / Bénévoles ===
+      const adminSnap = await readCollection(localCollection(db, 'A'));
+      admins = [];
+      adminSnap.forEach(d => admins.push({ nivol: d.id, nom: d.data().I || 'Inconnu', fonction: d.data().F || '' }));
+
+      const userSnap = await readCollection(localCollection(db, 'U'));
+      users = [];
+      userSnap.forEach(d => users.push({ nivol: d.id, nom: d.data().I || 'Inconnu' }));
+
+      // === Rendu ===
+      renderExpiredList();
+      renderMissingList();
+      renderInventoryList();
+      renderIncidentList();
+      renderAutoAlerts();
+      renderVehicleList();
+      renderAdminList();
+      renderUserList();
+    }
+
+    // ---- Helpers dates véhicules ----
+    function getLastTotalDisinfection(v) {
+      const history = v.ddh || [];
+      let last = null;
+      history.forEach(h => {
+        if (h.type === 'total') {
+          if (!last || new Date(h.date) > new Date(last.date)) last = h;
+        }
+      });
+      return last;
+    }
+    function getNextCleanDate(lastDate, freqDays) {
+      if (!lastDate || !freqDays) return null;
+      const last = new Date(lastDate);
+      const next = new Date(last);
+      next.setDate(next.getDate() + parseInt(freqDays));
+      return next.toISOString();
+    }
+
+    function canEditAnything() { return currentAdmin && HIERARCHY.includes(currentAdmin.fonction); }
+
+    // ---- Rendu générique ----
+    function renderListWithShowMore(items, listEl, showMoreEl, countEl, showAll, toggleFn, renderItemFn) {
+      listEl.innerHTML = '';
+      countEl.textContent = items.length;
+      const visible = showAll ? items : items.slice(0, ITEMS_PER_PAGE);
+      visible.forEach(item => renderItemFn(item, listEl));
+      if (items.length > ITEMS_PER_PAGE) {
+        showMoreEl.style.display = 'block';
+        showMoreEl.textContent = showAll ? 'Afficher moins' : `Afficher plus (${items.length - ITEMS_PER_PAGE} restants)`;
+        showMoreEl.onclick = toggleFn;
+      } else {
+        showMoreEl.style.display = 'none';
+      }
+    }
+
+    // ---- Listes ----
+    function renderExpiredList() {
+      renderListWithShowMore(expiredItems, expiredList, expiredShowMore, expiredCount, expiredShowAll,
+        () => { expiredShowAll = !expiredShowAll; renderExpiredList(); },
+        (item, listEl) => {
+          const li = document.createElement('li');
+          li.className = 'list-item';
+          const label = item.status === 'danger' ? 'PERIME' : 'Proche';
+          li.innerHTML = `
+            <div class="user-info">
+              <div class="user-avatar ${item.status}">${item.status === 'danger' ? '!' : '~'}</div>
+              <div>
+                <div class="user-name">${item.nom}</div>
+                <div class="user-nivol">${item.inventaireNom} → ${item.categorie} | ${new Date(item.date).toLocaleDateString('fr-FR')}</div>
+              </div>
+              <span class="user-func ${item.status}">${label} (${item.jours <= 0 ? 'depuis ' + Math.abs(item.jours) + 'j' : 'dans ' + item.jours + 'j'})</span>
+            </div>`;
+          li.addEventListener('click', () => { window.location.href = `./inventaire/index.html?inv=${encodeURIComponent(item.inventaireId)}`; });
+          listEl.appendChild(li);
+        });
+    }
+
+    function renderMissingList() {
+      renderListWithShowMore(missingItems, missingList, missingShowMore, missingCount, missingShowAll,
+        () => { missingShowAll = !missingShowAll; renderMissingList(); },
+        (item, listEl) => {
+          const li = document.createElement('li');
+          li.className = 'list-item';
+          li.innerHTML = `
+            <div class="user-info">
+              <div class="user-avatar warning">!</div>
+              <div>
+                <div class="user-name">${item.nom}</div>
+                <div class="user-nivol">${item.inventaireNom} / ${item.categorie}</div>
+              </div>
+              <span class="user-func warning">Manquant</span>
+            </div>
+            <div class="item-actions">
+              <button class="btn-icon" title="Marquer comme retrouvé" data-action="found">✅</button>
+            </div>`;
+          li.addEventListener('click', (e) => {
+            if (e.target.closest('.item-actions') || e.target.closest('button')) return;
+            window.location.href = `./inventaire/index.html?inv=${encodeURIComponent(item.inventaireId)}`;
+          });
+          li.querySelector('[data-action="found"]').addEventListener('click', async (e) => {
+            e.stopPropagation();
+            await markAsFound(item.inventaireId, item.entryOriginal);
+          });
+          listEl.appendChild(li);
+        });
+    }
+
+    async function markAsFound(invId, entryToRemove) {
+      try {
+        const invRef = localDoc(db, 'I', invId);
+        const invSnap = await readDoc(invRef);
+        if (!invSnap.exists()) return;
+        const data = invSnap.data();
+        const manquants = data.manquants || [];
+        if (!Array.isArray(manquants)) return;
+        const newManquants = manquants.filter(e => e !== entryToRemove);
+        await patchDoc(invRef, { manquants: newManquants });
+        const currentLogs = data.logs || [];
+        currentLogs.push({ n: currentAdmin.nivol, t: new Date().toISOString(), a: `Objet retrouvé : ${entryToRemove}` });
+        await patchDoc(invRef, { logs: currentLogs.slice(-50) });
+        await loadAllData();
+      } catch(e) { alert('Erreur : ' + e.message); }
+    }
+
+    function renderInventoryList() {
+      renderListWithShowMore(inventories, inventoryList, inventoryShowMore, inventoryCount, inventoryShowAll,
+        () => { inventoryShowAll = !inventoryShowAll; renderInventoryList(); },
+        (inv, listEl) => {
+          const li = document.createElement('li');
+          li.className = 'list-item';
+          const lastVerifText = inv.lastVerification
+            ? 'Dernière vérification : ' + new Date(inv.lastVerification).toLocaleDateString('fr-FR')
+            : 'Aucune vérification';
+          li.innerHTML = `
+            <div class="user-info">
+              <div class="user-avatar">${(inv.nom.charAt(0)||'?').toUpperCase()}</div>
+              <div>
+                <div class="user-name">${inv.nom || inv.id}</div>
+                <div class="user-nivol">${lastVerifText}</div>
+              </div>
+            </div>`;
+          li.addEventListener('click', () => { window.location.href = `./inventaire/index.html?inv=${encodeURIComponent(inv.id)}`; });
+          listEl.appendChild(li);
+        });
+    }
+
+    function renderIncidentList() {
+      renderListWithShowMore(incidentItems, incidentList, incidentShowMore, incidentCount, incidentShowAll,
+        () => { incidentShowAll = !incidentShowAll; renderIncidentList(); },
+        (item, listEl) => {
+          const li = document.createElement('li');
+          li.className = 'list-item';
+          const cls = item.priorite === 'Haute' ? 'danger' : item.priorite === 'Moyenne' ? 'warning' : '';
+          li.innerHTML = `
+            <div class="user-info">
+              <div class="user-avatar ${cls}">⚠️</div>
+              <div>
+                <div class="user-name">${item.titre} <span class="user-func ${cls}">${item.priorite}</span></div>
+                <div class="user-nivol">🚗 ${item.vehiculeNom} · ${new Date(item.date).toLocaleDateString('fr-FR')} · par ${item.par || '?'}</div>
+                ${item.desc ? `<div class="user-nivol" style="font-size:0.75rem;">${item.desc}</div>` : ''}
+              </div>
+            </div>`;
+          li.addEventListener('click', () => {
+            window.location.href = `./parc-auto/index.html?vehicule=${encodeURIComponent(item.vehiculeId)}`;
+          });
+          listEl.appendChild(li);
+        });
+    }
+
+    function renderAutoAlerts() {
+      renderListWithShowMore(autoAlerts, autoAlertList, autoAlertShowMore, autoAlertCount, autoAlertShowAll,
+        () => { autoAlertShowAll = !autoAlertShowAll; renderAutoAlerts(); },
+        (item, listEl) => {
+          const li = document.createElement('li');
+          li.className = 'list-item';
+          const label = item.status === 'danger' ? 'DÉPASSÉ' : 'Proche';
+          let dateInfo = '';
+          if (item.type === 'entretien_km') {
+            dateInfo = item.kmDiff <= 0
+              ? `${item.km} km (dépassé de ${Math.abs(item.kmDiff)} km)`
+              : `${item.km} km (dans ${item.kmDiff} km)`;
+          } else {
+            dateInfo = `${new Date(item.date).toLocaleDateString('fr-FR')} (${item.jours <= 0 ? 'depuis ' + Math.abs(item.jours) + 'j' : 'dans ' + item.jours + 'j'})`;
+          }
+          li.innerHTML = `
+            <div class="user-info">
+              <div class="user-avatar ${item.status}">${item.status === 'danger' ? '!' : '~'}</div>
+              <div>
+                <div class="user-name">${item.label}</div>
+                <div class="user-nivol">🚗 ${item.vehiculeNom} · ${dateInfo}</div>
+              </div>
+              <span class="user-func ${item.status}">${label}</span>
+            </div>`;
+          li.addEventListener('click', () => {
+            window.location.href = `./parc-auto/index.html?vehicule=${encodeURIComponent(item.vehiculeId)}`;
+          });
+          listEl.appendChild(li);
+        });
+    }
+
+    function renderVehicleList() {
+      renderListWithShowMore(vehicles, vehicleList, vehicleShowMore, vehicleCount, vehicleShowAll,
+        () => { vehicleShowAll = !vehicleShowAll; renderVehicleList(); },
+        (v, listEl) => {
+          const li = document.createElement('li');
+          li.className = 'list-item';
+          const lastTotalText = v.lastTotal
+            ? 'Dernière désinfection totale : ' + new Date(v.lastTotal.date).toLocaleDateString('fr-FR') + ' par ' + (v.lastTotal.par || '?')
+            : 'Aucune désinfection totale';
+          li.innerHTML = `
+            <div class="user-info">
+              <div class="user-avatar">🚗</div>
+              <div>
+                <div class="user-name">${v.nom} ${v.immat ? '(' + v.immat + ')' : ''}</div>
+                <div class="user-nivol">${lastTotalText}</div>
+              </div>
+            </div>`;
+          li.addEventListener('click', () => {
+            window.location.href = `./parc-auto/index.html?vehicule=${encodeURIComponent(v.id)}`;
+          });
+          listEl.appendChild(li);
+        });
+    }
+
+    function renderAdminList() {
+      adminActions.innerHTML = '';
+      if (canEditAnything()) {
+        const btn = document.createElement('button');
+        btn.className = 'btn-sm add';
+        btn.textContent = '+ Ajouter';
+        btn.addEventListener('click', () => openAddModal('A'));
+        adminActions.appendChild(btn);
+      }
+      renderListWithShowMore(admins, adminList, adminShowMore, adminCount, adminShowAll,
+        () => { adminShowAll = !adminShowAll; renderAdminList(); },
+        (a, listEl) => {
+          const li = document.createElement('li');
+          li.className = 'list-item';
+          li.innerHTML = `
+            <div class="user-info">
+              <div class="user-avatar">${(a.nom.charAt(0)||'?').toUpperCase()}</div>
+              <div>
+                <div class="user-name">${a.nom}</div>
+                <div class="user-nivol">${a.nivol}</div>
+              </div>
+              <span class="user-func">${a.fonction || '-'}</span>
+            </div>
+            <div class="item-actions"></div>`;
+          const actionsDiv = li.querySelector('.item-actions');
+          const canModify = canEditAnything() && (isStrictlyAbove(currentAdmin.fonction, a.fonction) || a.nivol === currentAdmin.nivol);
+          const canDelete = canEditAnything() && isStrictlyAbove(currentAdmin.fonction, a.fonction);
+          if (canModify) {
+            const editBtn = document.createElement('button');
+            editBtn.className = 'btn-icon'; editBtn.textContent = '✏️'; editBtn.title = 'Modifier';
+            editBtn.addEventListener('click', (e) => { e.stopPropagation(); openEditModal('A', a); });
+            actionsDiv.appendChild(editBtn);
+          }
+          if (canDelete) {
+            const delBtn = document.createElement('button');
+            delBtn.className = 'btn-icon delete'; delBtn.textContent = '🗑️'; delBtn.title = 'Supprimer';
+            delBtn.addEventListener('click', (e) => { e.stopPropagation(); confirmDelete('A', a); });
+            actionsDiv.appendChild(delBtn);
+          }
+          listEl.appendChild(li);
+        });
+    }
+
+    function renderUserList() {
+      userActions.innerHTML = '';
+      if (canEditAnything()) {
+        const btn = document.createElement('button');
+        btn.className = 'btn-sm add';
+        btn.textContent = '+ Ajouter';
+        btn.addEventListener('click', () => openAddModal('U'));
+        userActions.appendChild(btn);
+      }
+      renderListWithShowMore(users, userList, userShowMore, userCount, userShowAll,
+        () => { userShowAll = !userShowAll; renderUserList(); },
+        (u, listEl) => {
+          const li = document.createElement('li');
+          li.className = 'list-item';
+          li.innerHTML = `
+            <div class="user-info">
+              <div class="user-avatar">${(u.nom.charAt(0)||'?').toUpperCase()}</div>
+              <div>
+                <div class="user-name">${u.nom}</div>
+                <div class="user-nivol">${u.nivol}</div>
+              </div>
+            </div>
+            <div class="item-actions"></div>`;
+          const actionsDiv = li.querySelector('.item-actions');
+          if (canEditAnything()) {
+            const editBtn = document.createElement('button');
+            editBtn.className = 'btn-icon'; editBtn.textContent = '✏️'; editBtn.title = 'Modifier';
+            editBtn.addEventListener('click', (e) => { e.stopPropagation(); openEditModal('U', u); });
+            actionsDiv.appendChild(editBtn);
+            const delBtn = document.createElement('button');
+            delBtn.className = 'btn-icon delete'; delBtn.textContent = '🗑️'; delBtn.title = 'Supprimer';
+            delBtn.addEventListener('click', (e) => { e.stopPropagation(); confirmDelete('U', u); });
+            actionsDiv.appendChild(delBtn);
+          }
+          listEl.appendChild(li);
+        });
+    }
+
+    // ---- Modals ----
+    function openAddModal(collectionName) {
+      const isAdmin = collectionName === 'A';
+      modalContent.innerHTML = `
+        <h3>Ajouter un ${isAdmin ? 'administrateur' : 'bénévole'}</h3>
+        <input type="text" id="modal-nivol" placeholder="NIVOL (12 car.)" pattern="[0-9A-Za-z]{12}" maxlength="12">
+        <input type="text" id="modal-nom" placeholder="Prénom Nom">
+        ${isAdmin ? '<input type="text" id="modal-fonction" placeholder="Fonction">' : ''}
+        <div class="modal-actions">
+          <button class="btn btn-cancel" id="modal-cancel">Annuler</button>
+          <button class="btn btn-save" id="modal-save">Ajouter</button>
+        </div>`;
+      modalOverlay.style.display = 'flex';
+      document.getElementById('modal-cancel').addEventListener('click', closeModal);
+      document.getElementById('modal-save').addEventListener('click', async () => {
+        const nivol = document.getElementById('modal-nivol').value.trim().toUpperCase();
+        const nom = document.getElementById('modal-nom').value.trim();
+        const fonction = isAdmin ? document.getElementById('modal-fonction').value.trim() : '';
+        if (!/^[0-9A-Z]{12}$/.test(nivol)) return alert('NIVOL invalide.');
+        if (!nom) return alert('Nom requis.');
+        if (isAdmin && fonction && !canAssignFunction(currentAdmin.fonction, fonction)) {
+          return alert(`Vous ne pouvez pas attribuer la fonction "${fonction}".`);
+        }
+        const [existsA, existsU] = await Promise.all([
+          readDoc(localDoc(db, 'A', nivol)),
+          readDoc(localDoc(db, 'U', nivol))
+        ]);
+        if (existsA.exists() || existsU.exists()) return alert('Ce NIVOL existe déjà.');
+        try {
+          const data = { I: nom };
+          if (isAdmin && fonction) data.F = fonction;
+          await writeDoc(localDoc(db, collectionName, nivol), data);
+          closeModal();
+          await loadAllData();
+        } catch (e) { alert('Erreur : ' + e.message); }
+      });
+    }
+
+    function openEditModal(collectionName, item) {
+      const isAdmin = collectionName === 'A';
+      const isSelf = item.nivol === currentAdmin.nivol;
+      modalContent.innerHTML = `
+        <h3>Modifier ${item.nom}</h3>
+        <input type="text" id="modal-nom" value="${item.nom}" placeholder="Prénom Nom">
+        ${isAdmin ? `<input type="text" id="modal-fonction" value="${item.fonction || ''}" placeholder="Fonction">` : ''}
+        <p style="font-size:0.85rem;color:#666;">NIVOL : ${item.nivol} (non modifiable)</p>
+        <div class="modal-actions">
+          <button class="btn btn-cancel" id="modal-cancel">Annuler</button>
+          <button class="btn btn-save" id="modal-save">Enregistrer</button>
+        </div>`;
+      modalOverlay.style.display = 'flex';
+      document.getElementById('modal-cancel').addEventListener('click', closeModal);
+      document.getElementById('modal-save').addEventListener('click', async () => {
+        const nom = document.getElementById('modal-nom').value.trim();
+        const fonctionInput = isAdmin ? document.getElementById('modal-fonction') : null;
+        const nouvelleFonction = fonctionInput ? fonctionInput.value.trim() : undefined;
+        if (!nom) return alert('Nom requis.');
+        if (isAdmin && nouvelleFonction !== undefined) {
+          const oldFonction = item.fonction || '';
+          if (isSelf && nouvelleFonction !== oldFonction) return alert('Vous ne pouvez pas modifier votre propre fonction.');
+          if (!isSelf && nouvelleFonction !== oldFonction) {
+            if (!canAssignFunction(currentAdmin.fonction, nouvelleFonction)) {
+              return alert(`Vous ne pouvez pas attribuer la fonction "${nouvelleFonction}".`);
+            }
+          }
+        }
+        try {
+          const data = { I: nom };
+          if (isAdmin && nouvelleFonction !== undefined) data.F = nouvelleFonction;
+          await writeDoc(localDoc(db, collectionName, item.nivol), data, { merge: true });
+          closeModal();
+          await loadAllData();
+        } catch (e) { alert('Erreur : ' + e.message); }
+      });
+    }
+
+    function confirmDelete(collectionName, item) {
+      if (item.nivol === currentAdmin.nivol) return alert('Vous ne pouvez pas vous supprimer vous-même.');
+      modalContent.innerHTML = `
+        <h3>Confirmer la suppression</h3>
+        <p>Supprimer définitivement <strong>${item.nom}</strong> (${item.nivol}) ?</p>
+        <div class="modal-actions">
+          <button class="btn btn-cancel" id="modal-cancel">Annuler</button>
+          <button class="btn btn-danger" id="modal-delete">Supprimer</button>
+        </div>`;
+      modalOverlay.style.display = 'flex';
+      document.getElementById('modal-cancel').addEventListener('click', closeModal);
+      document.getElementById('modal-delete').addEventListener('click', async () => {
+        try {
+          await removeDoc(localDoc(db, collectionName, item.nivol));
+          closeModal();
+          await loadAllData();
+        } catch (e) { alert('Erreur : ' + e.message); }
+      });
+    }
+
+    function closeModal() { modalOverlay.style.display = 'none'; modalContent.innerHTML = ''; }
+    modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+  </script>
+</body>
+</html>

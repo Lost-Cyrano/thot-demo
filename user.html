@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thot – Bénévole</title>
+  <style>
+    :root {
+      --red: #e60000;
+      --red-hover: #b30000;
+      --bg: #f5f5f5;
+      --card-bg: #ffffff;
+      --border: #ddd;
+      --text: #333;
+      --text-light: #666;
+      --radius: 12px;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .identity-bar {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    .identity-info {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.95rem;
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--red);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .identity-text .name { font-weight: 600; }
+    .identity-text .details { color: var(--text-light); font-size: 0.85rem; }
+
+    .header-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .btn-logout {
+      background: transparent;
+      color: var(--red);
+      border: 1.5px solid var(--red);
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-logout:hover { background: var(--red); color: #fff; }
+
+    .btn-inventory {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-inventory:hover { background: var(--red-hover); }
+
+    .section {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      background: #fafafa;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .section-header h2 { font-size: 1rem; font-weight: 600; }
+
+    .badge {
+      background: var(--red);
+      color: #fff;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .list { list-style: none; }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      border-bottom: 1px solid #f0f0f0;
+      flex-wrap: wrap;
+      gap: 10px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .list-item:hover { background: #fafafa; }
+    .list-item:last-child { border-bottom: none; }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      color: #666;
+    }
+
+    .user-name { font-weight: 600; font-size: 0.95rem; }
+    .user-nivol { color: var(--text-light); font-size: 0.8rem; }
+
+    .show-more {
+      padding: 10px 18px;
+      text-align: center;
+      color: var(--red);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border-top: 1px solid #f0f0f0;
+      transition: background 0.2s;
+    }
+    .show-more:hover { background: #fafafa; }
+
+    @media (max-width: 480px) {
+      .identity-bar { flex-direction: column; align-items: flex-start; }
+      .header-buttons { width: 100%; justify-content: flex-end; }
+      .list-item { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="identity-bar">
+      <div class="identity-info">
+        <div class="avatar" id="avatar-initial"></div>
+        <div class="identity-text">
+          <div class="name" id="identity-name"></div>
+          <div class="details" id="identity-details"></div>
+        </div>
+      </div>
+      <div class="header-buttons">
+        <button class="btn-inventory" id="inventory-btn">Faire des vérifications</button>
+        <button class="btn-logout" id="logout-btn">Déconnexion</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <h2>Inventaires</h2>
+          <span class="badge" id="inventory-count">0</span>
+        </div>
+      </div>
+      <ul class="list" id="inventory-list"></ul>
+      <div class="show-more" id="inventory-show-more" style="display:none;">Afficher plus</div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <h2>Parc Automobile</h2>
+          <span class="badge" id="vehicle-count">0</span>
+        </div>
+      </div>
+      <ul class="list" id="vehicle-list"></ul>
+      <div class="show-more" id="vehicle-show-more" style="display:none;">Afficher plus</div>
+    </div>
+  </div>
+
+  <script src="./local-store.js"></script>
+  <script>
+    const { initializeLocalApp, getLocalSession, onDemoSessionChanged, clearDemoSession, getLocalStore, localDoc, readDoc, localCollection, readCollection } = window.THOTLocal;
+    
+    
+    
+
+    const app = initializeLocalApp({});
+    const auth = getLocalSession(app);
+    const db = getLocalStore(app);
+
+    const ITEMS_PER_PAGE = 2;
+
+    function getLastVerificationDate(data) {
+      const logs = data.logs || [];
+      if (logs.length === 0) return null;
+      const lastLog = logs[logs.length - 1];
+      return lastLog.t || null;
+    }
+
+    // Récupère la dernière désinfection de type "total" depuis ddh
+    function getLastTotalDisinfection(v) {
+      const history = v.ddh || [];
+      let last = null;
+      history.forEach(h => {
+        if (h.type === 'total') {
+          if (!last || new Date(h.date) > new Date(last.date)) {
+            last = h;
+          }
+        }
+      });
+      return last;
+    }
+
+    let currentUser = null;
+    let inventories = [];
+    let vehicles = [];
+    let inventoryShowAll = false;
+    let vehicleShowAll = false;
+
+    const avatarInitial = document.getElementById('avatar-initial');
+    const identityName = document.getElementById('identity-name');
+    const identityDetails = document.getElementById('identity-details');
+    const inventoryCount = document.getElementById('inventory-count');
+    const inventoryList = document.getElementById('inventory-list');
+    const inventoryShowMore = document.getElementById('inventory-show-more');
+    const vehicleCount = document.getElementById('vehicle-count');
+    const vehicleList = document.getElementById('vehicle-list');
+    const vehicleShowMore = document.getElementById('vehicle-show-more');
+
+    onDemoSessionChanged(auth, async (user) => {
+      if (!user) { window.location.href = './login.html'; return; }
+      const nivol = user.displayName;
+      if (!nivol) {
+        await clearDemoSession(user).catch(() => {});
+        window.location.href = './login.html';
+        return;
+      }
+
+      try {
+        // Vérifier que l'utilisateur existe dans U
+        const userSnap = await readDoc(localDoc(db, 'U', nivol));
+        if (!userSnap.exists()) {
+          // Vérifier aussi dans A au cas où
+          const adminSnap = await readDoc(localDoc(db, 'A', nivol));
+          if (!adminSnap.exists()) {
+            await clearDemoSession(user).catch(() => {});
+            window.location.href = './login.html';
+            return;
+          }
+          // Si c'est un admin, on le laisse passer aussi (il a le droit de voir les inventaires)
+          currentUser = {
+            nivol,
+            nom: adminSnap.data().I || 'Inconnu',
+            fonction: adminSnap.data().F || ''
+          };
+        } else {
+          currentUser = {
+            nivol,
+            nom: userSnap.data().I || 'Inconnu'
+          };
+        }
+
+        const initial = (currentUser.nom.charAt(0) || '?').toUpperCase();
+        avatarInitial.textContent = initial;
+        identityName.textContent = currentUser.nom;
+        identityDetails.textContent = `NIVOL : ${currentUser.nivol}`;
+
+        await loadInventories();
+        await loadVehicles();
+
+      } catch (err) {
+        console.error(err);
+        if (auth.currentUser) await clearDemoSession(auth.currentUser).catch(() => {});
+        window.location.href = './login.html';
+      }
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      const user = auth.currentUser;
+      if (user) {
+        await clearDemoSession(user).catch(() => {});
+        window.location.href = './login.html';
+      }
+    });
+
+    document.getElementById('inventory-btn').addEventListener('click', () => {
+      window.location.href = './inventaire/index.html';
+    });
+
+    async function loadInventories() {
+      try {
+        const invSnap = await readCollection(localCollection(db, 'I'));
+        inventories = [];
+        invSnap.forEach(docSnap => {
+          const data = docSnap.data();
+          const invId = docSnap.id;
+          const invName = data.nom || invId;
+          const lastVerif = getLastVerificationDate(data);
+
+          inventories.push({
+            id: invId,
+            nom: invName,
+            lastVerification: lastVerif
+          });
+        });
+      } catch(e) {
+        inventories = [];
+      }
+      renderInventoryList();
+    }
+
+    async function loadVehicles() {
+      try {
+        const vehSnap = await readCollection(localCollection(db, 'P'));
+        vehicles = [];
+        vehSnap.forEach(docSnap => {
+          const data = docSnap.data();
+          const vehId = docSnap.id;
+          const vehName = data.n || data.im || vehId;
+          const lastTotalDisinfect = getLastTotalDisinfection(data);
+
+          vehicles.push({
+            id: vehId,
+            nom: vehName,
+            lastTotalDisinfection: lastTotalDisinfect
+          });
+        });
+        vehicles.sort((a, b) => (a.nom || a.id).localeCompare(b.nom || b.id, 'fr'));
+      } catch(e) {
+        vehicles = [];
+      }
+      renderVehicleList();
+    }
+
+    function renderInventoryList() {
+      inventoryList.innerHTML = '';
+      inventoryCount.textContent = inventories.length;
+
+      const visibleItems = inventoryShowAll ? inventories : inventories.slice(0, ITEMS_PER_PAGE);
+      visibleItems.forEach(inv => {
+        const li = document.createElement('li');
+        li.className = 'list-item';
+        const lastVerifText = inv.lastVerification
+          ? 'Derniere verification : ' + new Date(inv.lastVerification).toLocaleDateString('fr-FR')
+          : 'Aucune verification';
+        li.innerHTML = `
+          <div class="user-info">
+            <div class="user-avatar">${(inv.nom.charAt(0)||'?').toUpperCase()}</div>
+            <div>
+              <div class="user-name">${inv.nom || inv.id || 'Sans nom'}</div>
+              <div class="user-nivol">${lastVerifText}</div>
+            </div>
+          </div>
+        `;
+        li.addEventListener('click', () => {
+          window.location.href = `./inventaire/index.html?inv=${encodeURIComponent(inv.id)}`;
+        });
+        inventoryList.appendChild(li);
+      });
+
+      if (inventories.length > ITEMS_PER_PAGE) {
+        inventoryShowMore.style.display = 'block';
+        inventoryShowMore.textContent = inventoryShowAll ? 'Afficher moins' : `Afficher plus (${inventories.length - ITEMS_PER_PAGE} restants)`;
+        inventoryShowMore.onclick = () => {
+          inventoryShowAll = !inventoryShowAll;
+          renderInventoryList();
+        };
+      } else {
+        inventoryShowMore.style.display = 'none';
+      }
+    }
+
+    function renderVehicleList() {
+      vehicleList.innerHTML = '';
+      vehicleCount.textContent = vehicles.length;
+
+      const visibleItems = vehicleShowAll ? vehicles : vehicles.slice(0, ITEMS_PER_PAGE);
+      visibleItems.forEach(veh => {
+        const li = document.createElement('li');
+        li.className = 'list-item';
+        const lastTotal = veh.lastTotalDisinfection;
+        const lastTotalText = lastTotal
+          ? 'Dernière désinfection totale : ' + new Date(lastTotal.date).toLocaleDateString('fr-FR') + ' par ' + (lastTotal.par || '?')
+          : 'Aucune désinfection totale';
+        li.innerHTML = `
+          <div class="user-info">
+            <div class="user-avatar">🚗</div>
+            <div>
+              <div class="user-name">${veh.nom || veh.id || 'Sans nom'}</div>
+              <div class="user-nivol">${lastTotalText}</div>
+            </div>
+          </div>
+        `;
+        li.addEventListener('click', () => {
+          window.location.href = `./parc-auto/index.html?vehicule=${encodeURIComponent(veh.id)}`;
+        });
+        vehicleList.appendChild(li);
+      });
+
+      if (vehicles.length > ITEMS_PER_PAGE) {
+        vehicleShowMore.style.display = 'block';
+        vehicleShowMore.textContent = vehicleShowAll ? 'Afficher moins' : `Afficher plus (${vehicles.length - ITEMS_PER_PAGE} restants)`;
+        vehicleShowMore.onclick = () => {
+          vehicleShowAll = !vehicleShowAll;
+          renderVehicleList();
+        };
+      } else {
+        vehicleShowMore.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>

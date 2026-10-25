@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thot – QR Code</title>
+  <style>
+    :root {
+      --red: #e60000;
+      --red-hover: #b30000;
+      --bg: #f5f5f5;
+      --card-bg: #ffffff;
+      --border: #ddd;
+      --text: #333;
+      --text-light: #666;
+      --radius: 12px;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Header */
+    .header {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-weight: 600;
+    }
+
+    .btn-back {
+      background: transparent;
+      border: 1.5px solid #ccc;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .btn-back:hover { background: #eee; }
+
+    .btn-logout {
+      background: transparent;
+      color: var(--red);
+      border: 1.5px solid var(--red);
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .btn-logout:hover { background: var(--red); color: #fff; }
+
+    /* Carte QR Code */
+    .qr-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .qr-container {
+      background: #fff;
+      border: 3px solid var(--red);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(230, 0, 0, 0.15);
+      position: relative;
+    }
+
+    #qr-code {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    #qr-code img,
+    #qr-code canvas {
+      width: 250px;
+      height: 250px;
+      max-width: 100%;
+    }
+
+    /* Logo superposé au centre du QR code */
+    .qr-logo-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 55px;
+      height: 55px;
+      background: #fff;
+      padding: 4px;
+      border-radius: 4px;
+      box-shadow: 0 0 0 3px #fff;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .qr-logo-overlay img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .qr-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
+      word-break: break-word;
+    }
+
+    .qr-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      text-align: center;
+      margin-top: -12px;
+    }
+
+    .qr-url-preview {
+      background: #f5f5f5;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.75rem;
+      color: var(--text-light);
+      word-break: break-all;
+      text-align: center;
+      font-family: monospace;
+      width: 100%;
+    }
+
+    .btn-download {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.2s;
+      width: 100%;
+    }
+
+    .btn-download:hover { background: var(--red-hover); }
+
+    .btn-download:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .error-state {
+      background: #fff0f0;
+      color: var(--red);
+      padding: 20px;
+      border-radius: var(--radius);
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .loader {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-light);
+      font-size: 1.1rem;
+    }
+
+    .loader-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e0e0e0;
+      border-top-color: var(--red);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media print {
+      body { background: #fff; padding: 0; }
+      .header, .btn-download, .qr-url-preview, .btn-back, .btn-logout { display: none !important; }
+      .qr-card { border: none; box-shadow: none; }
+    }
+
+    @media (max-width: 480px) {
+      .qr-card { padding: 20px 12px; }
+      .qr-container { padding: 12px; }
+      #qr-code img, #qr-code canvas { width: 200px; height: 200px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <span>📱 QR Code</span>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-back" id="btn-back">← Retour</button>
+        <button class="btn-logout" id="btn-logout">Déconnexion</button>
+      </div>
+    </div>
+
+    <!-- Contenu -->
+    <div id="content">
+      <div class="loader">
+        <div class="loader-spinner"></div>
+        Génération du QR Code...
+      </div>
+    </div>
+  </div>
+
+  <!-- Bibliothèque QRCode.js (identique à la page inventaire) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script src="../local-store.js"></script>
+  <script>
+    const { initializeLocalApp, getLocalSession, onDemoSessionChanged, clearDemoSession, getLocalStore, localDoc, readDoc } = window.THOTLocal;
+    
+    
+    
+
+    const app = initializeLocalApp({});
+    const auth = getLocalSession(app);
+    const db = getLocalStore(app);
+
+    const contentEl = document.getElementById('content');
+    const btnBack = document.getElementById('btn-back');
+
+    // Paramètres URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const type = urlParams.get('type'); // 'vehicule' ou 'inventaire'
+    const id = urlParams.get('id');
+
+    // Vérification connexion + admin
+    onDemoSessionChanged(auth, async (user) => {
+      if (!user) { redirectToLogin(); return; }
+      const nivol = user.displayName;
+      if (!nivol) {
+        await clearDemoSession(user).catch(() => {});
+        redirectToLogin();
+        return;
+      }
+
+      let isAdmin = false;
+      try {
+        const adminSnap = await readDoc(localDoc(db, 'A', nivol));
+        isAdmin = adminSnap.exists();
+      } catch (e) {}
+
+      if (!isAdmin) {
+        contentEl.innerHTML = '<div class="error-state">⛔ Accès réservé aux administrateurs.</div>';
+        return;
+      }
+
+      updateBackButton();
+
+      if (!type || !id) {
+        contentEl.innerHTML = '<div class="error-state">⚠️ Paramètres manquants : type et id sont requis.</div>';
+        return;
+      }
+
+      await loadAndGenerateQR();
+    });
+
+    function redirectToLogin() {
+      const currentUrl = encodeURIComponent(window.location.href);
+      window.location.href = `./login.html?redirect=${currentUrl}`;
+    }
+
+    function updateBackButton() {
+      if (type === 'vehicule') {
+        btnBack.onclick = () => { window.location.href = './admin.html'; };
+        btnBack.textContent = '← Parc Auto';
+      } else if (type === 'inventaire') {
+        btnBack.onclick = () => { window.location.href = './admin.html'; };
+        btnBack.textContent = '← Administration';
+      } else {
+        btnBack.onclick = () => { window.location.href = './admin.html'; };
+        btnBack.textContent = '← Retour';
+      }
+    }
+
+    document.getElementById('btn-logout').addEventListener('click', async () => {
+      const user = auth.currentUser;
+      if (user) {
+        await clearDemoSession(user).catch(() => {});
+        window.location.href = './login.html';
+      }
+    });
+
+    // ===== CHARGEMENT + GÉNÉRATION =====
+    async function loadAndGenerateQR() {
+      try {
+        let title = '';
+        let subtitle = '';
+        let targetUrl = '';
+        let filename = '';
+
+        if (type === 'vehicule') {
+          const docSnap = await readDoc(localDoc(db, 'P', id));
+          if (!docSnap.exists()) {
+            contentEl.innerHTML = '<div class="error-state">⚠️ Véhicule introuvable.</div>';
+            return;
+          }
+          const data = docSnap.data();
+          title = data.n || data.im || id;
+          subtitle = data.im ? `Immatriculation : ${data.im}` : '';
+
+          // URL vers la page index utilisateur du parc auto
+          const baseUrl = window.location.origin + window.location.pathname.replace(/\/qr\.html$/, '/') + 'parc-auto/index.html';
+          targetUrl = `${baseUrl}?vehicule=${encodeURIComponent(id)}`;
+          filename = `QRCode_vehicule_${(data.im || id).replace(/[^a-z0-9]/gi, '_').toLowerCase()}`;
+
+        } else if (type === 'inventaire') {
+          const docSnap = await readDoc(localDoc(db, 'I', id));
+          if (!docSnap.exists()) {
+            contentEl.innerHTML = '<div class="error-state">⚠️ Inventaire introuvable.</div>';
+            return;
+          }
+          const data = docSnap.data();
+          title = data.nom || id;
+          subtitle = 'Inventaire';
+
+          const baseUrl = window.location.origin + window.location.pathname.replace(/\/qr\.html$/, '/') + 'inventaire/';
+          targetUrl = `${baseUrl}?inv=${encodeURIComponent(id)}`;
+          filename = `QRCode_inventaire_${id.replace(/[^a-z0-9]/gi, '_').toLowerCase()}`;
+
+        } else {
+          contentEl.innerHTML = `<div class="error-state">⚠️ Type inconnu : "${type}".</div>`;
+          return;
+        }
+
+        renderQRCode(targetUrl, title, subtitle, filename);
+
+      } catch (e) {
+        console.error(e);
+        contentEl.innerHTML = `<div class="error-state">Erreur : ${e.message}</div>`;
+      }
+    }
+
+    function renderQRCode(qrTargetUrl, title, subtitle, filename) {
+      contentEl.innerHTML = `
+        <div class="qr-card">
+          <div class="qr-container">
+            <div id="qr-code"></div>
+            <div class="qr-logo-overlay" id="qr-logo-overlay">
+              <img src="./images/LogoThot.png" alt="Logo Thot" onerror="this.style.display='none';">
+            </div>
+          </div>
+          <div class="qr-title">${escapeHtml(title)}</div>
+          ${subtitle ? `<div class="qr-subtitle">${escapeHtml(subtitle)}</div>` : ''}
+          <div class="qr-url-preview">${escapeHtml(qrTargetUrl)}</div>
+          <button class="btn-download" id="btn-download" disabled>📥 Télécharger</button>
+        </div>
+      `;
+
+      // Génération QR (même style que la page inventaire : rouge, correction H)
+      const qrContainer = document.getElementById('qr-code');
+      const qr = new QRCode(qrContainer, {
+        text: qrTargetUrl,
+        width: 250,
+        height: 250,
+        colorDark: '#e60000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      // Activer le téléchargement quand le QR est prêt
+      setTimeout(() => {
+        const btn = document.getElementById('btn-download');
+        if (btn) {
+          btn.disabled = false;
+          btn.addEventListener('click', () => {
+            downloadQRCode(qrContainer, title, subtitle, filename);
+          });
+        }
+      }, 300);
+    }
+
+    // Téléchargement : combine QR + logo + titre + sous-titre
+    function downloadQRCode(qrContainer, title, subtitle, filename) {
+      const canvas = qrContainer.querySelector('canvas');
+      const img = qrContainer.querySelector('img');
+
+      const qrSize = 250;
+      const padding = 30;
+      const titleHeight = subtitle ? 80 : 55;
+      const totalWidth = qrSize + padding * 2;
+      const totalHeight = qrSize + padding * 2 + titleHeight;
+
+      const combinedCanvas = document.createElement('canvas');
+      combinedCanvas.width = totalWidth;
+      combinedCanvas.height = totalHeight;
+      const ctx = combinedCanvas.getContext('2d');
+
+      // Fond blanc
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, totalWidth, totalHeight);
+
+      // Dessiner le QR
+      if (canvas) {
+        ctx.drawImage(canvas, padding, padding, qrSize, qrSize);
+      } else if (img) {
+        ctx.drawImage(img, padding, padding, qrSize, qrSize);
+      }
+
+      // Ajouter le logo au centre (carré, comme la page inventaire)
+      const logo = new Image();
+      logo.crossOrigin = 'anonymous';
+      logo.onload = () => {
+        const logoSize = qrSize * 0.22;
+        const logoX = padding + (qrSize - logoSize) / 2;
+        const logoY = padding + (qrSize - logoSize) / 2;
+
+        // Fond blanc carré derrière le logo
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(
+          padding + qrSize / 2 - logoSize / 2 - 4,
+          padding + qrSize / 2 - logoSize / 2 - 4,
+          logoSize + 8,
+          logoSize + 8
+        );
+
+        ctx.drawImage(logo, logoX, logoY, logoSize, logoSize);
+
+        drawTextAndDownload(ctx, combinedCanvas, totalWidth, totalHeight, title, subtitle, filename);
+      };
+      logo.onerror = () => {
+        // Sans logo
+        drawTextAndDownload(ctx, combinedCanvas, totalWidth, totalHeight, title, subtitle, filename);
+      };
+      logo.src = './images/LogoThot.png';
+    }
+
+    function drawTextAndDownload(ctx, canvas, width, height, title, subtitle, filename) {
+      // Titre
+      ctx.fillStyle = '#333333';
+      ctx.font = 'bold 22px system-ui, -apple-system, sans-serif';
+      ctx.textAlign = 'center';
+      const titleY = height - (subtitle ? 50 : 25);
+      ctx.fillText(title, width / 2, titleY);
+
+      // Sous-titre
+      if (subtitle) {
+        ctx.fillStyle = '#666666';
+        ctx.font = '16px system-ui, -apple-system, sans-serif';
+        ctx.fillText(subtitle, width / 2, height - 22);
+      }
+
+      // Télécharger
+      const link = document.createElement('a');
+      link.download = `${filename}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+</html>

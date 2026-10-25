@@ -1,0 +1,165 @@
+{
+  "A": {
+    "DEMOADMIN001": {
+      "nivol": "DEMOADMIN001",
+      "nom": "Administrateur Démonstration",
+      "role": "admin"
+    }
+  },
+  "U": {
+    "DEMOUSER0001": {
+      "nivol": "DEMOUSER0001",
+      "nom": "Utilisateur Démonstration",
+      "role": "user"
+    }
+  },
+  "I": {
+    "sac-secours": {
+      "nom": "Sac de secours – équipe A",
+      "objets": {
+        "Protection et hygiène": {
+          "Gants nitrile": {
+            "q": 10,
+            "d": "2027-11-29"
+          },
+          "Masques chirurgicaux": {
+            "q": 5,
+            "d": "2026-11-19"
+          },
+          "Gel hydroalcoolique": {
+            "q": 1,
+            "d": "2026-10-17"
+          },
+          "Lunettes de protection": {
+            "q": 2
+          },
+          "Paire de ciseaux (absente)": {
+            "q": 0
+          }
+        },
+        "Matériel de bilan": {
+          "Consommables": {
+            "_sub": true,
+            "Piles AA": {
+              "q": 4
+            },
+            "Embouts thermomètre": {
+              "q": 10,
+              "d": "2028-03-08"
+            }
+          },
+          "Tensiomètre": {
+            "q": 1
+          },
+          "Oxymètre de pouls": {
+            "q": 1,
+            "d": "2027-03-24"
+          },
+          "Thermomètre": {
+            "q": 1
+          }
+        },
+        "Soins et pansements": {
+          "Compresses stériles": {
+            "q": 10,
+            "d": "2027-07-02"
+          },
+          "Pansements": {
+            "q": 12
+          },
+          "Bande extensible": {
+            "q": 3
+          },
+          "Sérum physiologique": {
+            "q": 5,
+            "d": "2026-11-06"
+          }
+        }
+      },
+      "checks": [],
+      "logs": []
+    },
+    "vpsp-inventaire": {
+      "nom": "VPSP – lot embarqué",
+      "objets": {
+        "Sécurité véhicule": {
+          "Triangle de présignalisation": {
+            "q": 1
+          },
+          "Gilet haute visibilité": {
+            "q": 4
+          },
+          "Lampe torche": {
+            "q": 2
+          }
+        },
+        "Matériel de secours": {
+          "Sac O2": {
+            "q": 1
+          },
+          "Masque à haute concentration adulte": {
+            "q": 2,
+            "d": "2028-03-08"
+          },
+          "Masque pédiatrique": {
+            "q": 1,
+            "d": "2026-10-23"
+          },
+          "Bouteille O2 de réserve": {
+            "q": 1
+          }
+        },
+        "Brancardage": {
+          "Arrimage": {
+            "_sub": true,
+            "Sangles de maintien": {
+              "q": 4
+            },
+            "Couverture de survie": {
+              "q": 3
+            }
+          },
+          "Brancard principal": {
+            "q": 1
+          },
+          "Chaise portoir": {
+            "q": 1
+          }
+        }
+      },
+      "checks": [],
+      "logs": []
+    }
+  },
+  "P": {
+    "AB_123_CD": {
+      "im": "AB-123-CD",
+      "n": "VPSP Démonstration",
+      "car": "Diesel",
+      "km": 48250,
+      "ass": "2027-03-24",
+      "ct": "2026-12-09",
+      "en": [
+        {
+          "type": "Contrôle périodique",
+          "date": "2026-11-06",
+          "description": "Contrôle des équipements embarqués"
+        },
+        {
+          "type": "Rendez-vous garage",
+          "date": "2026-10-30",
+          "description": "Révision et vérification des feux"
+        }
+      ],
+      "inc": [
+        {
+          "type": "Pneumatique",
+          "date": "2026-10-22",
+          "description": "Crevaison lente roue arrière droite",
+          "statut": "À traiter"
+        }
+      ],
+      "h": []
+    }
+  }
+}
