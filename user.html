@@ -234,43 +234,42 @@
     </div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, deleteUser } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyA1V3UybXWyyMmO9fBH7jhuVUSFL3mDBPo",
-      authDomain: "crf--thot.firebaseapp.com",
-      projectId: "crf--thot",
-      storageBucket: "crf--thot.firebasestorage.app",
-      messagingSenderId: "242106713414",
-      appId: "1:242106713414:web:76f4c6977264539ef85147",
-      measurementId: "G-NF6W8FS69P"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
+  <script>
+    /* ============================================================
+       VERSION DÉMO — pas de Firebase, tout en localStorage.
+       Clés :
+         thot_demo_db    → base JSON complète { U, A, I, P, ... }
+         thot_demo_user  → { nivol, role, loggedAt }
+       ============================================================ */
+    const DB_KEY = 'thot_demo_db';
+    const USER_KEY = 'thot_demo_user';
     const ITEMS_PER_PAGE = 2;
 
+    function readDb() {
+      const raw = localStorage.getItem(DB_KEY);
+      if (!raw) return null;
+      try { return JSON.parse(raw); } catch { return null; }
+    }
+
+    function readUser() {
+      const raw = localStorage.getItem(USER_KEY);
+      if (!raw) return null;
+      try { return JSON.parse(raw); } catch { return null; }
+    }
+
+    // Helpers métier (inchangés dans l'esprit)
     function getLastVerificationDate(data) {
       const logs = data.logs || [];
       if (logs.length === 0) return null;
-      const lastLog = logs[logs.length - 1];
-      return lastLog.t || null;
+      return logs[logs.length - 1].t || null;
     }
 
-    // Récupère la dernière désinfection de type "total" depuis ddh
     function getLastTotalDisinfection(v) {
       const history = v.ddh || [];
       let last = null;
       history.forEach(h => {
         if (h.type === 'total') {
-          if (!last || new Date(h.date) > new Date(last.date)) {
-            last = h;
-          }
+          if (!last || new Date(h.date) > new Date(last.date)) last = h;
         }
       });
       return last;
@@ -292,109 +291,66 @@
     const vehicleList = document.getElementById('vehicle-list');
     const vehicleShowMore = document.getElementById('vehicle-show-more');
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) { window.location.href = './login.html'; return; }
-      const nivol = user.displayName;
-      if (!nivol) {
-        await deleteUser(user).catch(() => {});
-        window.location.href = './login.html';
+    // --- Initialisation ---
+    function init() {
+      const db = readDb();
+      if (!db) {
+        // Base pas encore initialisée : on renvoie vers login pour la créer
+        window.location.href = './login.html?redirect=' + encodeURIComponent('./user.html');
         return;
       }
 
-      try {
-        // Vérifier que l'utilisateur existe dans U
-        const userSnap = await getDoc(doc(db, 'U', nivol));
-        if (!userSnap.exists()) {
-          // Vérifier aussi dans A au cas où
-          const adminSnap = await getDoc(doc(db, 'A', nivol));
-          if (!adminSnap.exists()) {
-            await deleteUser(user).catch(() => {});
-            window.location.href = './login.html';
-            return;
-          }
-          // Si c'est un admin, on le laisse passer aussi (il a le droit de voir les inventaires)
-          currentUser = {
-            nivol,
-            nom: adminSnap.data().I || 'Inconnu',
-            fonction: adminSnap.data().F || ''
-          };
-        } else {
-          currentUser = {
-            nivol,
-            nom: userSnap.data().I || 'Inconnu'
-          };
-        }
+      const u = readUser();
+      const nivol = (u && u.nivol) ? u.nivol : 'DEMO00000000';
 
-        const initial = (currentUser.nom.charAt(0) || '?').toUpperCase();
-        avatarInitial.textContent = initial;
-        identityName.textContent = currentUser.nom;
-        identityDetails.textContent = `NIVOL : ${currentUser.nivol}`;
+      // Résolution de l'identité : U puis A, sinon fallback
+      const uEntry = (db.U && db.U[nivol]) || null;
+      const aEntry = (db.A && db.A[nivol]) || null;
 
-        await loadInventories();
-        await loadVehicles();
-
-      } catch (err) {
-        console.error(err);
-        if (auth.currentUser) await deleteUser(auth.currentUser).catch(() => {});
-        window.location.href = './login.html';
+      let nom = 'Utilisateur démo';
+      let fonction = '';
+      if (uEntry) {
+        nom = uEntry.I || nom;
+        fonction = uEntry.F || '';
+      } else if (aEntry) {
+        nom = aEntry.I || nom;
+        fonction = aEntry.F || '';
       }
-    });
 
-    document.getElementById('logout-btn').addEventListener('click', async () => {
-      const user = auth.currentUser;
-      if (user) {
-        await deleteUser(user).catch(() => {});
-        window.location.href = './login.html';
-      }
+      currentUser = { nivol, nom, fonction };
+
+      const initial = (nom.charAt(0) || '?').toUpperCase();
+      avatarInitial.textContent = initial;
+      identityName.textContent = nom;
+      identityDetails.textContent = 'NIVOL : ' + nivol + (fonction ? ' • ' + fonction : '');
+
+      loadInventories(db);
+      loadVehicles(db);
+    }
+
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      localStorage.removeItem(USER_KEY);
+      window.location.href = './login.html';
     });
 
     document.getElementById('inventory-btn').addEventListener('click', () => {
       window.location.href = './inventaire';
     });
 
-    async function loadInventories() {
-      try {
-        const invSnap = await getDocs(collection(db, 'I'));
-        inventories = [];
-        invSnap.forEach(docSnap => {
-          const data = docSnap.data();
-          const invId = docSnap.id;
-          const invName = data.nom || invId;
-          const lastVerif = getLastVerificationDate(data);
-
-          inventories.push({
-            id: invId,
-            nom: invName,
-            lastVerification: lastVerif
-          });
+    // --- Inventaires ---
+    function loadInventories(db) {
+      inventories = [];
+      const I = db.I || {};
+      Object.keys(I).forEach(invId => {
+        const data = I[invId] || {};
+        inventories.push({
+          id: invId,
+          nom: data.nom || invId,
+          lastVerification: getLastVerificationDate(data)
         });
-      } catch(e) {
-        inventories = [];
-      }
+      });
+      inventories.sort((a, b) => a.nom.localeCompare(b.nom, 'fr'));
       renderInventoryList();
-    }
-
-    async function loadVehicles() {
-      try {
-        const vehSnap = await getDocs(collection(db, 'P'));
-        vehicles = [];
-        vehSnap.forEach(docSnap => {
-          const data = docSnap.data();
-          const vehId = docSnap.id;
-          const vehName = data.n || data.im || vehId;
-          const lastTotalDisinfect = getLastTotalDisinfection(data);
-
-          vehicles.push({
-            id: vehId,
-            nom: vehName,
-            lastTotalDisinfection: lastTotalDisinfect
-          });
-        });
-        vehicles.sort((a, b) => (a.nom || a.id).localeCompare(b.nom || b.id, 'fr'));
-      } catch(e) {
-        vehicles = [];
-      }
-      renderVehicleList();
     }
 
     function renderInventoryList() {
@@ -406,8 +362,8 @@
         const li = document.createElement('li');
         li.className = 'list-item';
         const lastVerifText = inv.lastVerification
-          ? 'Derniere verification : ' + new Date(inv.lastVerification).toLocaleDateString('fr-FR')
-          : 'Aucune verification';
+          ? 'Dernière vérification : ' + new Date(inv.lastVerification).toLocaleDateString('fr-FR')
+          : 'Aucune vérification';
         li.innerHTML = `
           <div class="user-info">
             <div class="user-avatar">${(inv.nom.charAt(0)||'?').toUpperCase()}</div>
@@ -425,7 +381,9 @@
 
       if (inventories.length > ITEMS_PER_PAGE) {
         inventoryShowMore.style.display = 'block';
-        inventoryShowMore.textContent = inventoryShowAll ? 'Afficher moins' : `Afficher plus (${inventories.length - ITEMS_PER_PAGE} restants)`;
+        inventoryShowMore.textContent = inventoryShowAll
+          ? 'Afficher moins'
+          : `Afficher plus (${inventories.length - ITEMS_PER_PAGE} restants)`;
         inventoryShowMore.onclick = () => {
           inventoryShowAll = !inventoryShowAll;
           renderInventoryList();
@@ -433,6 +391,22 @@
       } else {
         inventoryShowMore.style.display = 'none';
       }
+    }
+
+    // --- Véhicules ---
+    function loadVehicles(db) {
+      vehicles = [];
+      const P = db.P || {};
+      Object.keys(P).forEach(vehId => {
+        const data = P[vehId] || {};
+        vehicles.push({
+          id: vehId,
+          nom: data.n || data.im || vehId,
+          lastTotalDisinfection: getLastTotalDisinfection(data)
+        });
+      });
+      vehicles.sort((a, b) => (a.nom || a.id).localeCompare(b.nom || b.id, 'fr'));
+      renderVehicleList();
     }
 
     function renderVehicleList() {
@@ -464,7 +438,9 @@
 
       if (vehicles.length > ITEMS_PER_PAGE) {
         vehicleShowMore.style.display = 'block';
-        vehicleShowMore.textContent = vehicleShowAll ? 'Afficher moins' : `Afficher plus (${vehicles.length - ITEMS_PER_PAGE} restants)`;
+        vehicleShowMore.textContent = vehicleShowAll
+          ? 'Afficher moins'
+          : `Afficher plus (${vehicles.length - ITEMS_PER_PAGE} restants)`;
         vehicleShowMore.onclick = () => {
           vehicleShowAll = !vehicleShowAll;
           renderVehicleList();
@@ -473,6 +449,8 @@
         vehicleShowMore.style.display = 'none';
       }
     }
+
+    init();
   </script>
 </body>
 </html>
