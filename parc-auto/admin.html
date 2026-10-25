@@ -6,361 +6,128 @@
   <title>Thot – Parc Auto (Admin)</title>
   <style>
     :root {
-      --red: #e60000;
-      --red-hover: #b30000;
-      --bg: #f5f5f5;
-      --card-bg: #ffffff;
-      --border: #ddd;
-      --text: #333;
-      --text-light: #666;
-      --radius: 12px;
-      --shadow: 0 2px 8px rgba(0,0,0,0.08);
-      --warning: #f5a623;
-      --danger: #e60000;
-      --ok: #4caf50;
+      --red: #e60000; --red-hover: #b30000; --bg: #f5f5f5; --card-bg: #ffffff;
+      --border: #ddd; --text: #333; --text-light: #666; --radius: 12px;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08); --warning: #f5a623;
+      --danger: #e60000; --ok: #4caf50;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      padding: 16px;
+      background: var(--bg); color: var(--text); min-height: 100vh;
+      display: flex; justify-content: center; padding: 16px;
     }
-
-    .container {
-      width: 100%;
-      max-width: 900px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    /* Header */
+    .container { width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 16px; }
     .header {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px;
-      box-shadow: var(--shadow);
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 14px 18px; display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px; box-shadow: var(--shadow);
     }
-
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
+    .header-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .btn-back {
-      background: transparent;
-      border: 1.5px solid #ccc;
-      padding: 8px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 0.9rem;
-      transition: all 0.2s;
+      background: transparent; border: 1.5px solid #ccc; padding: 8px 14px;
+      border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.2s;
     }
-
     .btn-back:hover { background: #eee; }
-
     .btn-logout {
-      background: transparent;
-      color: var(--red);
-      border: 1.5px solid var(--red);
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 0.9rem;
-      transition: all 0.2s;
+      background: transparent; color: var(--red); border: 1.5px solid var(--red);
+      padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600;
+      font-size: 0.9rem; transition: all 0.2s;
     }
-
     .btn-logout:hover { background: var(--red); color: #fff; }
-
     .btn-add {
-      background: var(--red);
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 0.9rem;
-      transition: all 0.2s;
+      background: var(--red); color: #fff; border: none; padding: 10px 20px;
+      border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.2s;
     }
-
     .btn-add:hover { background: var(--red-hover); }
-
-    /* Sélecteur de véhicule */
     .vehicle-selector {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      box-shadow: var(--shadow);
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 14px 18px; display: flex; align-items: center; gap: 10px;
+      flex-wrap: wrap; box-shadow: var(--shadow);
     }
-
     .vehicle-selector select {
-      padding: 10px;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      font-size: 0.95rem;
-      flex: 1;
-      min-width: 200px;
+      padding: 10px; border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 0.95rem; flex: 1; min-width: 200px;
     }
-
-    /* Sections */
     .section {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      margin-bottom: 16px;
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
+      box-shadow: var(--shadow); overflow: hidden; margin-bottom: 16px;
     }
-
     .section:last-child { margin-bottom: 0; }
-
     .section-header {
-      padding: 14px 18px;
-      background: #fafafa;
-      border-bottom: 1px solid var(--border);
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 8px;
-      cursor: pointer;
-      user-select: none;
-      transition: background 0.2s;
+      padding: 14px 18px; background: #fafafa; border-bottom: 1px solid var(--border);
+      font-weight: 600; display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 8px; user-select: none; transition: background 0.2s;
     }
-
-    .section-header:hover { background: #f0f0f0; }
-
-    .section-header .collapse-icon {
-      font-size: 1.2rem;
-      transition: transform 0.3s;
-      display: inline-block;
-    }
-
-    .section-header.collapsed .collapse-icon {
-      transform: rotate(-90deg);
-    }
-
-    .section-body {
-      transition: max-height 0.3s ease, opacity 0.3s ease;
-      overflow: hidden;
-      max-height: 100000px;
-      opacity: 1;
-    }
-
-    .section-body.collapsed {
-      max-height: 0;
-      opacity: 0;
-    }
-
+    .section-body { transition: max-height 0.3s ease, opacity 0.3s ease; overflow: hidden; max-height: 100000px; opacity: 1; }
     .list { list-style: none; }
-
     .list-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 18px;
-      border-bottom: 1px solid #f0f0f0;
-      flex-wrap: wrap;
-      gap: 8px;
-      transition: background 0.2s;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 18px; border-bottom: 1px solid #f0f0f0; flex-wrap: wrap;
+      gap: 8px; transition: background 0.2s;
     }
-
     .list-item:last-child { border-bottom: none; }
     .list-item:hover { background: #fafafa; }
-
-    .list-item-main {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      flex: 1;
-      min-width: 0;
-    }
-
-    .list-item-title { font-weight: 600; font-size: 0.95rem; }
-    .list-item-sub { font-size: 0.8rem; color: var(--text-light); }
-    .list-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
-
-    .obj-info {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      min-width: 0;
-    }
-
+    .obj-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
     .obj-name { font-weight: 600; }
-
-    .obj-date {
-      font-size: 0.8rem;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
+    .obj-date { font-size: 0.8rem; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
     .date-ok { color: var(--ok); }
     .date-warning { color: var(--warning); font-weight: 600; }
     .date-danger { color: var(--danger); font-weight: 700; }
-
-    .item-actions {
-      display: flex;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-
+    .item-actions { display: flex; gap: 6px; flex-shrink: 0; }
     .btn-icon {
-      background: none;
-      border: 1.5px solid #ccc;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.95rem;
-      transition: all 0.2s;
+      background: none; border: 1.5px solid #ccc; padding: 6px 10px; border-radius: 6px;
+      cursor: pointer; font-size: 0.95rem; transition: all 0.2s;
     }
-
     .btn-icon:hover { background: #f0f0f0; }
     .btn-icon.delete:hover { color: var(--red); border-color: var(--red); background: #fff0f0; }
-
     .badge {
-      font-size: 0.75rem;
-      background: #f0f0f0;
-      padding: 3px 8px;
-      border-radius: 10px;
-      color: var(--text-light);
-      white-space: nowrap;
+      font-size: 0.75rem; background: #f0f0f0; padding: 3px 8px;
+      border-radius: 10px; color: var(--text-light); white-space: nowrap;
     }
     .badge.ok { background: #e8f5e9; color: #2e7d32; }
     .badge.warning { background: #fff8f0; color: var(--warning); }
     .badge.danger { background: #fff0f0; color: var(--danger); }
-
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--text-light);
-    }
-
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-light); }
     .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
-
-    /* Logs */
     .logs-section { margin-top: 8px; }
-    .logs-section summary {
-      cursor: pointer;
-      font-weight: 600;
-      color: var(--text-light);
-      font-size: 0.9rem;
-      padding: 8px 0;
-    }
-    .log-item {
-      font-size: 0.8rem;
-      color: var(--text-light);
-      padding: 4px 0;
-      border-bottom: 1px solid #f5f5f5;
-    }
-
-    /* Modals */
+    .logs-section summary { cursor: pointer; font-weight: 600; color: var(--text-light); font-size: 0.9rem; padding: 8px 0; }
+    .log-item { font-size: 0.8rem; color: var(--text-light); padding: 4px 0; border-bottom: 1px solid #f5f5f5; }
     .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      padding: 16px;
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex;
+      align-items: center; justify-content: center; z-index: 1000; padding: 16px;
     }
-
     .modal {
-      background: #fff;
-      border-radius: var(--radius);
-      padding: 24px;
-      width: 100%;
-      max-width: 480px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      max-height: 90vh;
-      overflow-y: auto;
+      background: #fff; border-radius: var(--radius); padding: 24px; width: 100%;
+      max-width: 480px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex;
+      flex-direction: column; gap: 14px; max-height: 90vh; overflow-y: auto;
     }
-
     .modal h3 { font-size: 1.1rem; }
     .modal label { font-weight: 600; display: block; margin-bottom: 4px; font-size: 0.9rem; }
     .modal input, .modal select, .modal textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-family: inherit;
+      width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 0.95rem; font-family: inherit;
     }
     .modal textarea { min-height: 80px; resize: vertical; }
     .modal .hint { font-size: 0.8rem; color: var(--text-light); margin-top: 4px; }
     .modal-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
-
-    .btn {
-      padding: 10px 18px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 0.9rem;
-      transition: all 0.2s;
-    }
+    .btn { padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
     .btn-cancel { background: #eee; color: #333; }
     .btn-cancel:hover { background: #ddd; }
     .btn-save { background: var(--red); color: #fff; }
     .btn-save:hover { background: var(--red-hover); }
     .btn-danger { background: #c00; color: #fff; }
     .btn-danger:hover { background: #a00; }
-
-    /* Confirm modal */
     .confirm-modal {
-      background: #fff;
-      border-radius: var(--radius);
-      padding: 28px 24px;
-      width: 100%;
-      max-width: 420px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      text-align: center;
-      border-top: 4px solid var(--red);
+      background: #fff; border-radius: var(--radius); padding: 28px 24px; width: 100%;
+      max-width: 420px; box-shadow: 0 10px 30px rgba(0,0,0,0.25); display: flex;
+      flex-direction: column; gap: 16px; text-align: center; border-top: 4px solid var(--red);
     }
     .confirm-modal .confirm-icon { font-size: 3rem; line-height: 1; }
     .confirm-modal h3 { font-size: 1.2rem; font-weight: 700; }
     .confirm-modal p { font-size: 0.95rem; color: var(--text-light); line-height: 1.5; }
-    .confirm-modal .confirm-actions {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 8px;
-    }
+    .confirm-modal .confirm-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
     .confirm-modal .btn { flex: 1; min-width: 120px; padding: 12px 18px; font-size: 0.95rem; }
-
-    /* Responsive */
     @media (max-width: 480px) {
       .list-item { flex-direction: column; align-items: flex-start; }
       .item-actions { align-self: flex-end; }
@@ -370,7 +137,6 @@
 </head>
 <body>
   <div class="container">
-    <!-- Header -->
     <div class="header">
       <div class="header-left">
         <span style="font-weight:600;">🚗 Gestion du parc auto</span>
@@ -381,7 +147,6 @@
       </div>
     </div>
 
-    <!-- Actions -->
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
       <div class="vehicle-selector">
         <select id="vehicle-select">
@@ -394,7 +159,6 @@
       <button class="btn-add" id="btn-create">+ Créer</button>
     </div>
 
-    <!-- Contenu du véhicule sélectionné -->
     <div id="vehicle-content">
       <div class="empty-state">
         <div class="icon">🚗</div>
@@ -403,106 +167,82 @@
     </div>
   </div>
 
-  <!-- Modal -->
   <div class="modal-overlay" id="modal-overlay" style="display:none;">
     <div class="modal" id="modal-content"></div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, deleteUser } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, getDocs, collection, setDoc, updateDoc, deleteDoc, deleteField } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyA1V3UybXWyyMmO9fBH7jhuVUSFL3mDBPo",
-      authDomain: "crf--thot.firebaseapp.com",
-      projectId: "crf--thot",
-      storageBucket: "crf--thot.firebasestorage.app",
-      messagingSenderId: "242106713414",
-      appId: "1:242106713414:web:76f4c6977264539ef85147",
-      measurementId: "G-NF6W8FS69P"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
+  <script>
+    /* ============================================================
+       VERSION DÉMO — pas de Firebase.
+       Clés :
+         thot_demo_db    → base JSON { U, A, I, P, ... }
+         thot_demo_user  → { nivol, role, loggedAt }
+       ============================================================ */
+    const DB_KEY = 'thot_demo_db';
+    const USER_KEY = 'thot_demo_user';
     const COLLECTION = 'P';
+
+    function readDb() {
+      const raw = localStorage.getItem(DB_KEY);
+      if (!raw) return null;
+      try { return JSON.parse(raw); } catch { return null; }
+    }
+    function saveDb(db) { localStorage.setItem(DB_KEY, JSON.stringify(db)); }
+    function readUser() {
+      const raw = localStorage.getItem(USER_KEY);
+      if (!raw) return null;
+      try { return JSON.parse(raw); } catch { return null; }
+    }
 
     let currentAdmin = null;
     let vehicles = [];
     let currentVehicleId = null;
     let currentVehicleData = null;
 
-    const vehicleSelect = document.getElementById('vehicle-select');
-    const vehicleContent = document.getElementById('vehicle-content');
-    const modalOverlay = document.getElementById('modal-overlay');
-    const modalContent = document.getElementById('modal-content');
-    const btnEditVehicle = document.getElementById('btn-edit-vehicle');
-    const btnDeleteVehicle = document.getElementById('btn-delete-vehicle');
-    const btnQRCode = document.getElementById('btn-qrcode');
+    const $ = id => document.getElementById(id);
+    const vehicleSelect = $('vehicle-select');
+    const vehicleContent = $('vehicle-content');
+    const modalOverlay = $('modal-overlay');
+    const modalContent = $('modal-content');
+    const btnEditVehicle = $('btn-edit-vehicle');
+    const btnDeleteVehicle = $('btn-delete-vehicle');
+    const btnQRCode = $('btn-qrcode');
 
-    // Vérification connexion
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) { window.location.href = '../login.html'; return; }
-      const nivol = user.displayName;
-      if (!nivol) {
-        await deleteUser(user).catch(() => {});
-        window.location.href = '../login.html';
+    // ---- Init ----
+    function init() {
+      const db = readDb();
+      if (!db) {
+        window.location.href = '../login.html?redirect=' + encodeURIComponent('./admin.html');
         return;
       }
-
-      try {
-        const adminSnap = await getDoc(doc(db, 'A', nivol));
-        if (!adminSnap.exists()) {
-          await deleteUser(user).catch(() => {});
-          window.location.href = '../login.html';
-          return;
-        }
-
-        currentAdmin = {
-          nivol,
-          nom: adminSnap.data().I || 'Inconnu',
-          fonction: adminSnap.data().F || ''
-        };
-
-        await loadVehicles();
-
-      } catch (err) {
-        console.error(err);
-        if (auth.currentUser) await deleteUser(auth.currentUser).catch(() => {});
-        window.location.href = '../login.html';
+      const u = readUser();
+      const nivol = (u && u.nivol) ? u.nivol : 'DEMO00000000';
+      const aEntry = (db.A && db.A[nivol]) || null;
+      if (aEntry) {
+        currentAdmin = { nivol, nom: aEntry.I || 'Administrateur', fonction: aEntry.F || '' };
+      } else {
+        currentAdmin = { nivol, nom: 'Administrateur démo', fonction: 'Dieu' };
       }
+      loadVehicles();
+    }
+
+    $('btn-logout').addEventListener('click', () => {
+      localStorage.removeItem(USER_KEY);
+      window.location.href = '../login.html';
     });
-
-    document.getElementById('btn-logout').addEventListener('click', async () => {
-      const user = auth.currentUser;
-      if (user) {
-        await deleteUser(user).catch(() => {});
-        window.location.href = '../login.html';
-      }
-    });
-
-    document.getElementById('btn-admin').addEventListener('click', () => {
-      window.location.href = '../admin.html';
-    });
-
-    document.getElementById('btn-create').addEventListener('click', () => openCreateModal());
-
+    $('btn-admin').addEventListener('click', () => { window.location.href = '../admin.html'; });
+    $('btn-create').addEventListener('click', () => openCreateModal());
     btnQRCode.addEventListener('click', () => {
       if (currentVehicleId) {
         window.location.href = `./qr.html?type=vehicule&id=${encodeURIComponent(currentVehicleId)}`;
       }
     });
-
     btnEditVehicle.addEventListener('click', () => {
       if (currentVehicleId && currentVehicleData) openEditVehicleModal();
     });
-
     btnDeleteVehicle.addEventListener('click', () => {
       if (currentVehicleId && currentVehicleData) openDeleteVehicleModal();
     });
-
     vehicleSelect.addEventListener('change', () => {
       const id = vehicleSelect.value;
       if (id) {
@@ -517,48 +257,50 @@
           <div class="empty-state">
             <div class="icon">🚗</div>
             <p>Sélectionnez un véhicule pour voir ses informations.</p>
-          </div>
-        `;
+          </div>`;
       }
     });
 
-    // ========== FONCTIONS ==========
+    // ---- Persistance ----
+    function persistVehicle() {
+      const db = readDb();
+      if (!db) return;
+      if (!db[COLLECTION]) db[COLLECTION] = {};
+      db[COLLECTION][currentVehicleId] = currentVehicleData;
+      saveDb(db);
+    }
 
-    async function loadVehicles() {
-      try {
-        const snap = await getDocs(collection(db, COLLECTION));
-        vehicles = [];
-        snap.forEach(d => {
-          const data = d.data();
-          vehicles.push({ id: d.id, ...data });
-        });
-        // Tri alphabétique par nom uniquement
-        vehicles.sort((a, b) => (a.n || a.id).localeCompare(b.n || b.id, 'fr'));
+    // ---- Chargement ----
+    function loadVehicles() {
+      const db = readDb();
+      if (!db) return;
+      vehicles = [];
+      const P = db[COLLECTION] || {};
+      Object.keys(P).forEach(id => {
+        vehicles.push({ id, ...(P[id] || {}) });
+      });
+      vehicles.sort((a, b) => (a.n || a.id).localeCompare(b.n || b.id, 'fr'));
 
-        const currentVal = vehicleSelect.value;
-        vehicleSelect.innerHTML = '<option value="">— Choisir un véhicule —</option>';
-        vehicles.forEach(v => {
-          // Affichage : nom uniquement (pas d'immatriculation)
-          const label = v.n || v.id;
-          vehicleSelect.innerHTML += `<option value="${v.id}"${v.id === currentVal ? ' selected' : ''}>${escapeHtml(label)}</option>`;
-        });
+      const currentVal = vehicleSelect.value;
+      vehicleSelect.innerHTML = '<option value="">— Choisir un véhicule —</option>';
+      vehicles.forEach(v => {
+        const label = v.n || v.id;
+        vehicleSelect.innerHTML += `<option value="${v.id}"${v.id === currentVal ? ' selected' : ''}>${escapeHtml(label)}</option>`;
+      });
 
-        if (currentVehicleId) {
-          const still = vehicles.find(v => v.id === currentVehicleId);
-          if (still) {
-            currentVehicleData = still;
-            renderVehicleContent();
-          } else {
-            currentVehicleId = null;
-            currentVehicleData = null;
-            btnEditVehicle.style.display = 'none';
-            btnDeleteVehicle.style.display = 'none';
-            btnQRCode.style.display = 'none';
-            vehicleContent.innerHTML = '<div class="empty-state"><p>Ce véhicule n\'existe plus.</p></div>';
-          }
+      if (currentVehicleId) {
+        const still = vehicles.find(v => v.id === currentVehicleId);
+        if (still) {
+          currentVehicleData = still;
+          renderVehicleContent();
+        } else {
+          currentVehicleId = null;
+          currentVehicleData = null;
+          btnEditVehicle.style.display = 'none';
+          btnDeleteVehicle.style.display = 'none';
+          btnQRCode.style.display = 'none';
+          vehicleContent.innerHTML = '<div class="empty-state"><p>Ce véhicule n\'existe plus.</p></div>';
         }
-      } catch(e) {
-        console.error(e);
       }
     }
 
@@ -566,34 +308,26 @@
       const v = vehicles.find(x => x.id === id);
       if (!v) return;
       currentVehicleId = id;
-      currentVehicleData = v;
+      currentVehicleData = JSON.parse(JSON.stringify(v));
       btnEditVehicle.style.display = 'inline-block';
       btnDeleteVehicle.style.display = 'inline-block';
       btnQRCode.style.display = 'inline-block';
       renderVehicleContent();
     }
 
-    // ===== HELPERS =====
+    // ---- Helpers ----
     function escapeHtml(str) {
       if (str === null || str === undefined) return '';
       return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
-
-    function formatDate(iso) {
-      if (!iso) return '—';
-      return new Date(iso).toLocaleString('fr-FR');
-    }
-
+    function formatDate(iso) { return iso ? new Date(iso).toLocaleString('fr-FR') : '—'; }
     function getDateStatus(dateStr) {
       if (!dateStr) return null;
-      const now = new Date();
-      const date = new Date(dateStr);
-      const diffDays = Math.ceil((date - now) / (1000 * 60 * 60 * 24));
+      const diffDays = Math.ceil((new Date(dateStr) - new Date()) / (1000 * 60 * 60 * 24));
       if (diffDays <= 0) return 'danger';
       if (diffDays <= 30) return 'warning';
       return 'ok';
     }
-
     function getKmStatus(targetKm, currentKm) {
       if (!targetKm) return null;
       const diff = targetKm - currentKm;
@@ -601,55 +335,51 @@
       if (diff <= 1000) return 'warning';
       return 'ok';
     }
-
     function getDateLabel(dateStr) {
       if (!dateStr) return '';
-      const status = getDateStatus(dateStr);
-      const formatted = new Date(dateStr).toLocaleDateString('fr-FR');
-      if (status === 'danger') return `⚠️ ${formatted} — PÉRIMÉ`;
-      if (status === 'warning') return `🟠 ${formatted} — Proche`;
-      return `🟢 ${formatted}`;
+      const s = getDateStatus(dateStr);
+      const f = new Date(dateStr).toLocaleDateString('fr-FR');
+      if (s === 'danger') return `⚠️ ${f} — PÉRIMÉ`;
+      if (s === 'warning') return `🟠 ${f} — Proche`;
+      return `🟢 ${f}`;
     }
-
     function getDateClass(dateStr) {
-      const status = getDateStatus(dateStr);
-      if (status === 'danger') return 'date-danger';
-      if (status === 'warning') return 'date-warning';
+      const s = getDateStatus(dateStr);
+      if (s === 'danger') return 'date-danger';
+      if (s === 'warning') return 'date-warning';
       return 'date-ok';
     }
-
     function getKmLabel(targetKm, currentKm) {
       if (!targetKm) return '';
-      const status = getKmStatus(targetKm, currentKm);
+      const s = getKmStatus(targetKm, currentKm);
       const diff = targetKm - currentKm;
-      if (status === 'danger') return `⚠️ ${targetKm} km (dépassé de ${Math.abs(diff)} km)`;
-      if (status === 'warning') return `🟠 ${targetKm} km (dans ${diff} km)`;
+      if (s === 'danger') return `⚠️ ${targetKm} km (dépassé de ${Math.abs(diff)} km)`;
+      if (s === 'warning') return `🟠 ${targetKm} km (dans ${diff} km)`;
       return `🟢 ${targetKm} km (dans ${diff} km)`;
     }
-
     function getKmClass(targetKm, currentKm) {
-      const status = getKmStatus(targetKm, currentKm);
-      if (status === 'danger') return 'date-danger';
-      if (status === 'warning') return 'date-warning';
+      const s = getKmStatus(targetKm, currentKm);
+      if (s === 'danger') return 'date-danger';
+      if (s === 'warning') return 'date-warning';
       return 'date-ok';
     }
-
     function computeNextOccurrence(entretien, currentKm) {
       if (!entretien.rec) return null;
       if (entretien.recType === 'jour') {
-        const baseDate = entretien.date ? new Date(entretien.date) : new Date();
-        if (isNaN(baseDate.getTime())) return null;
-        const nextDate = new Date(baseDate);
-        nextDate.setDate(nextDate.getDate() + parseInt(entretien.rec));
-        return { date: nextDate.toISOString().split('T')[0] };
-      } else if (entretien.recType === 'km') {
+        const base = entretien.date ? new Date(entretien.date) : new Date();
+        if (isNaN(base.getTime())) return null;
+        const next = new Date(base);
+        next.setDate(next.getDate() + parseInt(entretien.rec));
+        return { date: next.toISOString().split('T')[0] };
+      }
+      if (entretien.recType === 'km') {
         const baseKm = entretien.kmDeclencheur || currentKm || 0;
         return { kmDeclencheur: baseKm + parseInt(entretien.rec) };
       }
       return null;
     }
 
-    // ===== CONFIRMATION STYLÉE =====
+    // ---- Confirm stylée ----
     function showConfirm({ icon = '⚠️', title = 'Confirmation', message = '', confirmLabel = 'Confirmer', confirmClass = 'btn-danger', onConfirm }) {
       modalContent.innerHTML = `
         <div class="confirm-modal" style="border:none;padding:0;box-shadow:none;max-width:none;">
@@ -660,8 +390,7 @@
             <button class="btn btn-cancel" id="confirm-cancel">Annuler</button>
             <button class="btn ${confirmClass}" id="confirm-ok">${escapeHtml(confirmLabel)}</button>
           </div>
-        </div>
-      `;
+        </div>`;
       modalOverlay.style.display = 'flex';
       document.getElementById('confirm-cancel').addEventListener('click', closeModal);
       document.getElementById('confirm-ok').addEventListener('click', async () => {
@@ -670,13 +399,12 @@
       });
     }
 
-    // ===== RENDU =====
+    // ---- Rendu ----
     function renderVehicleContent() {
       if (!currentVehicleData) return;
       const v = currentVehicleData;
       const currentKm = v.km || 0;
 
-      // ===== SECTION INFORMATIONS (style original restauré) =====
       let html = `
         <div class="section">
           <div class="section-header">
@@ -688,51 +416,22 @@
           </div>
           <div class="section-body">
             <ul class="list">
+              <li class="list-item"><div class="obj-info"><span class="obj-name">Immatriculation</span></div><span style="font-weight:600;">${escapeHtml(v.im || '—')}</span></li>
+              <li class="list-item"><div class="obj-info"><span class="obj-name">Nom</span></div><span style="font-weight:600;">${escapeHtml(v.n || '—')}</span></li>
+              <li class="list-item"><div class="obj-info"><span class="obj-name">Type de carburant</span></div><span style="font-weight:600;">${escapeHtml(v.car || '—')}</span></li>
               <li class="list-item">
-                <div class="obj-info">
-                  <span class="obj-name">Immatriculation</span>
-                </div>
-                <span style="font-weight:600;">${escapeHtml(v.im || '—')}</span>
-              </li>
-              <li class="list-item">
-                <div class="obj-info">
-                  <span class="obj-name">Nom</span>
-                </div>
-                <span style="font-weight:600;">${escapeHtml(v.n || '—')}</span>
-              </li>
-              <li class="list-item">
-                <div class="obj-info">
-                  <span class="obj-name">Type de carburant</span>
-                </div>
-                <span style="font-weight:600;">${escapeHtml(v.car || '—')}</span>
-              </li>
-              <li class="list-item">
-                <div class="obj-info">
-                  <span class="obj-name">Kilométrage</span>
-                </div>
+                <div class="obj-info"><span class="obj-name">Kilométrage</span></div>
                 <div style="display:flex;align-items:center;gap:8px;">
                   <span style="font-weight:600;">${currentKm} km</span>
                   <button class="btn-icon" id="btn-edit-km" title="Modifier">✏️</button>
                 </div>
               </li>
-              <li class="list-item">
-                <div class="obj-info">
-                  <span class="obj-name">Assurance</span>
-                </div>
-                <span class="obj-date ${getDateClass(v.ass)}">${getDateLabel(v.ass)}</span>
-              </li>
-              <li class="list-item">
-                <div class="obj-info">
-                  <span class="obj-name">Contrôle technique</span>
-                </div>
-                <span class="obj-date ${getDateClass(v.ct)}">${getDateLabel(v.ct)}</span>
-              </li>
+              <li class="list-item"><div class="obj-info"><span class="obj-name">Assurance</span></div><span class="obj-date ${getDateClass(v.ass)}">${getDateLabel(v.ass)}</span></li>
+              <li class="list-item"><div class="obj-info"><span class="obj-name">Contrôle technique</span></div><span class="obj-date ${getDateClass(v.ct)}">${getDateLabel(v.ct)}</span></li>
             </ul>
           </div>
-        </div>
-      `;
+        </div>`;
 
-      // ===== SECTION NETTOYAGE & DÉSINFECTION (nouveau style) =====
       const derniereNettoyage = v.dn ? `${formatDate(v.dn)} par ${escapeHtml(v.dnp || '?')}` : 'Jamais';
       const derniereDesinfection = v.dd ? `${formatDate(v.dd)} (${escapeHtml(v.ddt || '?')}) par ${escapeHtml(v.ddp || '?')}` : 'Jamais';
 
@@ -744,38 +443,14 @@
           </div>
           <div class="section-body">
             <ul class="list">
-              <li class="list-item">
-                <div class="obj-info">
-                  <span class="obj-name">Fréquence nettoyage</span>
-                  <span class="obj-date" style="color:var(--text-light);">Tous les</span>
-                </div>
-                <span class="badge">${v.fn ? v.fn + ' jour(s)' : 'Non définie'}</span>
-              </li>
-              <li class="list-item">
-                <div class="obj-info">
-                  <span class="obj-name">Fréquence désinfection</span>
-                  <span class="obj-date" style="color:var(--text-light);">Tous les</span>
-                </div>
-                <span class="badge">${v.fd ? v.fd + ' jour(s)' : 'Non définie'}</span>
-              </li>
-              <li class="list-item">
-                <div class="obj-info">
-                  <span class="obj-name">Dernier nettoyage</span>
-                  <span class="obj-date ${v.dn ? 'date-ok' : ''}">${derniereNettoyage}</span>
-                </div>
-              </li>
-              <li class="list-item">
-                <div class="obj-info">
-                  <span class="obj-name">Dernière désinfection</span>
-                  <span class="obj-date ${v.dd ? 'date-ok' : ''}">${derniereDesinfection}</span>
-                </div>
-              </li>
+              <li class="list-item"><div class="obj-info"><span class="obj-name">Fréquence nettoyage</span><span class="obj-date" style="color:var(--text-light);">Tous les</span></div><span class="badge">${v.fn ? v.fn + ' jour(s)' : 'Non définie'}</span></li>
+              <li class="list-item"><div class="obj-info"><span class="obj-name">Fréquence désinfection</span><span class="obj-date" style="color:var(--text-light);">Tous les</span></div><span class="badge">${v.fd ? v.fd + ' jour(s)' : 'Non définie'}</span></li>
+              <li class="list-item"><div class="obj-info"><span class="obj-name">Dernier nettoyage</span><span class="obj-date ${v.dn ? 'date-ok' : ''}">${derniereNettoyage}</span></div></li>
+              <li class="list-item"><div class="obj-info"><span class="obj-name">Dernière désinfection</span><span class="obj-date ${v.dd ? 'date-ok' : ''}">${derniereDesinfection}</span></div></li>
             </ul>
           </div>
-        </div>
-      `;
+        </div>`;
 
-      // ===== SECTION ENTRETIENS =====
       const entretiens = v.en || [];
       html += `
         <div class="section">
@@ -818,10 +493,8 @@
               }).join('')}
             </ul>
           </div>
-        </div>
-      `;
+        </div>`;
 
-      // ===== SECTION INCIDENTS =====
       const incidents = v.inc || [];
       html += `
         <div class="section">
@@ -848,10 +521,8 @@
               }).join('')}
             </ul>
           </div>
-        </div>
-      `;
+        </div>`;
 
-      // ===== SECTION HISTORIQUE =====
       const logs = v.h || [];
       if (logs.length > 0) {
         html += `
@@ -860,8 +531,7 @@
             ${logs.slice().reverse().map(l => `
               <div class="log-item">${formatDate(l.t)} — ${escapeHtml(l.n || '?')} — ${escapeHtml(l.a || '')}</div>
             `).join('')}
-          </details>
-        `;
+          </details>`;
       }
 
       vehicleContent.innerHTML = html;
@@ -869,7 +539,6 @@
     }
 
     function attachContentEvents() {
-      // Bouton modifier les informations générales
       document.getElementById('btn-edit-vehicle-info')?.addEventListener('click', () => openEditVehicleModal());
       document.getElementById('btn-edit-km')?.addEventListener('click', () => openEditKmModal());
       document.getElementById('btn-edit-clean-freq')?.addEventListener('click', () => openCleanFreqModal());
@@ -889,20 +558,16 @@
       });
     }
 
-    // ===== LOG =====
-    async function addLog(action) {
+    // ---- Logs ----
+    function addLog(action) {
       const log = { n: currentAdmin.nivol, t: new Date().toISOString(), a: action };
-      try {
-        const ref = doc(db, COLLECTION, currentVehicleId);
-        const snap = await getDoc(ref);
-        const logs = snap.data().h || [];
-        logs.push(log);
-        await updateDoc(ref, { h: logs.slice(-100) });
-        if (currentVehicleData) currentVehicleData.h = logs.slice(-100);
-      } catch (e) { console.error('Log error:', e); }
+      if (!currentVehicleData) return;
+      if (!currentVehicleData.h) currentVehicleData.h = [];
+      currentVehicleData.h.push(log);
+      currentVehicleData.h = currentVehicleData.h.slice(-100);
     }
 
-    // ===== MODALS =====
+    // ---- Modals ----
     function openCreateModal() {
       modalContent.innerHTML = `
         <h3>Nouveau véhicule</h3>
@@ -920,38 +585,36 @@
         <div class="modal-actions">
           <button class="btn btn-cancel" id="modal-cancel">Annuler</button>
           <button class="btn btn-save" id="modal-save">Créer</button>
-        </div>
-      `;
+        </div>`;
       modalOverlay.style.display = 'flex';
       document.getElementById('modal-cancel').addEventListener('click', closeModal);
-      document.getElementById('modal-save').addEventListener('click', async () => {
+      document.getElementById('modal-save').addEventListener('click', () => {
         const im = document.getElementById('modal-im').value.trim();
         const n = document.getElementById('modal-nom').value.trim();
         if (!im) { showInlineError('Immatriculation requise.'); return; }
         if (!n) { showInlineError('Nom requis.'); return; }
 
         const docId = im.replace(/[^a-zA-Z0-9]/g, '_');
-        const exists = await getDoc(doc(db, COLLECTION, docId));
-        if (exists.exists()) { showInlineError('Un véhicule avec cette immatriculation existe déjà.'); return; }
-
-        const data = {
-          im: im,
-          n: n,
+        const db = readDb();
+        if (db[COLLECTION] && db[COLLECTION][docId]) {
+          showInlineError('Un véhicule avec cette immatriculation existe déjà.');
+          return;
+        }
+        if (!db[COLLECTION]) db[COLLECTION] = {};
+        db[COLLECTION][docId] = {
+          im, n,
           car: document.getElementById('modal-car').value,
           km: parseInt(document.getElementById('modal-km').value) || 0,
           ass: document.getElementById('modal-ass').value || '',
           ct: document.getElementById('modal-ct').value || '',
-          en: [],
-          inc: [],
+          en: [], inc: [],
           h: [{ n: currentAdmin.nivol, t: new Date().toISOString(), a: `Création du véhicule "${n}"` }]
         };
-        try {
-          await setDoc(doc(db, COLLECTION, docId), data);
-          closeModal();
-          await loadVehicles();
-          vehicleSelect.value = docId;
-          selectVehicle(docId);
-        } catch (e) { showInlineError('Erreur : ' + e.message); }
+        saveDb(db);
+        closeModal();
+        loadVehicles();
+        vehicleSelect.value = docId;
+        selectVehicle(docId);
       });
     }
 
@@ -971,26 +634,22 @@
         <div class="modal-actions">
           <button class="btn btn-cancel" id="modal-cancel">Annuler</button>
           <button class="btn btn-save" id="modal-save">Enregistrer</button>
-        </div>
-      `;
+        </div>`;
       modalOverlay.style.display = 'flex';
       document.getElementById('modal-cancel').addEventListener('click', closeModal);
-      document.getElementById('modal-save').addEventListener('click', async () => {
+      document.getElementById('modal-save').addEventListener('click', () => {
         const im = document.getElementById('modal-im').value.trim();
         const n = document.getElementById('modal-nom').value.trim();
         if (!im || !n) { showInlineError('Immatriculation et nom requis.'); return; }
-        try {
-          await updateDoc(doc(db, COLLECTION, currentVehicleId), {
-            im: im,
-            n: n,
-            car: document.getElementById('modal-car').value,
-            ass: document.getElementById('modal-ass').value || '',
-            ct: document.getElementById('modal-ct').value || ''
-          });
-          await addLog(`Modification des informations du véhicule`);
-          closeModal();
-          await loadVehicles();
-        } catch (e) { showInlineError('Erreur : ' + e.message); }
+        currentVehicleData.im = im;
+        currentVehicleData.n = n;
+        currentVehicleData.car = document.getElementById('modal-car').value;
+        currentVehicleData.ass = document.getElementById('modal-ass').value || '';
+        currentVehicleData.ct = document.getElementById('modal-ct').value || '';
+        addLog(`Modification des informations du véhicule`);
+        persistVehicle();
+        closeModal();
+        loadVehicles();
       });
     }
 
@@ -1002,18 +661,20 @@
         message: `Voulez-vous vraiment supprimer <strong>${escapeHtml(v.n)}</strong> (${escapeHtml(v.im || '')}) ?<br><br><span style="color:var(--red);font-weight:600;">Cette action est irréversible.</span>`,
         confirmLabel: 'Supprimer',
         confirmClass: 'btn-danger',
-        onConfirm: async () => {
-          try {
-            await deleteDoc(doc(db, COLLECTION, currentVehicleId));
-            currentVehicleId = null;
-            currentVehicleData = null;
-            btnEditVehicle.style.display = 'none';
-            btnDeleteVehicle.style.display = 'none';
-            btnQRCode.style.display = 'none';
-            await loadVehicles();
-            vehicleSelect.value = '';
-            vehicleContent.innerHTML = '<div class="empty-state"><p>Sélectionnez un véhicule.</p></div>';
-          } catch (e) { showInlineError('Erreur : ' + e.message); }
+        onConfirm: () => {
+          const db = readDb();
+          if (db[COLLECTION] && db[COLLECTION][currentVehicleId]) {
+            delete db[COLLECTION][currentVehicleId];
+            saveDb(db);
+          }
+          currentVehicleId = null;
+          currentVehicleData = null;
+          btnEditVehicle.style.display = 'none';
+          btnDeleteVehicle.style.display = 'none';
+          btnQRCode.style.display = 'none';
+          loadVehicles();
+          vehicleSelect.value = '';
+          vehicleContent.innerHTML = '<div class="empty-state"><p>Sélectionnez un véhicule.</p></div>';
         }
       });
     }
@@ -1026,18 +687,16 @@
         <div class="modal-actions">
           <button class="btn btn-cancel" id="modal-cancel">Annuler</button>
           <button class="btn btn-save" id="modal-save">Enregistrer</button>
-        </div>
-      `;
+        </div>`;
       modalOverlay.style.display = 'flex';
       document.getElementById('modal-cancel').addEventListener('click', closeModal);
-      document.getElementById('modal-save').addEventListener('click', async () => {
+      document.getElementById('modal-save').addEventListener('click', () => {
         const km = parseInt(document.getElementById('modal-km').value) || 0;
-        try {
-          await updateDoc(doc(db, COLLECTION, currentVehicleId), { km: km });
-          await addLog(`Kilométrage mis à jour : ${km} km`);
-          closeModal();
-          await loadVehicles();
-        } catch (e) { showInlineError('Erreur : ' + e.message); }
+        currentVehicleData.km = km;
+        addLog(`Kilométrage mis à jour : ${km} km`);
+        persistVehicle();
+        closeModal();
+        loadVehicles();
       });
     }
 
@@ -1050,26 +709,22 @@
         <div class="modal-actions">
           <button class="btn btn-cancel" id="modal-cancel">Annuler</button>
           <button class="btn btn-save" id="modal-save">Enregistrer</button>
-        </div>
-      `;
+        </div>`;
       modalOverlay.style.display = 'flex';
       document.getElementById('modal-cancel').addEventListener('click', closeModal);
-      document.getElementById('modal-save').addEventListener('click', async () => {
+      document.getElementById('modal-save').addEventListener('click', () => {
         const f1 = parseInt(document.getElementById('modal-fn').value) || 0;
         const f2 = parseInt(document.getElementById('modal-fd').value) || 0;
-        try {
-          await updateDoc(doc(db, COLLECTION, currentVehicleId), {
-            fn: f1 > 0 ? f1 : deleteField(),
-            fd: f2 > 0 ? f2 : deleteField()
-          });
-          await addLog(`Fréquences mises à jour (nettoyage:${f1}j, désinfection:${f2}j)`);
-          closeModal();
-          await loadVehicles();
-        } catch (e) { showInlineError('Erreur : ' + e.message); }
+        if (f1 > 0) currentVehicleData.fn = f1; else delete currentVehicleData.fn;
+        if (f2 > 0) currentVehicleData.fd = f2; else delete currentVehicleData.fd;
+        addLog(`Fréquences mises à jour (nettoyage:${f1}j, désinfection:${f2}j)`);
+        persistVehicle();
+        closeModal();
+        loadVehicles();
       });
     }
 
-    // ===== ENTRETIENS =====
+    // ---- Entretiens ----
     function openEntretienModal(editIdx = null) {
       const v = currentVehicleData;
       const isEdit = editIdx !== null;
@@ -1099,8 +754,7 @@
         <div class="modal-actions">
           <button class="btn btn-cancel" id="modal-cancel">Annuler</button>
           <button class="btn btn-save" id="modal-save">${isEdit ? 'Enregistrer' : 'Ajouter'}</button>
-        </div>
-      `;
+        </div>`;
       modalOverlay.style.display = 'flex';
 
       const recTypeSel = document.getElementById('modal-rec-type');
@@ -1116,7 +770,7 @@
       toggleDesc();
 
       document.getElementById('modal-cancel').addEventListener('click', closeModal);
-      document.getElementById('modal-save').addEventListener('click', async () => {
+      document.getElementById('modal-save').addEventListener('click', () => {
         const date = document.getElementById('modal-date').value;
         const recType = recTypeSel.value;
         const recValue = parseInt(document.getElementById('modal-rec-value').value) || 0;
@@ -1134,18 +788,17 @@
           data.kmDeclencheur = (v.km || 0) + recValue;
         }
 
-        try {
-          let entretiens = v.en ? [...v.en] : [];
-          if (isEdit) {
-            entretiens[editIdx] = { ...entretiens[editIdx], ...data };
-          } else {
-            entretiens.push({ ...data, cree: new Date().toISOString(), creePar: currentAdmin.nivol });
-          }
-          await updateDoc(doc(db, COLLECTION, currentVehicleId), { en: entretiens });
-          await addLog(`${isEdit ? 'Modification' : 'Ajout'} entretien "${type}"`);
-          closeModal();
-          await loadVehicles();
-        } catch (e) { showInlineError('Erreur : ' + e.message); }
+        let entretiens = v.en ? [...v.en] : [];
+        if (isEdit) {
+          entretiens[editIdx] = { ...entretiens[editIdx], ...data };
+        } else {
+          entretiens.push({ ...data, cree: new Date().toISOString(), creePar: currentAdmin.nivol });
+        }
+        currentVehicleData.en = entretiens;
+        addLog(`${isEdit ? 'Modification' : 'Ajout'} entretien "${type}"`);
+        persistVehicle();
+        closeModal();
+        loadVehicles();
       });
     }
 
@@ -1160,36 +813,30 @@
         message: `Valider l'entretien <strong>${escapeHtml(e.type)}</strong> ?<br><br>Il sera supprimé${e.rec ? ' et reprogrammé automatiquement' : ''}.`,
         confirmLabel: 'Valider',
         confirmClass: 'btn-save',
-        onConfirm: async () => {
-          try {
-            const entretiens = [...(v.en || [])];
-            let newEntretiens = entretiens.filter((_, i) => i !== idx);
+        onConfirm: () => {
+          const entretiens = [...(v.en || [])];
+          let newEntretiens = entretiens.filter((_, i) => i !== idx);
 
-            if (e.rec && e.recType) {
-              const next = computeNextOccurrence(e, v.km || 0);
-              if (next) {
-                const newE = {
-                  type: e.type,
-                  desc: e.desc || '',
-                  recType: e.recType,
-                  rec: e.rec,
-                  cree: new Date().toISOString(),
-                  creePar: currentAdmin.nivol
-                };
-                if (e.recType === 'jour') {
-                  newE.date = next.date;
-                } else if (e.recType === 'km') {
-                  newE.kmDeclencheur = next.kmDeclencheur;
-                  newE.date = e.date || '';
-                }
-                newEntretiens.push(newE);
-              }
+          if (e.rec && e.recType) {
+            const next = computeNextOccurrence(e, v.km || 0);
+            if (next) {
+              const newE = {
+                type: e.type,
+                desc: e.desc || '',
+                recType: e.recType,
+                rec: e.rec,
+                cree: new Date().toISOString(),
+                creePar: currentAdmin.nivol
+              };
+              if (e.recType === 'jour') newE.date = next.date;
+              else if (e.recType === 'km') { newE.kmDeclencheur = next.kmDeclencheur; newE.date = e.date || ''; }
+              newEntretiens.push(newE);
             }
-
-            await updateDoc(doc(db, COLLECTION, currentVehicleId), { en: newEntretiens });
-            await addLog(`Validation et suppression de l'entretien "${e.type}"${e.rec ? ' (reprogrammé)' : ''}`);
-            await loadVehicles();
-          } catch (err) { showInlineError('Erreur : ' + err.message); }
+          }
+          currentVehicleData.en = newEntretiens;
+          addLog(`Validation et suppression de l'entretien "${e.type}"${e.rec ? ' (reprogrammé)' : ''}`);
+          persistVehicle();
+          loadVehicles();
         }
       });
     }
@@ -1203,14 +850,13 @@
         message: `Supprimer l'entretien <strong>${escapeHtml(e.type)}</strong> ?`,
         confirmLabel: 'Supprimer',
         confirmClass: 'btn-danger',
-        onConfirm: async () => {
-          try {
-            const entretiens = [...(currentVehicleData.en || [])];
-            entretiens.splice(idx, 1);
-            await updateDoc(doc(db, COLLECTION, currentVehicleId), { en: entretiens });
-            await addLog(`Suppression de l'entretien "${e.type}"`);
-            await loadVehicles();
-          } catch (err) { showInlineError('Erreur : ' + err.message); }
+        onConfirm: () => {
+          const entretiens = [...(currentVehicleData.en || [])];
+          entretiens.splice(idx, 1);
+          currentVehicleData.en = entretiens;
+          addLog(`Suppression de l'entretien "${e.type}"`);
+          persistVehicle();
+          loadVehicles();
         }
       });
     }
@@ -1222,18 +868,16 @@
         message: 'Voulez-vous vraiment supprimer cet incident ?',
         confirmLabel: 'Supprimer',
         confirmClass: 'btn-danger',
-        onConfirm: async () => {
-          try {
-            const incidents = (currentVehicleData.inc || []).filter(i => i.id !== incId);
-            await updateDoc(doc(db, COLLECTION, currentVehicleId), { inc: incidents });
-            await addLog(`Suppression d'un incident`);
-            await loadVehicles();
-          } catch (err) { showInlineError('Erreur : ' + err.message); }
+        onConfirm: () => {
+          currentVehicleData.inc = (currentVehicleData.inc || []).filter(i => i.id !== incId);
+          addLog(`Suppression d'un incident`);
+          persistVehicle();
+          loadVehicles();
         }
       });
     }
 
-    // ===== ERREUR INLINE =====
+    // ---- Erreur inline ----
     function showInlineError(msg) {
       let errEl = document.getElementById('modal-inline-error');
       if (!errEl) {
@@ -1246,14 +890,10 @@
       setTimeout(() => { if (errEl && errEl.parentNode) errEl.parentNode.removeChild(errEl); }, 4000);
     }
 
-    function closeModal() {
-      modalOverlay.style.display = 'none';
-      modalContent.innerHTML = '';
-    }
+    function closeModal() { modalOverlay.style.display = 'none'; modalContent.innerHTML = ''; }
+    modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
 
-    modalOverlay.addEventListener('click', (e) => {
-      if (e.target === modalOverlay) closeModal();
-    });
+    init();
   </script>
 </body>
 </html>
