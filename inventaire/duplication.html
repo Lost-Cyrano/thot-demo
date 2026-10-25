@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thot – Dupliquer un inventaire</title>
+  <style>
+    :root {
+      --red: #e60000;
+      --red-hover: #b30000;
+      --bg: #f5f5f5;
+      --card-bg: #ffffff;
+      --border: #ddd;
+      --text: #333;
+      --text-light: #666;
+      --radius: 12px;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.3rem;
+      color: var(--text);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    select, input {
+      width: 100%;
+      padding: 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: var(--red);
+    }
+
+    .info {
+      font-size: 0.85rem;
+      color: var(--text-light);
+    }
+
+    .btn {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+      width: 100%;
+    }
+
+    .btn-duplicate {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .btn-duplicate:hover { background: var(--red-hover); }
+    .btn-duplicate:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .btn-back {
+      background: transparent;
+      border: 1.5px solid #ccc;
+      color: var(--text);
+    }
+
+    .btn-back:hover { background: #eee; }
+
+    .success {
+      background: #e8f5e9;
+      color: #2e7d32;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .error {
+      background: #fff0f0;
+      color: #c00;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .preview {
+      background: #fafafa;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .preview strong {
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Dupliquer un inventaire</h1>
+
+    <div class="card">
+      <label for="source-select">Inventaire source :</label>
+      <select id="source-select">
+        <option value="">-- Chargement... --</option>
+      </select>
+
+      <div class="preview" id="preview" style="display:none;"></div>
+
+      <label for="new-id">Nouvel ID (doit être unique) :</label>
+      <input type="text" id="new-id" placeholder="ex: lot-b" pattern="[a-zA-Z0-9_-]+">
+
+      <label for="new-name">Nouveau nom :</label>
+      <input type="text" id="new-name" placeholder="ex: Lot B">
+
+      <button class="btn btn-duplicate" id="btn-duplicate" disabled>Dupliquer</button>
+
+      <div id="message"></div>
+
+      <button class="btn btn-back" id="btn-back">Retour à l'administration</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+    import { getAuth, signInAnonymously, deleteUser } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, getDocs, collection, setDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA1V3UybXWyyMmO9fBH7jhuVUSFL3mDBPo",
+      authDomain: "crf--thot.firebaseapp.com",
+      projectId: "crf--thot",
+      storageBucket: "crf--thot.firebasestorage.app",
+      messagingSenderId: "242106713414",
+      appId: "1:242106713414:web:76f4c6977264539ef85147",
+      measurementId: "G-NF6W8FS69P"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let inventoriesList = [];
+    let currentSourceData = null;
+
+    const sourceSelect = document.getElementById('source-select');
+    const newIdInput = document.getElementById('new-id');
+    const newNameInput = document.getElementById('new-name');
+    const btnDuplicate = document.getElementById('btn-duplicate');
+    const previewDiv = document.getElementById('preview');
+    const messageDiv = document.getElementById('message');
+    const btnBack = document.getElementById('btn-back');
+
+    // Connexion anonyme automatique
+    async function init() {
+      try {
+        await signInAnonymously(auth);
+        await loadInventories();
+      } catch(e) {
+        console.error('Erreur init:', e);
+        messageDiv.innerHTML = '<div class="error">Erreur de connexion à Firebase.</div>';
+      }
+    }
+
+    async function loadInventories() {
+      try {
+        const snap = await getDocs(collection(db, 'I'));
+        inventoriesList = [];
+        sourceSelect.innerHTML = '<option value="">-- Sélectionner un inventaire --</option>';
+
+        if (snap.empty) {
+          sourceSelect.innerHTML += '<option value="" disabled>Aucun inventaire trouvé</option>';
+          return;
+        }
+
+        // Trier par ordre alphabétique
+        const docs = [];
+        snap.forEach(d => docs.push({ id: d.id, data: d.data() }));
+        docs.sort((a, b) => a.id.localeCompare(b.id, 'fr', { sensitivity: 'base' }));
+
+        docs.forEach(d => {
+          inventoriesList.push(d);
+          const nom = d.data.nom || d.id;
+          sourceSelect.innerHTML += `<option value="${d.id}">${nom} (${d.id})</option>`;
+        });
+      } catch(e) {
+        console.error('Erreur loadInventories:', e);
+        messageDiv.innerHTML = '<div class="error">Erreur lors du chargement des inventaires.</div>';
+      }
+    }
+
+    sourceSelect.addEventListener('change', async () => {
+      const selectedId = sourceSelect.value;
+      previewDiv.style.display = 'none';
+      btnDuplicate.disabled = true;
+      messageDiv.innerHTML = '';
+
+      if (!selectedId) {
+        currentSourceData = null;
+        return;
+      }
+
+      try {
+        const docSnap = await getDoc(doc(db, 'I', selectedId));
+        if (!docSnap.exists()) {
+          messageDiv.innerHTML = '<div class="error">Inventaire introuvable.</div>';
+          return;
+        }
+
+        currentSourceData = docSnap.data();
+
+        // Afficher un aperçu
+        const objets = currentSourceData.objets || {};
+        const catCount = Object.keys(objets).length;
+        let objCount = 0;
+        Object.values(objets).forEach(items => {
+          objCount += Object.keys(items).length;
+        });
+        const logsCount = (currentSourceData.logs || []).length;
+        const manquantsCount = (currentSourceData.manquants || []).length;
+
+        previewDiv.innerHTML = `
+          <strong>Aperçu de l'inventaire :</strong><br>
+          Nom : <strong>${currentSourceData.nom || selectedId}</strong><br>
+          Catégories : <strong>${catCount}</strong><br>
+          Objets : <strong>${objCount}</strong><br>
+          Logs : <strong>${logsCount}</strong><br>
+          Manquants : <strong>${manquantsCount}</strong>
+        `;
+        previewDiv.style.display = 'block';
+
+        // Pré-remplir le nouveau nom
+        if (!newNameInput.value) {
+          newNameInput.value = (currentSourceData.nom || selectedId) + ' (copie)';
+        }
+
+        checkForm();
+
+      } catch(e) {
+        console.error('Erreur aperçu:', e);
+        messageDiv.innerHTML = '<div class="error">Erreur lors du chargement de l\'aperçu.</div>';
+      }
+    });
+
+    newIdInput.addEventListener('input', checkForm);
+    newNameInput.addEventListener('input', checkForm);
+
+    function checkForm() {
+      const selectedId = sourceSelect.value;
+      const newId = newIdInput.value.trim();
+      const newName = newNameInput.value.trim();
+
+      btnDuplicate.disabled = !selectedId || !newId || !newName;
+    }
+
+    btnDuplicate.addEventListener('click', async () => {
+      const newId = newIdInput.value.trim();
+      const newName = newNameInput.value.trim();
+
+      if (!newId || !newName) return;
+
+      // Vérifier que l'ID n'existe pas déjà
+      try {
+        const existing = await getDoc(doc(db, 'I', newId));
+        if (existing.exists()) {
+          messageDiv.innerHTML = '<div class="error">Cet ID existe déjà. Choisissez un autre ID.</div>';
+          return;
+        }
+      } catch(e) {
+        messageDiv.innerHTML = '<div class="error">Erreur lors de la vérification de l\'ID.</div>';
+        return;
+      }
+
+      // Dupliquer
+      try {
+        btnDuplicate.disabled = true;
+        btnDuplicate.textContent = 'Duplication en cours...';
+
+        // Copier toutes les données sauf les logs (on repart à zéro)
+        const newData = {
+          nom: newName,
+          objets: JSON.parse(JSON.stringify(currentSourceData.objets || {})),
+          manquants: JSON.parse(JSON.stringify(currentSourceData.manquants || [])),
+          logs: [{
+            n: 'duplication',
+            t: new Date().toISOString(),
+            a: `Inventaire dupliqué depuis "${sourceSelect.value}"`
+          }]
+        };
+
+        await setDoc(doc(db, 'I', newId), newData);
+
+        messageDiv.innerHTML = `
+          <div class="success">
+            Inventaire dupliqué avec succès !<br>
+            <a href="./inventaire.html?inv=${encodeURIComponent(newId)}" style="color:#2e7d32;">Ouvrir l'inventaire</a>
+          </div>
+        `;
+
+        btnDuplicate.textContent = 'Dupliqué !';
+
+        // Recharger la liste des inventaires pour être à jour
+        setTimeout(async () => {
+          await loadInventories();
+          btnDuplicate.textContent = 'Dupliquer';
+          sourceSelect.value = newId;
+          // Déclencher le changement pour afficher l'aperçu du nouveau
+          sourceSelect.dispatchEvent(new Event('change'));
+        }, 1500);
+
+      } catch(e) {
+        console.error('Erreur duplication:', e);
+        messageDiv.innerHTML = `<div class="error">Erreur lors de la duplication : ${e.message}</div>`;
+        btnDuplicate.disabled = false;
+        btnDuplicate.textContent = 'Dupliquer';
+      }
+    });
+
+    btnBack.addEventListener('click', () => {
+      window.location.href = './admin.html';
+    });
+
+    // Nettoyage à la fermeture
+    window.addEventListener('beforeunload', async () => {
+      if (auth.currentUser) {
+        try { await deleteUser(auth.currentUser); } catch(e) {}
+      }
+    });
+
+    // Démarrer
+    init();
+  </script>
+</body>
+</html>

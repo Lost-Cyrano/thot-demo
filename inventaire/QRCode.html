@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thot – QR Code</title>
+  <style>
+    :root {
+      --red: #e60000;
+      --red-hover: #b30000;
+      --bg: #f5f5f5;
+      --card-bg: #ffffff;
+      --border: #ddd;
+      --text: #333;
+      --text-light: #666;
+      --radius: 12px;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Header */
+    .header {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-back {
+      background: transparent;
+      border: 1.5px solid #ccc;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .btn-back:hover { background: #eee; }
+
+    .btn-logout {
+      background: transparent;
+      color: var(--red);
+      border: 1.5px solid var(--red);
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .btn-logout:hover { background: var(--red); color: #fff; }
+
+    /* Carte QR Code */
+    .qr-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .qr-container {
+      background: #fff;
+      border: 3px solid var(--red);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(230, 0, 0, 0.15);
+      position: relative;
+    }
+
+    #qr-code {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    #qr-code img,
+    #qr-code canvas {
+      width: 250px;
+      height: 250px;
+      max-width: 100%;
+    }
+
+    /* Logo superposé au centre du QR code */
+    .qr-logo-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 55px;
+      height: 55px;
+      background: #fff;
+      padding: 4px;
+      border-radius: 4px;
+      box-shadow: 0 0 0 3px #fff;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .qr-logo-overlay img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .inventory-name {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
+      word-break: break-word;
+    }
+
+    .btn-download {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.2s;
+      width: 100%;
+    }
+
+    .btn-download:hover { background: var(--red-hover); }
+
+    .error-state {
+      background: #fff0f0;
+      color: var(--red);
+      padding: 20px;
+      border-radius: var(--radius);
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .loader {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-light);
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <span style="font-weight:600;">📱 QR Code</span>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-back" id="btn-back-admin">← Administration</button>
+        <button class="btn-logout" id="btn-logout">Déconnexion</button>
+      </div>
+    </div>
+
+    <!-- Contenu -->
+    <div id="content">
+      <div class="loader">Génération du QR Code...</div>
+    </div>
+  </div>
+
+  <!-- Bibliothèque QRCode.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, deleteUser } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA1V3UybXWyyMmO9fBH7jhuVUSFL3mDBPo",
+      authDomain: "crf--thot.firebaseapp.com",
+      projectId: "crf--thot",
+      storageBucket: "crf--thot.firebasestorage.app",
+      messagingSenderId: "242106713414",
+      appId: "1:242106713414:web:76f4c6977264539ef85147",
+      measurementId: "G-NF6W8FS69P"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const contentEl = document.getElementById('content');
+
+    // Récupérer le paramètre inv
+    const urlParams = new URLSearchParams(window.location.search);
+    const invId = urlParams.get('inv');
+
+    // Construire le lien du QR code en supprimant "QRCode.html" de l'URL actuelle
+    function buildQRCodeUrl() {
+      const currentUrl = window.location.href;
+      // Supprimer "QRCode.html" de l'URL
+      const baseUrl = currentUrl.replace(/QRCode\.html.*$/, '');
+      // Ajouter le paramètre inv
+      return `${baseUrl}?inv=${encodeURIComponent(invId)}`;
+    }
+
+    // Vérification connexion
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { redirectToLogin(); return; }
+      const nivol = user.displayName;
+      if (!nivol) {
+        await deleteUser(user).catch(() => {});
+        redirectToLogin();
+        return;
+      }
+
+      if (!invId) {
+        contentEl.innerHTML = `
+          <div class="error-state">
+            Aucun inventaire spécifié dans l'URL.
+          </div>
+        `;
+        return;
+      }
+
+      // Charger les infos de l'inventaire
+      try {
+        const invSnap = await getDoc(doc(db, 'I', invId));
+        if (!invSnap.exists()) {
+          contentEl.innerHTML = `
+            <div class="error-state">
+              Inventaire introuvable : "${invId}"
+            </div>
+          `;
+          return;
+        }
+
+        const data = invSnap.data();
+        const invName = data.nom || invId;
+        const qrTargetUrl = buildQRCodeUrl();
+
+        renderQRCode(qrTargetUrl, invName);
+
+      } catch (e) {
+        console.error(e);
+        contentEl.innerHTML = `
+          <div class="error-state">
+            Erreur lors du chargement de l'inventaire.
+          </div>
+        `;
+      }
+    });
+
+    function redirectToLogin() {
+      const currentUrl = encodeURIComponent(window.location.href);
+      window.location.href = `../login.html?redirect=${currentUrl}`;
+    }
+
+    // Déconnexion
+    document.getElementById('btn-logout').addEventListener('click', async () => {
+      const user = auth.currentUser;
+      if (user) {
+        await deleteUser(user).catch(() => {});
+        window.location.href = '../login.html';
+      }
+    });
+
+    // Retour admin
+    document.getElementById('btn-back-admin').addEventListener('click', () => {
+      window.location.href = './admin.html';
+    });
+
+    function renderQRCode(qrTargetUrl, invName) {
+      contentEl.innerHTML = `
+        <div class="qr-card">
+          <div class="qr-container">
+            <div id="qr-code"></div>
+            <div class="qr-logo-overlay" id="qr-logo-overlay">
+              <img src="../images/LogoThot.png" alt="Logo Thot" onerror="this.style.display='none';">
+            </div>
+          </div>
+          <div class="inventory-name">${invName}</div>
+          <button class="btn-download" id="btn-download">📥 Télécharger</button>
+        </div>
+      `;
+
+      // Générer le QR Code
+      const qrContainer = document.getElementById('qr-code');
+      
+      const qr = new QRCode(qrContainer, {
+        text: qrTargetUrl,
+        width: 250,
+        height: 250,
+        colorDark: '#e60000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      // Bouton télécharger
+      document.getElementById('btn-download').addEventListener('click', () => {
+        downloadQRCode(qrContainer, invName);
+      });
+    }
+
+    function downloadQRCode(qrContainer, invName) {
+      const canvas = qrContainer.querySelector('canvas');
+      const img = qrContainer.querySelector('img');
+
+      // Créer un canvas combiné (QR + nom)
+      const combinedCanvas = document.createElement('canvas');
+      const ctx = combinedCanvas.getContext('2d');
+
+      const qrSize = 250;
+      const padding = 30;
+      const titleHeight = 60;
+      const totalWidth = qrSize + padding * 2;
+      const totalHeight = qrSize + padding * 2 + titleHeight;
+
+      combinedCanvas.width = totalWidth;
+      combinedCanvas.height = totalHeight;
+
+      // Fond blanc
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, totalWidth, totalHeight);
+
+      // Dessiner le QR code
+      if (canvas) {
+        ctx.drawImage(canvas, padding, padding, qrSize, qrSize);
+      } else if (img) {
+        ctx.drawImage(img, padding, padding, qrSize, qrSize);
+      }
+
+      // Ajouter le logo au centre (carré, pas en cercle)
+      const logo = new Image();
+      logo.crossOrigin = 'anonymous';
+      logo.onload = () => {
+        const logoSize = qrSize * 0.22;
+        const logoX = padding + (qrSize - logoSize) / 2;
+        const logoY = padding + (qrSize - logoSize) / 2;
+        
+        // Fond blanc carré derrière le logo
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(
+          padding + qrSize / 2 - logoSize / 2 - 4,
+          padding + qrSize / 2 - logoSize / 2 - 4,
+          logoSize + 8,
+          logoSize + 8
+        );
+        
+        // Dessiner le logo (carré)
+        ctx.drawImage(logo, logoX, logoY, logoSize, logoSize);
+        
+        // Ajouter le texte
+        ctx.fillStyle = '#333333';
+        ctx.font = 'bold 22px system-ui, -apple-system, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(invName, totalWidth / 2, totalHeight - 20);
+
+        // Télécharger
+        triggerDownload(combinedCanvas, invName);
+      };
+      logo.onerror = () => {
+        // Sans logo
+        ctx.fillStyle = '#333333';
+        ctx.font = 'bold 22px system-ui, -apple-system, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(invName, totalWidth / 2, totalHeight - 20);
+        triggerDownload(combinedCanvas, invName);
+      };
+      logo.src = '../images/LogoThot.png';
+    }
+
+    function triggerDownload(canvas, invName) {
+      const safeName = invName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      const link = document.createElement('a');
+      link.download = `QRCode_${safeName}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+  </script>
+</body>
+</html>

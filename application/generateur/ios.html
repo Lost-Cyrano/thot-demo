@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web to IPA - Convertissez votre App Web en application iOS</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js">
+    </script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --border: #334155;
+            --text: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --accent: #0ea5e9;
+            --accent-hover: #0284c7;
+            --accent-glow: rgba(14, 165, 233, 0.3);
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --input-bg: #0f172a;
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            background-image:
+                radial-gradient(ellipse at 20% 20%, rgba(14, 165, 233, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(56, 189, 248, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(16, 185, 129, 0.04) 0%, transparent 60%);
+            background-attachment: fixed;
+        }
+
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .bg-particle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0.03;
+            animation: floatUp 15s infinite ease-in;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.04; }
+            50% { opacity: 0.02; }
+            90% { opacity: 0.04; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 20px 20px;
+        }
+        .header .icon-wrapper {
+            display: inline-block;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--accent), #0369a1);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 32px var(--accent-glow);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 8px 32px var(--accent-glow); }
+            50% { box-shadow: 0 8px 48px rgba(14, 165, 233, 0.5); }
+        }
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #e2e8f0 0%, #7dd3fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-top: 6px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 30px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+            transition: var(--transition);
+        }
+        .card:hover {
+            border-color: #475569;
+            box-shadow: 0 4px 32px rgba(0, 0, 0, 0.4);
+        }
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card-title .icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        .icon-blue { background: rgba(14, 165, 233, 0.15); color: #38bdf8; }
+        .icon-green { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .icon-purple { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
+        .icon-orange { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+        }
+        .form-group label .required { color: var(--error); margin-left: 2px; }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        @media (max-width: 600px) {
+            .form-row { grid-template-columns: 1fr; }
+            .card { padding: 20px 16px; }
+            .header h1 { font-size: 1.5rem; }
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 11px 14px;
+            background: var(--input-bg);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        input[type="text"]::placeholder,
+        input[type="number"]::placeholder { color: #4a5568; }
+
+        .file-upload-area {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 28px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--input-bg);
+            position: relative;
+            overflow: hidden;
+        }
+        .file-upload-area:hover {
+            border-color: var(--accent);
+            background: rgba(14, 165, 233, 0.04);
+        }
+        .file-upload-area.has-file {
+            border-color: var(--success);
+            border-style: solid;
+            background: rgba(16, 185, 129, 0.05);
+        }
+        .file-upload-area .upload-icon {
+            font-size: 42px;
+            margin-bottom: 8px;
+            transition: var(--transition);
+        }
+        .file-upload-area.has-file .upload-icon { color: var(--success); }
+        .file-upload-area .upload-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .file-upload-area .file-name {
+            font-weight: 600;
+            color: var(--success);
+            margin-top: 4px;
+            word-break: break-all;
+            font-size: 0.85rem;
+        }
+        .file-upload-area input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .btn-generate {
+            width: 100%;
+            padding: 14px 24px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            letter-spacing: -0.01em;
+            transition: var(--transition);
+            font-family: inherit;
+            background: linear-gradient(135deg, var(--accent), #0369a1);
+            color: #fff;
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+        .btn-generate:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(14, 165, 233, 0.45);
+            background: linear-gradient(135deg, #0284c7, #075985);
+        }
+        .btn-generate:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: 0 2px 12px var(--accent-glow);
+        }
+        .btn-generate:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: grayscale(30%);
+        }
+        .btn-generate .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2.5px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .btn-generate.loading .spinner { display: inline-block; }
+        .btn-generate.loading .btn-text { display: none; }
+        .btn-generate.loading::after {
+            content: 'Génération en cours...';
+            color: #fff;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .progress-container {
+            display: none;
+            margin-top: 16px;
+        }
+        .progress-container.active { display: block; }
+        .progress-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: var(--border);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #0369a1);
+            border-radius: 99px;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+        .progress-text {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 6px;
+            text-align: center;
+        }
+
+        .status-msg {
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            margin-top: 12px;
+            display: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .status-msg.success { display: block; background: rgba(16, 185, 129, 0.12); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .status-msg.error { display: block; background: rgba(239, 68, 68, 0.12); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .status-msg.info { display: block; background: rgba(14, 165, 233, 0.12); color: #7dd3fc; border: 1px solid rgba(14, 165, 233, 0.3); }
+
+        .btn-download {
+            display: none;
+            width: 100%;
+            padding: 14px 24px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            letter-spacing: -0.01em;
+            transition: var(--transition);
+            font-family: inherit;
+            background: var(--success);
+            color: #fff;
+            margin-top: 8px;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+        }
+        .btn-download:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(16, 185, 129, 0.45); }
+        .btn-download.visible { display: block; animation: fadeInUp 0.4s ease; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #475569;
+            font-size: 0.8rem;
+        }
+
+        .info-tooltip {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--border);
+            color: var(--text-secondary);
+            text-align: center;
+            font-size: 10px;
+            line-height: 16px;
+            cursor: help;
+            margin-left: 4px;
+            font-weight: 700;
+            vertical-align: middle;
+        }
+        .info-tooltip:hover { background: var(--accent); color: #fff; }
+
+        .optional-badge {
+            background: var(--border);
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 99px;
+            margin-left: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-particles" id="bgParticles"></div>
+    <div class="container">
+        <div class="header">
+            <div class="icon-wrapper">📱</div>
+            <h1>Web to IPA Converter</h1>
+            <p class="subtitle">Transformez votre application web en fichier IPA iOS (nécessite signature ultérieure)</p>
+        </div>
+
+        <!-- Informations de l'application -->
+        <div class="card">
+            <div class="card-title">
+                <span class="icon icon-blue">📋</span> Informations de l'Application
+            </div>
+            <div class="form-group">
+                <label for="appName">Give Your App a Name <span class="required">*</span></label>
+                <input type="text" id="appName" placeholder="ex: Mon App Géniale" maxlength="50" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="majorVersion">Major Version <span class="required">*</span></label>
+                    <input type="number" id="majorVersion" placeholder="1" min="0" max="999" value="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="minorVersion">Minor Version <span class="required">*</span></label>
+                    <input type="number" id="minorVersion" placeholder="0" min="0" max="999" value="0" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="companyName">Company / Brand Name <span class="required">*</span></label>
+                <input type="text" id="companyName" placeholder="ex: MaSociété" maxlength="40" required>
+            </div>
+            <div class="form-group">
+                <label for="bundleId">
+                    Bundle Identifier <span class="required">*</span>
+                    <span class="info-tooltip" title="Format: com.company.appname (minuscules, chiffres, points)">?</span>
+                </label>
+                <input type="text" id="bundleId" placeholder="ex: com.masociete.monapp" maxlength="100" required
+                       pattern="^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$">
+                <p class="package-hint" id="bundleHint" style="font-size:0.75rem; color:#64748b; margin-top:3px;">Format : com.votreentreprise.nomapp</p>
+            </div>
+        </div>
+
+        <!-- Fichiers -->
+        <div class="card">
+            <div class="card-title">
+                <span class="icon icon-green">📁</span> Fichiers Requis
+            </div>
+            <div class="form-group">
+                <label>Fichier .zip de l'application web <span class="required">*</span></label>
+                <div class="file-upload-area" id="zipUploadArea">
+                    <span class="upload-icon">📦</span>
+                    <p class="upload-text">Cliquez ou glissez-déposez votre fichier .zip</p>
+                    <p class="file-name" id="zipFileName"></p>
+                    <p class="file-size-hint">Contient vos fichiers HTML, CSS, JS (index.html obligatoire à la racine)</p>
+                    <input type="file" id="zipFile" accept=".zip" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Logo de l'application (.png) <span class="required">*</span></label>
+                <div class="file-upload-area" id="logoUploadArea">
+                    <span class="upload-icon">🖼️</span>
+                    <p class="upload-text">Cliquez ou glissez-déposez le logo .png</p>
+                    <p class="file-name" id="logoFileName"></p>
+                    <p class="file-size-hint">Format PNG recommandé : 1024x1024px (sera redimensionné automatiquement)</p>
+                    <input type="file" id="logoFile" accept=".png" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>
+                    Exécutable iOS compilé (optionnel)
+                    <span class="optional-badge">optionnel</span>
+                    <span class="info-tooltip" title="Fichier binaire arm64 compilé depuis un projet Xcode (WebView shell). Sans cela, l'IPA ne sera pas fonctionnel.">?</span>
+                </label>
+                <div class="file-upload-area" id="binaryUploadArea">
+                    <span class="upload-icon">⚙️</span>
+                    <p class="upload-text">Cliquez ou glissez-déposez le binaire exécutable (optionnel)</p>
+                    <p class="file-name" id="binaryFileName"></p>
+                    <p class="file-size-hint">Laissez vide pour utiliser un placeholder non fonctionnel. Vous pouvez compiler un shell WebView via Xcode.</p>
+                    <input type="file" id="binaryFile" accept="*/*">
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-generate" id="btnGenerate" disabled>
+            <span class="spinner"></span>
+            <span class="btn-text">🚀 Générer l'IPA</span>
+        </button>
+
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+            <p class="progress-text" id="progressText">Préparation...</p>
+        </div>
+
+        <div class="status-msg" id="statusMsg"></div>
+
+        <button class="btn-download" id="btnDownload">
+            ⬇️ Télécharger le fichier IPA
+        </button>
+
+        <div class="footer">
+            L'IPA généré n'est pas signé. Vous devrez le signer avec un certificat Apple Developer valide pour l'installer sur un appareil.
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // Éléments DOM
+            const appNameInput = document.getElementById('appName');
+            const majorVersionInput = document.getElementById('majorVersion');
+            const minorVersionInput = document.getElementById('minorVersion');
+            const companyNameInput = document.getElementById('companyName');
+            const bundleIdInput = document.getElementById('bundleId');
+            const bundleHint = document.getElementById('bundleHint');
+            const zipFileInput = document.getElementById('zipFile');
+            const logoFileInput = document.getElementById('logoFile');
+            const binaryFileInput = document.getElementById('binaryFile');
+            const zipUploadArea = document.getElementById('zipUploadArea');
+            const logoUploadArea = document.getElementById('logoUploadArea');
+            const binaryUploadArea = document.getElementById('binaryUploadArea');
+            const zipFileName = document.getElementById('zipFileName');
+            const logoFileName = document.getElementById('logoFileName');
+            const binaryFileName = document.getElementById('binaryFileName');
+            const btnGenerate = document.getElementById('btnGenerate');
+            const btnDownload = document.getElementById('btnDownload');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const statusMsg = document.getElementById('statusMsg');
+
+            let zipFileData = null;
+            let logoFileData = null;
+            let binaryFileData = null;
+            let generatedIpaBlob = null;
+            let generatedIpaName = '';
+
+            // Particules d'arrière-plan
+            const bgParticles = document.getElementById('bgParticles');
+            for (let i = 0; i < 25; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('bg-particle');
+                const size = Math.random() * 180 + 40;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 18 + 10) + 's';
+                bgParticles.appendChild(particle);
+            }
+
+            // Validation du Bundle ID
+            bundleIdInput.addEventListener('input', () => {
+                const val = bundleIdInput.value.trim();
+                const validPattern = /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/;
+                if (val.length === 0) {
+                    bundleHint.textContent = 'Format : com.votreentreprise.nomapp';
+                    bundleHint.style.color = '#64748b';
+                } else if (validPattern.test(val)) {
+                    bundleHint.textContent = '✅ Format valide';
+                    bundleHint.style.color = '#34d399';
+                } else {
+                    bundleHint.textContent = '❌ Format invalide. Utilisez des minuscules, chiffres, underscores et points';
+                    bundleHint.style.color = '#f87171';
+                }
+                checkFormValidity();
+            });
+
+            // Gestion des fichiers
+            function setupFileUpload(input, area, nameDisplay, fileTypeName, maxSize) {
+                input.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        const file = this.files[0];
+                        if (maxSize && file.size > maxSize) {
+                            showStatus('error', `Le fichier ${fileTypeName} est trop volumineux (max ${formatSize(maxSize)}).`);
+                            this.value = '';
+                            return;
+                        }
+                        if (input === zipFileInput && !file.name.toLowerCase().endsWith('.zip')) {
+                            showStatus('error', 'Veuillez sélectionner un fichier .zip valide.');
+                            this.value = '';
+                            return;
+                        }
+                        if (input === logoFileInput && !file.name.toLowerCase().endsWith('.png')) {
+                            showStatus('error', 'Veuillez sélectionner un fichier .png pour le logo.');
+                            this.value = '';
+                            return;
+                        }
+                        // Stocker la référence
+                        if (input === zipFileInput) zipFileData = file;
+                        else if (input === logoFileInput) logoFileData = file;
+                        else if (input === binaryFileInput) binaryFileData = file;
+                        nameDisplay.textContent = '✅ ' + file.name + ' (' + formatSize(file.size) + ')';
+                        area.classList.add('has-file');
+                        hideStatus();
+                        checkFormValidity();
+                    }
+                });
+
+                area.addEventListener('dragover', (e) => { e.preventDefault(); area.style.borderColor = 'var(--accent)'; });
+                area.addEventListener('dragleave', () => { area.style.borderColor = (input.files && input.files[0]) ? 'var(--success)' : 'var(--border)'; });
+                area.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    area.style.borderColor = (input.files && input.files[0]) ? 'var(--success)' : 'var(--border)';
+                    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                        input.files = e.dataTransfer.files;
+                        input.dispatchEvent(new Event('change'));
+                    }
+                });
+            }
+
+            setupFileUpload(zipFileInput, zipUploadArea, zipFileName, 'ZIP', 200 * 1024 * 1024);
+            setupFileUpload(logoFileInput, logoUploadArea, logoFileName, 'PNG', 10 * 1024 * 1024);
+            setupFileUpload(binaryFileInput, binaryUploadArea, binaryFileName, 'binaire', 100 * 1024 * 1024);
+
+            function checkFormValidity() {
+                const appName = appNameInput.value.trim();
+                const major = majorVersionInput.value.trim();
+                const minor = minorVersionInput.value.trim();
+                const bundle = bundleIdInput.value.trim();
+                const validBundle = /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/;
+                const isValid = appName.length > 0 && major.length > 0 && parseInt(major) >= 0 &&
+                    minor.length > 0 && parseInt(minor) >= 0 && validBundle.test(bundle) &&
+                    zipFileData !== null && logoFileData !== null;
+                btnGenerate.disabled = !isValid;
+            }
+
+            [appNameInput, majorVersionInput, minorVersionInput, companyNameInput, bundleIdInput].forEach(el => {
+                el.addEventListener('input', checkFormValidity);
+            });
+
+            function showStatus(type, message) {
+                statusMsg.textContent = message;
+                statusMsg.className = 'status-msg ' + type;
+                statusMsg.style.display = 'block';
+            }
+            function hideStatus() { statusMsg.style.display = 'none'; }
+            function updateProgress(percent, text) {
+                progressContainer.classList.add('active');
+                progressBar.style.width = percent + '%';
+                progressText.textContent = text;
+            }
+            function resetProgress() {
+                progressContainer.classList.remove('active');
+                progressBar.style.width = '0%';
+                progressText.textContent = 'Préparation...';
+            }
+            function formatSize(bytes) {
+                if (bytes < 1024) return bytes + ' o';
+                if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' Ko';
+                return (bytes / 1048576).toFixed(1) + ' Mo';
+            }
+
+            // Redimensionnement du logo pour les icônes iOS
+            function resizeLogoImage(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = new Image();
+                        img.onload = function() {
+                            const sizes = {
+                                '20x20': 20, '29x29': 29, '40x40': 40, '60x60': 60,
+                                '76x76': 76, '83.5x83.5': 83.5, '1024x1024': 1024
+                            };
+                            const canvases = {};
+                            Object.entries(sizes).forEach(([name, size]) => {
+                                const canvas = document.createElement('canvas');
+                                canvas.width = size;
+                                canvas.height = size;
+                                const ctx = canvas.getContext('2d');
+                                ctx.drawImage(img, 0, 0, size, size);
+                                canvases[name] = canvas;
+                            });
+                            resolve(canvases);
+                        };
+                        img.onerror = reject;
+                        img.src = e.target.result;
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            function canvasToBlob(canvas) {
+                return new Promise((resolve, reject) => {
+                    canvas.toBlob((blob) => {
+                        if (blob) resolve(blob);
+                        else reject(new Error('Canvas toBlob failed'));
+                    }, 'image/png');
+                });
+            }
+
+            // Génération du fichier Info.plist (XML)
+            function generateInfoPlist(bundleId, appName, version, build) {
+                const lines = [
+                    '<?xml version="1.0" encoding="UTF-8"?>',
+                    '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">',
+                    '<plist version="1.0">',
+                    '<dict>',
+                    '    <key>CFBundleDevelopmentRegion</key>',
+                    '    <string>fr</string>',
+                    '    <key>CFBundleDisplayName</key>',
+                    '    <string>' + escapeXml(appName) + '</string>',
+                    '    <key>CFBundleExecutable</key>',
+                    '    <string>' + escapeXml(appName.replace(/ /g, '_')) + '</string>',
+                    '    <key>CFBundleIdentifier</key>',
+                    '    <string>' + escapeXml(bundleId) + '</string>',
+                    '    <key>CFBundleInfoDictionaryVersion</key>',
+                    '    <string>6.0</string>',
+                    '    <key>CFBundleName</key>',
+                    '    <string>' + escapeXml(appName) + '</string>',
+                    '    <key>CFBundlePackageType</key>',
+                    '    <string>APPL</string>',
+                    '    <key>CFBundleShortVersionString</key>',
+                    '    <string>' + version + '</string>',
+                    '    <key>CFBundleVersion</key>',
+                    '    <string>' + build + '</string>',
+                    '    <key>LSRequiresIPhoneOS</key>',
+                    '    <true/>',
+                    '    <key>UILaunchStoryboardName</key>',
+                    '    <string>LaunchScreen</string>',
+                    '    <key>UISupportedInterfaceOrientations</key>',
+                    '    <array>',
+                    '        <string>UIInterfaceOrientationPortrait</string>',
+                    '        <string>UIInterfaceOrientationLandscapeLeft</string>',
+                    '        <string>UIInterfaceOrientationLandscapeRight</string>',
+                    '    </array>',
+                    '    <key>UIDeviceFamily</key>',
+                    '    <array>',
+                    '        <integer>1</integer>',
+                    '    </array>',
+                    '    <key>CFBundleIconFiles</key>',
+                    '    <array>',
+                    '        <string>AppIcon60x60</string>',
+                    '    </array>',
+                    '    <key>CFBundleIcons</key>',
+                    '    <dict>',
+                    '        <key>CFBundlePrimaryIcon</key>',
+                    '        <dict>',
+                    '            <key>CFBundleIconFiles</key>',
+                    '            <array>',
+                    '                <string>AppIcon60x60</string>',
+                    '            </array>',
+                    '        </dict>',
+                    '    </dict>',
+                    '    <key>NSAppTransportSecurity</key>',
+                    '    <dict>',
+                    '        <key>NSAllowsArbitraryLoads</key>',
+                    '        <true/>',
+                    '    </dict>',
+                    '    <key>UIViewControllerBasedStatusBarAppearance</key>',
+                    '    <false/>',
+                    '</dict>',
+                    '</plist>'
+                ];
+                return lines.join('\n');
+            }
+
+            function escapeXml(str) {
+                return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+            }
+
+            // Génération de l'IPA
+            async function generateIPA() {
+                const appName = appNameInput.value.trim();
+                const bundleId = bundleIdInput.value.trim();
+                const major = parseInt(majorVersionInput.value.trim());
+                const minor = parseInt(minorVersionInput.value.trim());
+                const version = major + '.' + minor;
+                const build = String(major * 1000 + minor);
+                const executableName = appName.replace(/ /g, '_');
+
+                updateProgress(5, 'Lecture du fichier ZIP...');
+                const zipData = await zipFileData.arrayBuffer();
+                const userZip = await JSZip.loadAsync(zipData);
+                const hasIndex = userZip.file('index.html') || userZip.file('Index.html') || userZip.file('index.htm');
+                if (!hasIndex) throw new Error('Le ZIP doit contenir un index.html à la racine.');
+
+                updateProgress(15, 'Redimensionnement du logo...');
+                const logoSizes = await resizeLogoImage(logoFileData);
+
+                updateProgress(25, 'Préparation du binaire...');
+                let executableData;
+                if (binaryFileData) {
+                    executableData = new Uint8Array(await binaryFileData.arrayBuffer());
+                } else {
+                    // Placeholder non fonctionnel
+                    executableData = new Uint8Array([0x00, 0x00, 0x00, 0x00]);
+                    showStatus('info', '⚠️ Aucun binaire fourni. L\'IPA sera non fonctionnel. Pour une app fonctionnelle, compilez un shell WebView avec Xcode.');
+                }
+
+                updateProgress(35, 'Création du bundle .app...');
+                const ipaZip = new JSZip();
+                const payloadFolder = ipaZip.folder('Payload');
+                const appFolder = payloadFolder.folder(appName + '.app');
+
+                // Info.plist
+                const plistContent = generateInfoPlist(bundleId, appName, version, build);
+                appFolder.file('Info.plist', plistContent);
+
+                // Exécutable
+                appFolder.file(executableName, executableData, { binary: true, unixPermissions: '755' });
+
+                // Icônes
+                const iconMapping = {
+                    'AppIcon20x20.png': '20x20',
+                    'AppIcon29x29.png': '29x29',
+                    'AppIcon40x40.png': '40x40',
+                    'AppIcon60x60.png': '60x60',
+                    'AppIcon76x76.png': '76x76',
+                    'AppIcon83.5x83.5.png': '83.5x83.5',
+                    'iTunesArtwork@2x.png': '1024x1024'
+                };
+                for (const [filename, sizeKey] of Object.entries(iconMapping)) {
+                    const canvas = logoSizes[sizeKey];
+                    const blob = await canvasToBlob(canvas);
+                    const arrayBuf = await blob.arrayBuffer();
+                    appFolder.file(filename, new Uint8Array(arrayBuf), { binary: true });
+                }
+
+                // Contenu web dans www/
+                updateProgress(55, 'Intégration des fichiers web...');
+                const wwwFolder = appFolder.folder('www');
+                const files = [];
+                userZip.forEach((path, file) => { if (!file.dir) files.push({ path, file }); });
+                for (const { path, file } of files) {
+                    const data = await file.async('uint8array');
+                    wwwFolder.file(path, data, { binary: true });
+                }
+
+                updateProgress(80, 'Compression de l\'IPA...');
+                const ipaBlob = await ipaZip.generateAsync({
+                    type: 'blob',
+                    compression: 'DEFLATE',
+                    compressionOptions: { level: 6 }
+                }, (meta) => {
+                    const pct = 80 + Math.round(meta.percent / 100 * 15);
+                    updateProgress(pct, 'Compression... ' + Math.round(meta.percent) + '%');
+                });
+
+                updateProgress(100, '✅ IPA généré avec succès !');
+                return ipaBlob;
+            }
+
+            // Gestionnaire du bouton Générer
+            btnGenerate.addEventListener('click', async () => {
+                if (btnGenerate.disabled) return;
+                btnGenerate.classList.add('loading');
+                btnGenerate.disabled = true;
+                btnDownload.classList.remove('visible');
+                hideStatus();
+                resetProgress();
+                progressContainer.classList.add('active');
+                try {
+                    generatedIpaBlob = await generateIPA();
+                    const safeName = appNameInput.value.trim().replace(/[^a-zA-Z0-9_\-]/g, '_');
+                    generatedIpaName = safeName + '_v' + majorVersionInput.value.trim() + '.' + minorVersionInput.value.trim() + '.ipa';
+                    updateProgress(100, '✅ IPA généré avec succès !');
+                    showStatus('success', '🎉 Votre IPA a été généré ! Téléchargez-le et signez-le avec votre certificat Apple.');
+                    btnDownload.classList.add('visible');
+                    btnDownload.textContent = '⬇️ Télécharger ' + generatedIpaName;
+                } catch (error) {
+                    console.error(error);
+                    showStatus('error', '❌ Erreur : ' + error.message);
+                    resetProgress();
+                } finally {
+                    btnGenerate.classList.remove('loading');
+                    btnGenerate.disabled = false;
+                    checkFormValidity();
+                }
+            });
+
+            btnDownload.addEventListener('click', () => {
+                if (generatedIpaBlob && generatedIpaName) {
+                    saveAs(generatedIpaBlob, generatedIpaName);
+                }
+            });
+
+            checkFormValidity();
+        })();
+    </script>
+</body>
+</html>

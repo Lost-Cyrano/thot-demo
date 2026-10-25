@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thot – Connexion</title>
+  <style>
+    body { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; max-width: 400px; margin: 50px auto; padding: 0 20px; }
+    .error { color: #c00; margin-top: 10px; }
+    input, button { padding: 10px; width: 100%; margin: 5px 0; box-sizing: border-box; }
+    button { background: #e60000; color: white; border: none; cursor: pointer; }
+    button:hover { background: #b30000; }
+  </style>
+</head>
+<body>
+  <h1>Thot – Inventaires</h1>
+  <form id="login-form">
+    <label for="nivol">NIVOL</label>
+    <input type="text" id="nivol" placeholder="ex: 01234567890A" required pattern="[0-9A-Za-z]{12}">
+    <button type="submit">Se connecter</button>
+  </form>
+  <p id="message" class="error"></p>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+    import { getAuth, signInAnonymously, updateProfile, deleteUser } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA1V3UybXWyyMmO9fBH7jhuVUSFL3mDBPo",
+      authDomain: "crf--thot.firebaseapp.com",
+      projectId: "crf--thot",
+      storageBucket: "crf--thot.firebasestorage.app",
+      messagingSenderId: "242106713414",
+      appId: "1:242106713414:web:76f4c6977264539ef85147",
+      measurementId: "G-NF6W8FS69P"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Récupérer le paramètre de redirection
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirectUrl = urlParams.get('redirect');
+
+    const form = document.getElementById('login-form');
+    const nivolInput = document.getElementById('nivol');
+    const messageEl = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      messageEl.textContent = '';
+
+      const nivol = nivolInput.value.trim().toUpperCase();
+      if (!/^[0-9A-Z]{12}$/.test(nivol)) {
+        messageEl.textContent = 'Format de NIVOL invalide (12 caractères alphanumériques).';
+        return;
+      }
+
+      try {
+        // 1. Connexion anonyme
+        const userCredential = await signInAnonymously(auth);
+        const user = userCredential.user;
+
+        // 2. Vérifier dans les collections A et U
+        const [userSnap, adminSnap] = await Promise.all([
+          getDoc(doc(db, 'U', nivol)),
+          getDoc(doc(db, 'A', nivol))
+        ]);
+
+        if (!userSnap.exists() && !adminSnap.exists()) {
+          await deleteUser(user);
+          messageEl.textContent = 'NIVOL non reconnu. Veuillez réessayer.';
+          return;
+        }
+
+        // 3. Stocker le NIVOL dans le profil Auth
+        await updateProfile(user, {
+          displayName: nivol
+        });
+
+        // 4. Déterminer la page de destination
+        let destinationUrl = '';
+
+        if (adminSnap.exists()) {
+          destinationUrl = './admin.html';
+        } else {
+          destinationUrl = './user.html';
+        }
+
+        // 5. Redirection : si un paramètre redirect est présent, on l'utilise, sinon page par défaut
+        if (redirectUrl) {
+          window.location.href = decodeURIComponent(redirectUrl);
+        } else {
+          window.location.href = destinationUrl;
+        }
+
+      } catch (error) {
+        console.error('Erreur:', error);
+        messageEl.textContent = 'Une erreur technique est survenue. Veuillez réessayer.';
+        if (auth.currentUser) {
+          try { await deleteUser(auth.currentUser); } catch (e) {}
+        }
+      }
+    });
+  </script>
+</body>
+</html>
