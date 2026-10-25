@@ -134,7 +134,7 @@ Accessible uniquement aux adminsitrateurs depuis `admin.html` → **« Gérer le
   - **Incidents signalés** : liste des incidents avec priorité, description, date et auteur. Possibilité de les supprimer.
   - **Historique** repliable : les actions effectuées sur le véhicule.
 
-### 7. Vue terrain du parc automobile (`parc-auto/index.html`)
+### 7. Vue terrain du parc automobile
 
 Accessible depuis les menus principaux ou en cliquant sur un véhicule dans les listes.
 
