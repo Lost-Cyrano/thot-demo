@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thot – Présentation</title>
+  <meta name="description" content="Thot : la solution de gestion d'inventaires et de parc automobile pour les structures de secours. Tarif unique, temps réel, 100% web.">
+  <style>
+    :root {
+      --red: #e60000; --red-hover: #b30000; --bg: #f5f5f5; --card-bg: #ffffff;
+      --border: #ddd; --text: #333; --text-light: #666; --radius: 12px;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08); --shadow-lg: 0 8px 24px rgba(0,0,0,0.10);
+      --ok: #4caf50; --warning: #f5a623;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { width: 100%; max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+
+    /* ===== Topbar ===== */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: saturate(180%) blur(12px);
+      -webkit-backdrop-filter: saturate(180%) blur(12px);
+      border-bottom: 1px solid #eee;
+    }
+    .topbar-inner { display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    .topbar-brand {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; font-size: 1.05rem; color: var(--text); text-decoration: none;
+    }
+    .topbar-brand img { height: 26px; width: auto; }
+    .topbar-links { display: flex; gap: 18px; align-items: center; }
+    .topbar-links a {
+      color: var(--text-light); text-decoration: none; font-size: 0.9rem;
+      font-weight: 500; transition: color 0.2s;
+    }
+    .topbar-links a:hover { color: var(--red); }
+    .topbar-links .btn-cta {
+      background: var(--red); color: #fff; padding: 8px 16px;
+      border-radius: 8px; font-weight: 600; font-size: 0.85rem;
+    }
+    .topbar-links .btn-cta:hover { background: var(--red-hover); color: #fff; }
+
+    /* ===== Hero ===== */
+    .hero { padding: 72px 0 64px; text-align: center; background: linear-gradient(180deg, #fff 0%, var(--bg) 100%); }
+    .hero-badge {
+      display: inline-block; background: #fff0f0; color: var(--red);
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.5px;
+      text-transform: uppercase; padding: 6px 14px; border-radius: 20px; margin-bottom: 22px;
+    }
+    .hero h1 {
+      font-size: clamp(1.9rem, 4vw, 2.8rem); font-weight: 800;
+      line-height: 1.15; letter-spacing: -0.5px; margin-bottom: 18px; color: var(--text);
+    }
+    .hero h1 span { color: var(--red); }
+    .hero p.subtitle {
+      font-size: clamp(1rem, 1.6vw, 1.15rem); color: var(--text-light);
+      max-width: 680px; margin: 0 auto 32px;
+    }
+    .hero-cta { display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 26px; border-radius: 10px; font-weight: 700;
+      font-size: 0.95rem; text-decoration: none; transition: all 0.2s;
+      border: none; cursor: pointer;
+    }
+    .btn-primary { background: var(--red); color: #fff; }
+    .btn-primary:hover { background: var(--red-hover); transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+    .btn-ghost { background: #fff; color: var(--text); border: 1.5px solid var(--border); }
+    .btn-ghost:hover { background: #f0f0f0; border-color: #bbb; }
+    .hero-preview {
+      margin-top: 56px; border-radius: var(--radius); overflow: hidden;
+      box-shadow: var(--shadow-lg); border: 1px solid var(--border); background: #fff;
+    }
+    .hero-preview img { width: 100%; display: block; }
+
+    /* ===== Bandeau de confiance ===== */
+    .trust-banner { padding: 28px 0 8px; }
+    .trust-inner {
+      background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px 28px; box-shadow: var(--shadow); text-align: center;
+    }
+    .trust-inner p.trust-title {
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.6px;
+      text-transform: uppercase; color: var(--text-light); margin-bottom: 18px;
+    }
+    .trust-logos {
+      display: flex; flex-wrap: wrap; justify-content: center;
+      align-items: center; gap: 40px;
+    }
+    .trust-logos .trust-item {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; color: var(--text); font-size: 0.95rem; opacity: 0.9;
+    }
+    .trust-logos .trust-item img { height: 36px; width: auto; }
+    .trust-logos .trust-item .placeholder-logo {
+      height: 36px; width: 36px; border-radius: 6px;
+      background: #fff0f0; color: var(--red);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.9rem;
+    }
+
+    /* ===== Sections ===== */
+    section.block { padding: 64px 0; }
+    .section-head { text-align: center; max-width: 640px; margin: 0 auto 44px; }
+    .section-head h2 {
+      font-size: clamp(1.4rem, 2.6vw, 1.9rem); font-weight: 800;
+      letter-spacing: -0.3px; margin-bottom: 12px;
+    }
+    .section-head p { color: var(--text-light); font-size: 1rem; }
+
+    /* ===== Bénéfices ===== */
+    .benefits { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+    .benefit {
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 26px 22px; box-shadow: var(--shadow); transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .benefit:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+    .benefit .icon {
+      width: 44px; height: 44px; border-radius: 10px; background: #fff0f0;
+      color: var(--red); display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; margin-bottom: 16px;
+    }
+    .benefit h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .benefit p { font-size: 0.9rem; color: var(--text-light); }
+
+    /* ===== Features ===== */
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; }
+    .feature {
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
+      box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .feature:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+    .feature-img { aspect-ratio: 16 / 10; background: #fafafa; border-bottom: 1px solid #f0f0f0; overflow: hidden; }
+    .feature-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .feature-body { padding: 20px 22px 24px; }
+    .feature-body .tag {
+      display: inline-block; font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.4px; text-transform: uppercase; color: var(--red);
+      background: #fff0f0; padding: 3px 10px; border-radius: 10px; margin-bottom: 10px;
+    }
+    .feature-body h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+    .feature-body p { font-size: 0.9rem; color: var(--text-light); }
+
+    /* ===== Temps réel ===== */
+    .realtime-block {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+      border-radius: var(--radius); padding: 40px 32px; color: #fff;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center;
+      box-shadow: var(--shadow-lg);
+    }
+    .realtime-block h3 { font-size: 1.35rem; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.3px; }
+    .realtime-block p { color: #bbb; font-size: 0.95rem; margin-bottom: 10px; }
+    .realtime-block .realtime-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(76,175,80,0.15); color: #81c784;
+      padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .realtime-block .realtime-pill .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #4caf50; animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+    .realtime-block .web-badge {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px; padding: 18px 20px;
+    }
+    .realtime-block .web-badge strong { display: block; color: #fff; margin-bottom: 6px; font-size: 0.95rem; }
+    .realtime-block .web-badge p { color: #aaa; font-size: 0.85rem; margin: 0; }
+
+    /* ===== Étapes ===== */
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; counter-reset: step; }
+    .step {
+      position: relative; background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px 22px 22px; box-shadow: var(--shadow);
+    }
+    .step::before {
+      counter-increment: step; content: counter(step); position: absolute;
+      top: -18px; left: 22px; width: 36px; height: 36px; border-radius: 50%;
+      background: var(--red); color: #fff; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.95rem; box-shadow: 0 4px 10px rgba(230,0,0,0.25);
+    }
+    .step h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .step p { font-size: 0.9rem; color: var(--text-light); }
+
+    /* ===== Tarifs ===== */
+    .pricing { max-width: 560px; margin: 0 auto; }
+    .pricing-card {
+      background: #fff; border: 2px solid var(--red); border-radius: 16px;
+      padding: 36px 32px; box-shadow: var(--shadow-lg); position: relative; overflow: hidden;
+    }
+    .pricing-card .pricing-badge {
+      position: absolute; top: 20px; right: -34px; background: var(--red); color: #fff;
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+      padding: 6px 42px; transform: rotate(35deg);
+    }
+    .pricing-card h3 { font-size: 1.25rem; font-weight: 800; margin-bottom: 6px; }
+    .pricing-card .pricing-sub { color: var(--text-light); font-size: 0.9rem; margin-bottom: 24px; }
+    .pricing-card .price-main {
+      display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px;
+    }
+    .pricing-card .price-main .price-amount { font-size: 2.8rem; font-weight: 800; color: var(--red); letter-spacing: -1px; }
+    .pricing-card .price-main .price-period { color: var(--text-light); font-size: 1rem; }
+    .pricing-card .price-note {
+      font-size: 0.85rem; color: var(--text-light); margin-bottom: 24px;
+      padding-bottom: 20px; border-bottom: 1px solid #f0f0f0;
+    }
+    .pricing-card .price-year {
+      background: #f9f9f9; border-radius: 10px; padding: 16px 20px; margin-bottom: 24px;
+    }
+    .pricing-card .price-year .price-year-title {
+      font-size: 0.8rem; font-weight: 700; color: var(--ok); text-transform: uppercase;
+      letter-spacing: 0.4px; margin-bottom: 4px;
+    }
+    .pricing-card .price-year .price-year-amount { font-size: 1.3rem; font-weight: 800; color: var(--text); }
+    .pricing-card .price-year .price-year-amount .strike {
+      text-decoration: line-through; color: #bbb; font-weight: 500; font-size: 1rem; margin-right: 8px;
+    }
+    .pricing-card .price-year .price-year-note { font-size: 0.82rem; color: var(--text-light); margin-top: 4px; }
+    .pricing-card ul.pricing-features {
+      list-style: none; margin-bottom: 28px; padding: 0;
+    }
+    .pricing-card ul.pricing-features li {
+      padding: 6px 0; font-size: 0.9rem; display: flex; align-items: flex-start; gap: 10px;
+    }
+    .pricing-card ul.pricing-features li::before {
+      content: '✓'; color: var(--ok); font-weight: 800; flex-shrink: 0;
+    }
+    .pricing-card .pricing-actions { display: flex; flex-direction: column; gap: 10px; }
+    .pricing-card .btn { justify-content: center; width: 100%; }
+    .pricing-card .btn-pdf {
+      background: transparent; color: var(--text); border: 1.5px solid var(--border);
+      font-size: 0.88rem; padding: 11px 20px;
+    }
+    .pricing-card .btn-pdf:hover { background: #f5f5f5; border-color: #bbb; }
+
+    /* ===== CTA final ===== */
+    .cta-banner {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+      color: #fff; border-radius: var(--radius); padding: 48px 32px;
+      text-align: center; box-shadow: var(--shadow-lg);
+    }
+    .cta-banner h2 {
+      font-size: clamp(1.3rem, 2.4vw, 1.7rem); font-weight: 800;
+      margin-bottom: 12px; letter-spacing: -0.3px;
+    }
+    .cta-banner p { color: #bbb; max-width: 560px; margin: 0 auto 26px; font-size: 0.98rem; }
+    .cta-banner .btn-primary { background: var(--red); }
+    .cta-banner .btn-primary:hover { background: #ff1a1a; }
+
+    /* ===== Démo card ===== */
+    .demo-card {
+      background: #fff; border: 2px dashed var(--red); border-radius: var(--radius);
+      padding: 32px; text-align: center; box-shadow: var(--shadow);
+    }
+    .demo-card .demo-tag {
+      display: inline-block; background: #fff0f0; color: var(--red);
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.5px;
+      text-transform: uppercase; padding: 4px 12px; border-radius: 12px; margin-bottom: 14px;
+    }
+    .demo-card h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 10px; }
+    .demo-card p { color: var(--text-light); max-width: 560px; margin: 0 auto 22px; font-size: 0.92rem; }
+
+    /* ===== Footer ===== */
+    footer {
+      padding: 32px 0 40px; text-align: center; color: #999;
+      font-size: 0.8rem; border-top: 1px solid #eee; margin-top: 40px;
+    }
+    footer .footer-brand {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--text-light); font-weight: 600; margin-bottom: 10px;
+      text-decoration: none; font-size: 0.9rem;
+    }
+    footer .footer-brand img { height: 20px; }
+    footer .copyright { margin-top: 8px; }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 800px) {
+      .realtime-block { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 720px) {
+      .topbar-links a:not(.btn-cta) { display: none; }
+      .hero { padding: 52px 0 44px; }
+      section.block { padding: 48px 0; }
+      .trust-logos { gap: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== Topbar ===== -->
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a href="#top" class="topbar-brand">
+        <img src="./images/logo-thot.png" alt="Thot" onerror="this.style.display='none';">
+        <span>Thot</span>
+      </a>
+      <nav class="topbar-links">
+        <a href="#benefices">Bénéfices</a>
+        <a href="#fonctionnalites">Fonctionnalités</a>
+        <a href="#tarifs">Tarifs</a>
+        <a href="#contact" class="btn-cta">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===== Hero ===== -->
+  <section class="hero" id="top">
+    <div class="container">
+      <span class="hero-badge">Gestion d'inventaires & parc auto</span>
+      <h1>Le matériel de secours,<br><span>toujours prêt, toujours suivi.</span></h1>
+      <p class="subtitle">
+        Thot centralise vos inventaires, vos véhicules et vos contrôles dans une interface
+        simple, pensée pour le terrain. Conçu à partir de la solution utilisée
+        à la Croix-Rouge française, adaptable à votre organisation.
+      </p>
+      <div class="hero-cta">
+        <a href="#tarifs" class="btn btn-primary">Voir les tarifs</a>
+        <a href="#fonctionnalites" class="btn btn-ghost">Découvrir les fonctionnalités</a>
+      </div>
+
+      <div class="hero-preview">
+        <img src="./images/apercu-tableau-de-bord.png"
+             alt="Aperçu du tableau de bord Thot"
+             onerror="this.parentElement.style.display='none';">
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Bandeau de confiance ===== -->
+  <section class="trust-banner">
+    <div class="container">
+      <div class="trust-inner">
+        <p class="trust-title">Ils nous font confiance</p>
+        <div class="trust-logos">
+          <div class="trust-item">
+            <img src="./images/logo-crf.png" alt="Croix-Rouge française"
+                 onerror="this.outerHTML='<span class=\'placeholder-logo\'>CRF</span>';">
+            <span>Croix-Rouge française</span>
+          </div>
+          <!-- Ajoutez ici d'autres organisations au fur et à mesure :
+          <div class="trust-item">
+            <img src="./images/logo-xxx.png" alt="Nom organisation" onerror="...">
+            <span>Nom organisation</span>
+          </div>
+          -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Bénéfices ===== -->
+  <section class="block" id="benefices">
+    <div class="container">
+      <div class="section-head">
+        <h2>Pourquoi Thot&nbsp;?</h2>
+        <p>Parce qu'un inventaire à jour, c'est un matériel fiable le jour de l'intervention.</p>
+      </div>
+      <div class="benefits">
+        <div class="benefit">
+          <div class="icon">⏱️</div>
+          <h3>Gagnez du temps</h3>
+          <p>Fini les tableaux papier et les doubles saisies. Tout se fait depuis un seul écran, y compris sur le terrain.</p>
+        </div>
+        <div class="benefit">
+          <div class="icon">🛡️</div>
+          <h3>Ne ratez plus aucune alerte</h3>
+          <p>Péremptions, objets manquants, incidents, contrôles techniques&nbsp;: Thot vous prévient avant qu'il ne soit trop tard.</p>
+        </div>
+        <div class="benefit">
+          <div class="icon">🚑</div>
+          <h3>Inventaires &amp; parc auto</h3>
+          <p>Bien plus que des inventaires&nbsp;: véhicules, désinfections, incidents et rendez-vous d'entretien au même endroit.</p>
+        </div>
+        <div class="benefit">
+          <div class="icon">📱</div>
+          <h3>Accès partout</h3>
+          <p>Un QR Code sur un tiroir ou un véhicule, et vous accédez à sa fiche en un scan.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Fonctionnalités ===== -->
+  <section class="block" id="fonctionnalites">
+    <div class="container">
+      <div class="section-head">
+        <h2>Les fonctionnalités clés</h2>
+        <p>Un outil complet, conçu pour les structures de secours et d'intervention.</p>
+      </div>
+      <div class="features">
+
+        <article class="feature">
+          <div class="feature-img">
+            <img src="./images/apercu-inventaires.png" alt="Gestion des inventaires"
+                 onerror="this.parentElement.style.background='linear-gradient(135deg,#fff0f0,#ffe5e5)';">
+          </div>
+          <div class="feature-body">
+            <span class="tag">Inventaires</span>
+            <h3>Inventaires hiérarchisés</h3>
+            <p>Organisez vos inventaires en catégories et sous-catégories, avec quantités et dates de péremption.</p>
+          </div>
+        </article>
+
+        <article class="feature">
+          <div class="feature-img">
+            <img src="./images/apercu-verification.png" alt="Vérification des objets"
+                 onerror="this.parentElement.style.background='linear-gradient(135deg,#fff0f0,#ffe5e5)';">
+          </div>
+          <div class="feature-body">
+            <span class="tag">Vérification</span>
+            <h3>Vérification guidée</h3>
+            <p>Cochez chaque objet, signalez les objets manquants, mettez à jour les dates&nbsp;: tout est tracé.</p>
+          </div>
+        </article>
+
+        <article class="feature">
+          <div class="feature-img">
+            <img src="./images/apercu-alertes.png" alt="Alertes et péremptions"
+                 onerror="this.parentElement.style.background='linear-gradient(135deg,#fff0f0,#ffe5e5)';">
+          </div>
+          <div class="feature-body">
+            <span class="tag">Alertes</span>
+            <h3>Alertes de péremption</h3>
+            <p>Visualisez immédiatement les objets périmés ou proches de l'être, tous inventaires confondus.</p>
+          </div>
+        </article>
+
+        <article class="feature">
+          <div class="feature-img">
+            <img src="./images/apercu-parc-auto.png" alt="Parc automobile"
+                 onerror="this.parentElement.style.background='linear-gradient(135deg,#fff0f0,#ffe5e5)';">
+          </div>
+          <div class="feature-body">
+            <span class="tag">Parc auto</span>
+            <h3>Véhicules, désinfections, rendez-vous</h3>
+            <p>Assurance, contrôle technique, désinfection, incidents et entretiens&nbsp;: tout le parc suivi, véhicule par véhicule.</p>
+          </div>
+        </article>
+
+        <article class="feature">
+          <div class="feature-img">
+            <img src="./images/apercu-utilisation.png" alt="Suivi de l'utilisation"
+                 onerror="this.parentElement.style.background='linear-gradient(135deg,#fff0f0,#ffe5e5)';">
+          </div>
+          <div class="feature-body">
+            <span class="tag">Utilisation</span>
+            <h3>Matériel utilisé &amp; réarmement</h3>
+            <p>Enregistrez le matériel sorti, puis réarmez les inventaires en un clic, avec marquage des objets manquants.</p>
+          </div>
+        </article>
+
+        <article class="feature">
+          <div class="feature-img">
+            <img src="./images/apercu-qrcode.png" alt="QR Codes"
+                 onerror="this.parentElement.style.background='linear-gradient(135deg,#fff0f0,#ffe5e5)';">
+          </div>
+          <div class="feature-body">
+            <span class="tag">QR Code</span>
+            <h3>Accès par QR Code</h3>
+            <p>Un QR Code par tiroir, par sac, par véhicule. Scannez, accédez, agissez.</p>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Temps réel + Web ===== -->
+  <section class="block">
+    <div class="container">
+      <div class="realtime-block">
+        <div>
+          <div class="realtime-pill"><span class="dot"></span> Synchronisation temps réel</div>
+          <h3>Plusieurs personnes, un seul inventaire, en même temps.</h3>
+          <p>L'ensemble de l'application fonctionne en temps réel&nbsp;: plusieurs bénévoles peuvent réaliser le même inventaire, en simultané, depuis plusieurs appareils différents.</p>
+          <p>Chaque action est immédiatement visible par les autres utilisateurs connectés. Fini les conflits de version et les doubles saisies.</p>
+        </div>
+        <div class="web-badge">
+          <strong>💻 100&nbsp;% web, zéro installation</strong>
+          <p>Thot est une application web&nbsp;: aucun téléchargement, aucune mise à jour à gérer, aucune application à installer sur les appareils de vos utilisateurs. Un simple navigateur suffit, sur ordinateur, tablette ou smartphone (IOS comme Android).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Étapes ===== -->
+  <section class="block" id="utilisation">
+    <div class="container">
+      <div class="section-head">
+        <h2>Comment ça marche&nbsp;?</h2>
+        <p>Trois étapes simples, du paramétrage à l'usage quotidien.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <h3>1. Paramétrez</h3>
+          <p>Créez vos inventaires, importez vos objets, définissez vos rôles et vos fréquences de contrôle.</p>
+        </div>
+        <div class="step">
+          <h3>2. Vérifiez</h3>
+          <p>Vos équipes réalisent les inventaires depuis un téléphone, une tablette ou un ordinateur.</p>
+        </div>
+        <div class="step">
+          <h3>3. Pilotez</h3>
+          <p>Le tableau de bord remonte les alertes&nbsp;: péremptions, objets manquants, incidents, entretiens à venir.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Tarifs ===== -->
+  <section class="block" id="tarifs">
+    <div class="container">
+      <div class="section-head">
+        <h2>Un tarif clair, sans surprise</h2>
+        <p>Un prix fixe, quelle que soit la taille de votre structure.</p>
+      </div>
+      <div class="pricing">
+        <div class="pricing-card">
+          <span class="pricing-badge">Tout inclus</span>
+          <h3>Thot — Offre complète</h3>
+          <p class="pricing-sub">L'application entière, adaptée à vos besoins.</p>
+
+          <div class="price-main">
+            <span class="price-amount">27&nbsp;€</span>
+            <span class="price-period">/ mois</span>
+          </div>
+          <p class="price-note">Un prix unique, quel que soit le nombre d'utilisateurs, d'administrateurs, d'inventaires ou de véhicules dans votre flotte.</p>
+
+          <div class="price-year">
+            <div class="price-year-title">Offre annuelle — −20&nbsp;%</div>
+            <div class="price-year-amount"><span class="strike">324&nbsp;€</span> 250&nbsp;€ / an</div>
+            <div class="price-year-note">Soit l'équivalent de 2,7 mois offerts, répartis sur l'année.</div>
+          </div>
+
+          <ul class="pricing-features">
+            <li>Nombre d'utilisateurs illimité</li>
+            <li>Nombre d'administrateurs illimité</li>
+            <li>Inventaires illimités</li>
+            <li>Véhicules illimités dans votre flotte</li>
+            <li>Synchronisation temps réel multi-appareils</li>
+            <li>Accès 100&nbsp;% web, sans installation</li>
+            <li>Adaptation à vos besoins incluse</li>
+          </ul>
+
+          <div class="pricing-actions">
+            <a href="mailto:anaelmaire.pro@gmail.com?subject=Demande%20d'informations%20Thot"
+               class="btn btn-primary">Demander des informations</a>
+            <a href="mailto:anaelmaire.pro@gmail.com?subject=Demande%20de%20devis%20Thot"
+               class="btn btn-primary" style="background:#1a1a1a;">Demander un devis</a>
+            <a href="./devis.pdf" download class="btn btn-pdf">📄 Télécharger un devis d'exemple</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Démo / Maquette ===== -->
+  <section class="block">
+    <div class="container">
+      <div class="demo-card">
+        <span class="demo-tag">Maquette d'exemple</span>
+        <h3>Essayez Thot dès maintenant</h3>
+        <p>
+          Une version de démonstration est disponible en ligne&nbsp;: données fictives,
+          aucun compte requis, aucune installation. Explorez librement l'ensemble des
+          fonctionnalités, en tant qu'utilisateur ou administrateur.
+        </p>
+        <div class="hero-cta">
+          <a href="../login.html" class="btn btn-primary">Accéder à la maquette d'exemple</a>
+          <a href="./maquette.pdf" download class="btn btn-ghost">📘 Télécharger la maquette (PDF)</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA final ===== -->
+  <section class="block" id="contact">
+    <div class="container">
+      <div class="cta-banner">
+        <h2>Prêt à moderniser vos inventaires&nbsp;?</h2>
+        <p>
+          Thot s'adapte à votre structure&nbsp;: association, SDIS, entreprise de transport sanitaire,
+          protection civile, ou tout autre acteur du secours.
+          Contactez-nous pour obtenir des informations ou un devis personnalisé.
+        </p>
+        <div class="hero-cta">
+          <a href="mailto:anaelmaire.pro@gmail.com?subject=Demande%20d'informations%20Thot"
+             class="btn btn-primary">Demander des informations</a>
+          <a href="mailto:anaelmaire.pro@gmail.com?subject=Demande%20de%20devis%20Thot"
+             class="btn btn-ghost" style="background:transparent;color:#fff;border-color:#555;">Demander un devis</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer>
+    <div class="container">
+      <a href="#top" class="footer-brand">
+        <img src="./images/logo-thot.png" alt="Thot" onerror="this.style.display='none';">
+        <span>Thot</span>
+      </a>
+      <div class="copyright">©2026 Thot — Tous droits réservés</div>
+    </div>
+  </footer>
+
+</body>
+</html>
