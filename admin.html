@@ -19,263 +19,125 @@
       --danger: #e60000;
       --ok: #4caf50;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      padding: 16px;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; display: flex; justify-content: center; padding: 16px;
     }
-
-    .container {
-      width: 100%;
-      max-width: 800px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
+    .container { width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: 16px; }
     .identity-bar {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px;
-      box-shadow: var(--shadow);
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 14px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px; box-shadow: var(--shadow);
     }
-
-    .identity-info {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 12px;
-      font-size: 0.95rem;
-    }
-
+    .identity-info { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; font-size: 0.95rem; }
     .avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: var(--red);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 1.2rem;
-      flex-shrink: 0;
+      width: 44px; height: 44px; border-radius: 50%; background: var(--red);
+      color: #fff; display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 1.2rem; flex-shrink: 0;
     }
-
     .identity-text .name { font-weight: 600; }
     .identity-text .details { color: var(--text-light); font-size: 0.85rem; }
-
     .header-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
-
     .btn-logout {
-      background: transparent;
-      color: var(--red);
-      border: 1.5px solid var(--red);
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 0.9rem;
-      transition: all 0.2s;
-      white-space: nowrap;
+      background: transparent; color: var(--red); border: 1.5px solid var(--red);
+      padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600;
+      font-size: 0.9rem; transition: all 0.2s; white-space: nowrap;
     }
     .btn-logout:hover { background: var(--red); color: #fff; }
-
     .btn-inventory {
-      background: var(--red);
-      color: #fff;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 0.9rem;
-      transition: all 0.2s;
-      white-space: nowrap;
+      background: var(--red); color: #fff; border: none; padding: 8px 16px;
+      border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem;
+      transition: all 0.2s; white-space: nowrap;
     }
     .btn-inventory:hover { background: var(--red-hover); }
-
     .section {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;
     }
-
     .section-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 18px;
-      background: #fafafa;
-      border-bottom: 1px solid var(--border);
-      flex-wrap: wrap;
-      gap: 10px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 18px; background: #fafafa; border-bottom: 1px solid var(--border);
+      flex-wrap: wrap; gap: 10px;
     }
-
     .section-header h2 { font-size: 1rem; font-weight: 600; }
-
     .badge {
-      background: var(--red);
-      color: #fff;
-      border-radius: 20px;
-      padding: 3px 10px;
-      font-size: 0.8rem;
-      font-weight: 600;
+      background: var(--red); color: #fff; border-radius: 20px;
+      padding: 3px 10px; font-size: 0.8rem; font-weight: 600;
     }
     .badge.warning { background: var(--warning); }
     .badge.danger { background: var(--danger); }
     .badge.ok { background: var(--ok); }
-
     .actions { display: flex; gap: 8px; flex-wrap: wrap; }
-
     .btn-sm {
-      background: transparent;
-      border: 1.5px solid #ccc;
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      transition: all 0.2s;
-      white-space: nowrap;
+      background: transparent; border: 1.5px solid #ccc; padding: 6px 12px;
+      border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+      transition: all 0.2s; white-space: nowrap;
     }
     .btn-sm:hover { background: #eee; border-color: #aaa; }
     .btn-sm.add { border-color: var(--red); color: var(--red); }
     .btn-sm.add:hover { background: var(--red); color: #fff; }
-
     .list { list-style: none; }
-
     .list-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 18px;
-      border-bottom: 1px solid #f0f0f0;
-      flex-wrap: wrap;
-      gap: 10px;
-      cursor: pointer;
-      transition: background 0.15s;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 18px; border-bottom: 1px solid #f0f0f0;
+      flex-wrap: wrap; gap: 10px; cursor: pointer; transition: background 0.15s;
     }
     .list-item:hover { background: #fafafa; }
     .list-item:last-child { border-bottom: none; }
-
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 0;
-      flex: 1;
-    }
-
+    .user-info { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
     .user-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: #eee;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      font-size: 0.9rem;
-      flex-shrink: 0;
-      color: #666;
+      width: 36px; height: 36px; border-radius: 50%; background: #eee;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 0.9rem; flex-shrink: 0; color: #666;
     }
     .user-avatar.danger { background: #fff0f0; color: var(--danger); }
     .user-avatar.warning { background: #fff8f0; color: var(--warning); }
     .user-avatar.ok { background: #e8f5e9; color: var(--ok); }
-
     .user-name { font-weight: 600; font-size: 0.95rem; }
     .user-nivol { color: var(--text-light); font-size: 0.8rem; }
-
     .user-func {
-      font-size: 0.8rem;
-      background: #f0f0f0;
-      padding: 2px 8px;
-      border-radius: 10px;
-      color: #555;
-      white-space: nowrap;
+      font-size: 0.8rem; background: #f0f0f0; padding: 2px 8px;
+      border-radius: 10px; color: #555; white-space: nowrap;
     }
     .user-func.danger { background: #fff0f0; color: var(--danger); }
     .user-func.warning { background: #fff8f0; color: var(--warning); }
     .user-func.ok { background: #e8f5e9; color: var(--ok); }
-
     .item-actions { display: flex; gap: 6px; flex-shrink: 0; }
-
     .btn-icon {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 1.1rem;
-      padding: 4px 8px;
-      border-radius: 6px;
-      transition: background 0.2s;
+      background: none; border: none; cursor: pointer; font-size: 1.1rem;
+      padding: 4px 8px; border-radius: 6px; transition: background 0.2s;
     }
     .btn-icon:hover { background: #f0f0f0; }
     .btn-icon.delete:hover { color: var(--red); background: #fff0f0; }
-
     .show-more {
-      padding: 10px 18px;
-      text-align: center;
-      color: var(--red);
-      font-weight: 600;
-      font-size: 0.9rem;
-      cursor: pointer;
-      border-top: 1px solid #f0f0f0;
-      transition: background 0.2s;
+      padding: 10px 18px; text-align: center; color: var(--red);
+      font-weight: 600; font-size: 0.9rem; cursor: pointer;
+      border-top: 1px solid #f0f0f0; transition: background 0.2s;
     }
     .show-more:hover { background: #fafafa; }
-
     .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      padding: 16px;
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000; padding: 16px;
     }
-
     .modal {
-      background: #fff;
-      border-radius: var(--radius);
-      padding: 24px;
-      width: 100%;
-      max-width: 420px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+      background: #fff; border-radius: var(--radius); padding: 24px;
+      width: 100%; max-width: 420px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      display: flex; flex-direction: column; gap: 14px;
     }
     .modal h3 { font-size: 1.1rem; }
     .modal input {
-      width: 100%;
-      padding: 10px;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      font-size: 0.95rem;
+      width: 100%; padding: 10px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-size: 0.95rem;
     }
     .modal .modal-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
-
     .btn { padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
     .btn-cancel { background: #eee; color: #333; }
     .btn-save { background: var(--red); color: #fff; }
     .btn-danger { background: #c00; color: #fff; }
-
     @media (max-width: 480px) {
       .identity-bar { flex-direction: column; align-items: flex-start; }
       .header-buttons { width: 100%; justify-content: flex-end; }
@@ -300,36 +162,30 @@
       </div>
     </div>
 
-    <!-- Périmés -->
     <div class="section">
       <div class="section-header">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <h2>Périmés</h2>
-          <span class="badge danger" id="expired-count">0</span>
+          <h2>Périmés</h2><span class="badge danger" id="expired-count">0</span>
         </div>
       </div>
       <ul class="list" id="expired-list"></ul>
       <div class="show-more" id="expired-show-more" style="display:none;">Afficher plus</div>
     </div>
 
-    <!-- Manquants -->
     <div class="section">
       <div class="section-header">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <h2>Manquants</h2>
-          <span class="badge warning" id="missing-count">0</span>
+          <h2>Manquants</h2><span class="badge warning" id="missing-count">0</span>
         </div>
       </div>
       <ul class="list" id="missing-list"></ul>
       <div class="show-more" id="missing-show-more" style="display:none;">Afficher plus</div>
     </div>
 
-    <!-- Inventaires -->
     <div class="section">
       <div class="section-header">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <h2>Inventaires</h2>
-          <span class="badge" id="inventory-count">0</span>
+          <h2>Inventaires</h2><span class="badge" id="inventory-count">0</span>
         </div>
         <div class="actions" id="inventory-actions">
           <button class="btn-sm" id="btn-manage-inventory">Modifier les inventaires</button>
@@ -339,36 +195,30 @@
       <div class="show-more" id="inventory-show-more" style="display:none;">Afficher plus</div>
     </div>
 
-    <!-- Incidents -->
     <div class="section">
       <div class="section-header">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <h2>Incidents</h2>
-          <span class="badge warning" id="incident-count">0</span>
+          <h2>Incidents</h2><span class="badge warning" id="incident-count">0</span>
         </div>
       </div>
       <ul class="list" id="incident-list"></ul>
       <div class="show-more" id="incident-show-more" style="display:none;">Afficher plus</div>
     </div>
 
-    <!-- Alertes Automobiles -->
     <div class="section">
       <div class="section-header">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <h2>Alertes Automobiles</h2>
-          <span class="badge danger" id="auto-alert-count">0</span>
+          <h2>Alertes Automobiles</h2><span class="badge danger" id="auto-alert-count">0</span>
         </div>
       </div>
       <ul class="list" id="auto-alert-list"></ul>
       <div class="show-more" id="auto-alert-show-more" style="display:none;">Afficher plus</div>
     </div>
 
-    <!-- Parc Automobile -->
     <div class="section">
       <div class="section-header">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <h2>Parc Automobile</h2>
-          <span class="badge" id="vehicle-count">0</span>
+          <h2>Parc Automobile</h2><span class="badge" id="vehicle-count">0</span>
         </div>
         <div class="actions" id="vehicle-actions">
           <button class="btn-sm" id="btn-manage-vehicles">Gérer les véhicules</button>
@@ -378,12 +228,10 @@
       <div class="show-more" id="vehicle-show-more" style="display:none;">Afficher plus</div>
     </div>
 
-    <!-- Administrateurs -->
     <div class="section">
       <div class="section-header">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <h2>Administrateurs</h2>
-          <span class="badge" id="admin-count">0</span>
+          <h2>Administrateurs</h2><span class="badge" id="admin-count">0</span>
         </div>
         <div class="actions" id="admin-actions"></div>
       </div>
@@ -391,12 +239,10 @@
       <div class="show-more" id="admin-show-more" style="display:none;">Afficher plus</div>
     </div>
 
-    <!-- Bénévoles -->
     <div class="section">
       <div class="section-header">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <h2>Bénévoles</h2>
-          <span class="badge" id="user-count">0</span>
+          <h2>Bénévoles</h2><span class="badge" id="user-count">0</span>
         </div>
         <div class="actions" id="user-actions"></div>
       </div>
@@ -409,29 +255,32 @@
     <div class="modal" id="modal-content"></div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, deleteUser } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, collection, getDocs, setDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyA1V3UybXWyyMmO9fBH7jhuVUSFL3mDBPo",
-      authDomain: "crf--thot.firebaseapp.com",
-      projectId: "crf--thot",
-      storageBucket: "crf--thot.firebasestorage.app",
-      messagingSenderId: "242106713414",
-      appId: "1:242106713414:web:76f4c6977264539ef85147",
-      measurementId: "G-NF6W8FS69P"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
+  <script>
+    /* ============================================================
+       VERSION DÉMO — pas de Firebase.
+       Clés localStorage :
+         thot_demo_db    → base JSON complète
+         thot_demo_user  → { nivol, role, loggedAt }
+       ============================================================ */
+    const DB_KEY = 'thot_demo_db';
+    const USER_KEY = 'thot_demo_user';
     const HIERARCHY = ['Géniteur', 'PUL', 'DLUS', 'MOT', 'Adjoint Urgence'];
     const ITEMS_PER_PAGE = 2;
 
-    // ---- Hiérarchie ----
+    // ---- Base locale ----
+    function readDb() {
+      const raw = localStorage.getItem(DB_KEY);
+      if (!raw) return null;
+      try { return JSON.parse(raw); } catch { return null; }
+    }
+    function saveDb(db) { localStorage.setItem(DB_KEY, JSON.stringify(db)); }
+    function readUser() {
+      const raw = localStorage.getItem(USER_KEY);
+      if (!raw) return null;
+      try { return JSON.parse(raw); } catch { return null; }
+    }
+
+    // ---- Hiérarchie (inchangée) ----
     function getHierarchyLevel(fonction) {
       const idx = HIERARCHY.indexOf(fonction);
       return idx === -1 ? HIERARCHY.length : idx;
@@ -446,7 +295,7 @@
       return isAboveOrEqual(myFonc, functionToAssign);
     }
 
-    // ---- Dates ----
+    // ---- Dates / helpers métier (inchangés) ----
     function getDateStatus(dateStr) {
       if (!dateStr) return null;
       const now = new Date();
@@ -471,6 +320,23 @@
       if (match) return { nom: match[1].trim(), categorie: match[2].trim() };
       return { nom: entry.trim(), categorie: 'Inconnue' };
     }
+    function getLastTotalDisinfection(v) {
+      const history = v.ddh || [];
+      let last = null;
+      history.forEach(h => {
+        if (h.type === 'total') {
+          if (!last || new Date(h.date) > new Date(last.date)) last = h;
+        }
+      });
+      return last;
+    }
+    function getNextCleanDate(lastDate, freqDays) {
+      if (!lastDate || !freqDays) return null;
+      const last = new Date(lastDate);
+      const next = new Date(last);
+      next.setDate(next.getDate() + parseInt(freqDays));
+      return next.toISOString();
+    }
 
     // ---- État ----
     let currentAdmin = null;
@@ -482,85 +348,66 @@
     let autoAlertShowAll = false, vehicleShowAll = false;
 
     // ---- DOM ----
-    const avatarInitial = document.getElementById('avatar-initial');
-    const identityName = document.getElementById('identity-name');
-    const identityDetails = document.getElementById('identity-details');
-    const adminCount = document.getElementById('admin-count');
-    const userCount = document.getElementById('user-count');
-    const inventoryCount = document.getElementById('inventory-count');
-    const expiredCount = document.getElementById('expired-count');
-    const missingCount = document.getElementById('missing-count');
-    const incidentCount = document.getElementById('incident-count');
-    const autoAlertCount = document.getElementById('auto-alert-count');
-    const vehicleCount = document.getElementById('vehicle-count');
-    const adminList = document.getElementById('admin-list');
-    const userList = document.getElementById('user-list');
-    const inventoryList = document.getElementById('inventory-list');
-    const expiredList = document.getElementById('expired-list');
-    const missingList = document.getElementById('missing-list');
-    const incidentList = document.getElementById('incident-list');
-    const autoAlertList = document.getElementById('auto-alert-list');
-    const vehicleList = document.getElementById('vehicle-list');
-    const adminActions = document.getElementById('admin-actions');
-    const userActions = document.getElementById('user-actions');
-    const adminShowMore = document.getElementById('admin-show-more');
-    const userShowMore = document.getElementById('user-show-more');
-    const inventoryShowMore = document.getElementById('inventory-show-more');
-    const expiredShowMore = document.getElementById('expired-show-more');
-    const missingShowMore = document.getElementById('missing-show-more');
-    const incidentShowMore = document.getElementById('incident-show-more');
-    const autoAlertShowMore = document.getElementById('auto-alert-show-more');
-    const vehicleShowMore = document.getElementById('vehicle-show-more');
-    const modalOverlay = document.getElementById('modal-overlay');
-    const modalContent = document.getElementById('modal-content');
+    const $ = id => document.getElementById(id);
+    const avatarInitial = $('avatar-initial'), identityName = $('identity-name'), identityDetails = $('identity-details');
+    const adminCount = $('admin-count'), userCount = $('user-count'), inventoryCount = $('inventory-count');
+    const expiredCount = $('expired-count'), missingCount = $('missing-count'), incidentCount = $('incident-count');
+    const autoAlertCount = $('auto-alert-count'), vehicleCount = $('vehicle-count');
+    const adminList = $('admin-list'), userList = $('user-list'), inventoryList = $('inventory-list');
+    const expiredList = $('expired-list'), missingList = $('missing-list'), incidentList = $('incident-list');
+    const autoAlertList = $('auto-alert-list'), vehicleList = $('vehicle-list');
+    const adminActions = $('admin-actions'), userActions = $('user-actions');
+    const adminShowMore = $('admin-show-more'), userShowMore = $('user-show-more');
+    const inventoryShowMore = $('inventory-show-more'), expiredShowMore = $('expired-show-more');
+    const missingShowMore = $('missing-show-more'), incidentShowMore = $('incident-show-more');
+    const autoAlertShowMore = $('auto-alert-show-more'), vehicleShowMore = $('vehicle-show-more');
+    const modalOverlay = $('modal-overlay'), modalContent = $('modal-content');
 
-    // ---- Auth ----
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) { window.location.href = './login.html'; return; }
-      const nivol = user.displayName;
-      if (!nivol) { await deleteUser(user).catch(() => {}); window.location.href = './login.html'; return; }
-
-      try {
-        const adminSnap = await getDoc(doc(db, 'A', nivol));
-        if (!adminSnap.exists()) {
-          await deleteUser(user).catch(() => {});
-          window.location.href = './login.html';
-          return;
-        }
-        currentAdmin = {
-          nivol,
-          nom: adminSnap.data().I || 'Inconnu',
-          fonction: adminSnap.data().F || ''
-        };
-        const initial = (currentAdmin.nom.charAt(0) || '?').toUpperCase();
-        avatarInitial.textContent = initial;
-        identityName.textContent = currentAdmin.nom;
-        identityDetails.textContent = `NIVOL : ${currentAdmin.nivol}${currentAdmin.fonction ? ' - ' + currentAdmin.fonction : ''}`;
-        await loadAllData();
-      } catch (err) {
-        console.error(err);
-        if (auth.currentUser) await deleteUser(auth.currentUser).catch(() => {});
-        window.location.href = './login.html';
+    // ---- Init (remplace onAuthStateChanged) ----
+    function init() {
+      const db = readDb();
+      if (!db) {
+        window.location.href = './login.html?redirect=' + encodeURIComponent('./admin.html');
+        return;
       }
-    });
+      const u = readUser();
+      const nivol = (u && u.nivol) ? u.nivol : 'DEMO00000000';
 
-    document.getElementById('logout-btn').addEventListener('click', async () => {
-      const user = auth.currentUser;
-      if (user) { await deleteUser(user).catch(() => {}); window.location.href = './login.html'; }
-    });
-    document.getElementById('inventory-btn').addEventListener('click', () => { window.location.href = './inventaire'; });
-    document.getElementById('btn-manage-inventory').addEventListener('click', () => { window.location.href = './inventaire/admin.html'; });
-    document.getElementById('btn-manage-vehicles').addEventListener('click', () => { window.location.href = './parc-auto/admin.html'; });
+      // Recherche dans A
+      const aEntry = (db.A && db.A[nivol]) || null;
+      if (aEntry) {
+        currentAdmin = { nivol, nom: aEntry.I || 'Administrateur', fonction: aEntry.F || '' };
+      } else {
+        // Fallback démo : on s'accorde tous les droits pour pouvoir tester
+        currentAdmin = { nivol, nom: 'Administrateur démo', fonction: 'Dieu' };
+      }
 
-    // ---- Chargement global ----
-    async function loadAllData() {
+      const initial = (currentAdmin.nom.charAt(0) || '?').toUpperCase();
+      avatarInitial.textContent = initial;
+      identityName.textContent = currentAdmin.nom;
+      identityDetails.textContent = 'NIVOL : ' + currentAdmin.nivol + (currentAdmin.fonction ? ' - ' + currentAdmin.fonction : '');
+
+      loadAllData();
+    }
+
+    $('logout-btn').addEventListener('click', () => {
+      localStorage.removeItem(USER_KEY);
+      window.location.href = './login.html';
+    });
+    $('inventory-btn').addEventListener('click', () => { window.location.href = './inventaire'; });
+    $('btn-manage-inventory').addEventListener('click', () => { window.location.href = './inventaire/admin.html'; });
+    $('btn-manage-vehicles').addEventListener('click', () => { window.location.href = './parc-auto/admin.html'; });
+
+    // ---- Chargement global depuis le JSON local ----
+    function loadAllData() {
+      const db = readDb();
+      if (!db) return;
+
       // === Inventaires ===
-      const invSnap = await getDocs(collection(db, 'I'));
       inventories = []; expiredItems = []; missingItems = [];
-
-      invSnap.forEach(docSnap => {
-        const data = docSnap.data();
-        const invId = docSnap.id;
+      const I = db.I || {};
+      Object.keys(I).forEach(invId => {
+        const data = I[invId] || {};
         const invName = data.nom || invId;
         const lastVerif = getLastVerificationDate(data);
         inventories.push({ id: invId, nom: invName, lastVerification: lastVerif });
@@ -600,24 +447,20 @@
       });
       expiredItems.sort((a, b) => a.jours - b.jours);
 
-      // === Véhicules : incidents + alertes ===
-      const vehSnap = await getDocs(collection(db, 'P'));
+      // === Véhicules ===
       vehicles = []; incidentItems = []; autoAlerts = [];
-
-      vehSnap.forEach(docSnap => {
-        const data = docSnap.data();
-        const vehId = docSnap.id;
+      const P = db.P || {};
+      Object.keys(P).forEach(vehId => {
+        const data = P[vehId] || {};
         const vehName = data.n || data.im || vehId;
         const currentKm = data.km || 0;
 
         vehicles.push({
-          id: vehId, nom: vehName,
-          immat: data.im || '',
+          id: vehId, nom: vehName, immat: data.im || '',
           incidents: (data.inc || []).length,
           lastTotal: getLastTotalDisinfection(data)
         });
 
-        // Incidents
         (data.inc || []).forEach(inc => {
           const prio = inc.p || 'Basse';
           const prioLevel = prio === 'Haute' ? 0 : prio === 'Moyenne' ? 1 : 2;
@@ -629,94 +472,64 @@
           });
         });
 
-        // Alertes auto : assurance, contrôle technique, nettoyage, désinfection, entretiens
-        // Assurance
         if (data.ass) {
           const s = getDateStatus(data.ass);
           if (s === 'danger' || s === 'warning') {
-            autoAlerts.push({
-              label: 'Assurance', date: data.ass, status: s,
-              jours: getDaysUntil(data.ass),
-              vehiculeId: vehId, vehiculeNom: vehName, type: 'assurance'
-            });
+            autoAlerts.push({ label: 'Assurance', date: data.ass, status: s, jours: getDaysUntil(data.ass), vehiculeId: vehId, vehiculeNom: vehName, type: 'assurance' });
           }
         }
-        // Contrôle technique
         if (data.ct) {
           const s = getDateStatus(data.ct);
           if (s === 'danger' || s === 'warning') {
-            autoAlerts.push({
-              label: 'Contrôle technique', date: data.ct, status: s,
-              jours: getDaysUntil(data.ct),
-              vehiculeId: vehId, vehiculeNom: vehName, type: 'ct'
-            });
+            autoAlerts.push({ label: 'Contrôle technique', date: data.ct, status: s, jours: getDaysUntil(data.ct), vehiculeId: vehId, vehiculeNom: vehName, type: 'ct' });
           }
         }
-        // Nettoyage (prochaine date calculée)
         const nextClean = getNextCleanDate(data.dn, data.fn);
         if (nextClean) {
           const s = getDateStatus(nextClean);
           if (s === 'danger' || s === 'warning') {
-            autoAlerts.push({
-              label: 'Nettoyage', date: nextClean, status: s,
-              jours: getDaysUntil(nextClean),
-              vehiculeId: vehId, vehiculeNom: vehName, type: 'nettoyage'
-            });
+            autoAlerts.push({ label: 'Nettoyage', date: nextClean, status: s, jours: getDaysUntil(nextClean), vehiculeId: vehId, vehiculeNom: vehName, type: 'nettoyage' });
           }
         }
-        // Désinfection (prochaine date calculée)
         const nextDisinfect = getNextCleanDate(data.dd, data.fd);
         if (nextDisinfect) {
           const s = getDateStatus(nextDisinfect);
           if (s === 'danger' || s === 'warning') {
-            autoAlerts.push({
-              label: 'Désinfection', date: nextDisinfect, status: s,
-              jours: getDaysUntil(nextDisinfect),
-              vehiculeId: vehId, vehiculeNom: vehName, type: 'desinfection'
-            });
+            autoAlerts.push({ label: 'Désinfection', date: nextDisinfect, status: s, jours: getDaysUntil(nextDisinfect), vehiculeId: vehId, vehiculeNom: vehName, type: 'desinfection' });
           }
         }
-        // Entretiens (date ou km)
         (data.en || []).forEach(e => {
-          let d = null;
-          let label = `Entretien : ${e.type || '—'}`;
+          let label = 'Entretien : ' + (e.type || '—');
           if (e.recType === 'km' && e.kmDeclencheur) {
             const diff = e.kmDeclencheur - currentKm;
             if (diff <= 1000) {
               autoAlerts.push({
                 label, date: null, km: e.kmDeclencheur, kmDiff: diff,
                 status: diff <= 0 ? 'danger' : 'warning',
-                jours: diff <= 0 ? -1 : diff, // utilisé pour tri
+                jours: diff <= 0 ? -1 : diff,
                 vehiculeId: vehId, vehiculeNom: vehName, type: 'entretien_km'
               });
             }
           } else if (e.date) {
             const s = getDateStatus(e.date);
             if (s === 'danger' || s === 'warning') {
-              autoAlerts.push({
-                label, date: e.date, status: s,
-                jours: getDaysUntil(e.date),
-                vehiculeId: vehId, vehiculeNom: vehName, type: 'entretien'
-              });
+              autoAlerts.push({ label, date: e.date, status: s, jours: getDaysUntil(e.date), vehiculeId: vehId, vehiculeNom: vehName, type: 'entretien' });
             }
           }
         });
       });
-
       incidentItems.sort((a, b) => a.prioLevel - b.prioLevel);
       autoAlerts.sort((a, b) => a.jours - b.jours);
       vehicles.sort((a, b) => (a.nom || a.id).localeCompare(b.nom || b.id, 'fr'));
 
       // === Admins / Bénévoles ===
-      const adminSnap = await getDocs(collection(db, 'A'));
       admins = [];
-      adminSnap.forEach(d => admins.push({ nivol: d.id, nom: d.data().I || 'Inconnu', fonction: d.data().F || '' }));
-
-      const userSnap = await getDocs(collection(db, 'U'));
+      const A = db.A || {};
+      Object.keys(A).forEach(k => admins.push({ nivol: k, nom: (A[k] && A[k].I) || 'Inconnu', fonction: (A[k] && A[k].F) || '' }));
       users = [];
-      userSnap.forEach(d => users.push({ nivol: d.id, nom: d.data().I || 'Inconnu' }));
+      const U = db.U || {};
+      Object.keys(U).forEach(k => users.push({ nivol: k, nom: (U[k] && U[k].I) || 'Inconnu' }));
 
-      // === Rendu ===
       renderExpiredList();
       renderMissingList();
       renderInventoryList();
@@ -725,25 +538,6 @@
       renderVehicleList();
       renderAdminList();
       renderUserList();
-    }
-
-    // ---- Helpers dates véhicules ----
-    function getLastTotalDisinfection(v) {
-      const history = v.ddh || [];
-      let last = null;
-      history.forEach(h => {
-        if (h.type === 'total') {
-          if (!last || new Date(h.date) > new Date(last.date)) last = h;
-        }
-      });
-      return last;
-    }
-    function getNextCleanDate(lastDate, freqDays) {
-      if (!lastDate || !freqDays) return null;
-      const last = new Date(lastDate);
-      const next = new Date(last);
-      next.setDate(next.getDate() + parseInt(freqDays));
-      return next.toISOString();
     }
 
     function canEditAnything() { return currentAdmin && HIERARCHY.includes(currentAdmin.fonction); }
@@ -807,29 +601,26 @@
             if (e.target.closest('.item-actions') || e.target.closest('button')) return;
             window.location.href = `./inventaire/?inv=${encodeURIComponent(item.inventaireId)}`;
           });
-          li.querySelector('[data-action="found"]').addEventListener('click', async (e) => {
+          li.querySelector('[data-action="found"]').addEventListener('click', (e) => {
             e.stopPropagation();
-            await markAsFound(item.inventaireId, item.entryOriginal);
+            markAsFound(item.inventaireId, item.entryOriginal);
           });
           listEl.appendChild(li);
         });
     }
 
-    async function markAsFound(invId, entryToRemove) {
-      try {
-        const invRef = doc(db, 'I', invId);
-        const invSnap = await getDoc(invRef);
-        if (!invSnap.exists()) return;
-        const data = invSnap.data();
-        const manquants = data.manquants || [];
-        if (!Array.isArray(manquants)) return;
-        const newManquants = manquants.filter(e => e !== entryToRemove);
-        await updateDoc(invRef, { manquants: newManquants });
-        const currentLogs = data.logs || [];
-        currentLogs.push({ n: currentAdmin.nivol, t: new Date().toISOString(), a: `Objet retrouvé : ${entryToRemove}` });
-        await updateDoc(invRef, { logs: currentLogs.slice(-50) });
-        await loadAllData();
-      } catch(e) { alert('Erreur : ' + e.message); }
+    function markAsFound(invId, entryToRemove) {
+      const db = readDb();
+      if (!db || !db.I || !db.I[invId]) return;
+      const inv = db.I[invId];
+      const manquants = inv.manquants || [];
+      if (!Array.isArray(manquants)) return;
+      inv.manquants = manquants.filter(e => e !== entryToRemove);
+      const logs = inv.logs || [];
+      logs.push({ n: currentAdmin.nivol, t: new Date().toISOString(), a: `Objet retrouvé : ${entryToRemove}` });
+      inv.logs = logs.slice(-50);
+      saveDb(db);
+      loadAllData();
     }
 
     function renderInventoryList() {
@@ -870,9 +661,7 @@
                 ${item.desc ? `<div class="user-nivol" style="font-size:0.75rem;">${item.desc}</div>` : ''}
               </div>
             </div>`;
-          li.addEventListener('click', () => {
-            window.location.href = `./parc-auto/?vehicule=${encodeURIComponent(item.vehiculeId)}`;
-          });
+          li.addEventListener('click', () => { window.location.href = `./parc-auto/?vehicule=${encodeURIComponent(item.vehiculeId)}`; });
           listEl.appendChild(li);
         });
     }
@@ -901,9 +690,7 @@
               </div>
               <span class="user-func ${item.status}">${label}</span>
             </div>`;
-          li.addEventListener('click', () => {
-            window.location.href = `./parc-auto/?vehicule=${encodeURIComponent(item.vehiculeId)}`;
-          });
+          li.addEventListener('click', () => { window.location.href = `./parc-auto/?vehicule=${encodeURIComponent(item.vehiculeId)}`; });
           listEl.appendChild(li);
         });
     }
@@ -925,9 +712,7 @@
                 <div class="user-nivol">${lastTotalText}</div>
               </div>
             </div>`;
-          li.addEventListener('click', () => {
-            window.location.href = `./parc-auto/?vehicule=${encodeURIComponent(v.id)}`;
-          });
+          li.addEventListener('click', () => { window.location.href = `./parc-auto/?vehicule=${encodeURIComponent(v.id)}`; });
           listEl.appendChild(li);
         });
     }
@@ -1013,7 +798,7 @@
         });
     }
 
-    // ---- Modals ----
+    // ---- Modals (logique conservée, écriture locale) ----
     function openAddModal(collectionName) {
       const isAdmin = collectionName === 'A';
       modalContent.innerHTML = `
@@ -1027,7 +812,7 @@
         </div>`;
       modalOverlay.style.display = 'flex';
       document.getElementById('modal-cancel').addEventListener('click', closeModal);
-      document.getElementById('modal-save').addEventListener('click', async () => {
+      document.getElementById('modal-save').addEventListener('click', () => {
         const nivol = document.getElementById('modal-nivol').value.trim().toUpperCase();
         const nom = document.getElementById('modal-nom').value.trim();
         const fonction = isAdmin ? document.getElementById('modal-fonction').value.trim() : '';
@@ -1036,18 +821,15 @@
         if (isAdmin && fonction && !canAssignFunction(currentAdmin.fonction, fonction)) {
           return alert(`Vous ne pouvez pas attribuer la fonction "${fonction}".`);
         }
-        const [existsA, existsU] = await Promise.all([
-          getDoc(doc(db, 'A', nivol)),
-          getDoc(doc(db, 'U', nivol))
-        ]);
-        if (existsA.exists() || existsU.exists()) return alert('Ce NIVOL existe déjà.');
-        try {
-          const data = { I: nom };
-          if (isAdmin && fonction) data.F = fonction;
-          await setDoc(doc(db, collectionName, nivol), data);
-          closeModal();
-          await loadAllData();
-        } catch (e) { alert('Erreur : ' + e.message); }
+        const db = readDb();
+        if ((db.A && db.A[nivol]) || (db.U && db.U[nivol])) return alert('Ce NIVOL existe déjà.');
+        if (!db[collectionName]) db[collectionName] = {};
+        const data = { I: nom };
+        if (isAdmin && fonction) data.F = fonction;
+        db[collectionName][nivol] = data;
+        saveDb(db);
+        closeModal();
+        loadAllData();
       });
     }
 
@@ -1065,7 +847,7 @@
         </div>`;
       modalOverlay.style.display = 'flex';
       document.getElementById('modal-cancel').addEventListener('click', closeModal);
-      document.getElementById('modal-save').addEventListener('click', async () => {
+      document.getElementById('modal-save').addEventListener('click', () => {
         const nom = document.getElementById('modal-nom').value.trim();
         const fonctionInput = isAdmin ? document.getElementById('modal-fonction') : null;
         const nouvelleFonction = fonctionInput ? fonctionInput.value.trim() : undefined;
@@ -1079,13 +861,14 @@
             }
           }
         }
-        try {
-          const data = { I: nom };
-          if (isAdmin && nouvelleFonction !== undefined) data.F = nouvelleFonction;
-          await setDoc(doc(db, collectionName, item.nivol), data, { merge: true });
-          closeModal();
-          await loadAllData();
-        } catch (e) { alert('Erreur : ' + e.message); }
+        const db = readDb();
+        if (!db[collectionName] || !db[collectionName][item.nivol]) return alert('Entrée introuvable.');
+        const entry = db[collectionName][item.nivol];
+        entry.I = nom;
+        if (isAdmin && nouvelleFonction !== undefined) entry.F = nouvelleFonction;
+        saveDb(db);
+        closeModal();
+        loadAllData();
       });
     }
 
@@ -1100,17 +883,21 @@
         </div>`;
       modalOverlay.style.display = 'flex';
       document.getElementById('modal-cancel').addEventListener('click', closeModal);
-      document.getElementById('modal-delete').addEventListener('click', async () => {
-        try {
-          await deleteDoc(doc(db, collectionName, item.nivol));
-          closeModal();
-          await loadAllData();
-        } catch (e) { alert('Erreur : ' + e.message); }
+      document.getElementById('modal-delete').addEventListener('click', () => {
+        const db = readDb();
+        if (db[collectionName] && db[collectionName][item.nivol]) {
+          delete db[collectionName][item.nivol];
+          saveDb(db);
+        }
+        closeModal();
+        loadAllData();
       });
     }
 
     function closeModal() { modalOverlay.style.display = 'none'; modalContent.innerHTML = ''; }
     modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+
+    init();
   </script>
 </body>
 </html>
