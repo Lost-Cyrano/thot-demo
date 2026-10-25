@@ -1,1 +1,458 @@
+{
+  "A": {
+    "11111111111A": { "I": "Marie Dupont",    "F": "Owner" },
+    "22222222222B": { "I": "Sophie Bernard",  "F": "PUL" },
+    "33333333333C": { "I": "Pierre Leroux",   "F": "DLUS" },
+    "44444444444D": { "I": "Claire Petit",    "F": "MOT" },
+    "55555555555E": { "I": "Lucas Moreau",    "F": "Adjoint Urgence" },
+    "66666666666F": { "I": "Jean Martin",     "F": "Administrateur" }
+  },
 
+  "U": {
+    "77777777777G": { "I": "Camille Roux" },
+    "88888888888H": { "I": "Antoine Faure" },
+    "99999999999I": { "I": "Élodie Girard" },
+    "10101010101J": { "I": "Thomas Blanc" },
+    "20202020202K": { "I": "Manon Lemoine" },
+    "30303030303L": { "I": "Hugo Chevalier" }
+  },
+
+  "I": {
+    "vpsp-1": {
+      "nom": "VPSP",
+      "objets": {
+        "Tiroir Bilan": {
+          "Tensionmètre électronique": { "q": 2, "d": "2027-06-15" },
+          "Oxymètre de pouls":         { "q": 3, "d": "2026-12-01" },
+          "Thermomètre frontal":       { "q": 2, "d": "2026-09-20" },
+          "Glucomètre":                { "q": 1, "d": "2026-03-10" },
+          "Bandes de tensiomètre":     { "q": 10, "d": "2028-01-30" }
+        },
+        "Tiroir Oxygénothérapie": {
+          "Masques haute concentration": { "q": 6, "d": "2027-11-05" },
+          "Lunettes à oxygène":          { "q": 8, "d": "2027-04-18" },
+          "Ballon auto-remplisseur (BAVU)": { "q": 2, "d": "2026-08-22" },
+          "Canules de Guedel": {
+            "_sub": true,
+            "Taille 1": { "q": 4, "d": "2028-02-14" },
+            "Taille 2": { "q": 4, "d": "2028-02-14" },
+            "Taille 3": { "q": 3, "d": "2028-02-14" }
+          }
+        },
+        "Tiroir Pansements": {
+          "Compresses stériles 10x10": { "q": 40, "d": "2028-03-01" },
+          "Bandes extensibles":        { "q": 15, "d": "2027-10-12" },
+          "Pansements américains":     { "q": 20, "d": "2027-07-09" },
+          "Sparadrap microporeux":     { "q": 6,  "d": "2026-11-25" },
+          "Sérum physiologique unidoses": {
+            "_sub": true,
+            "5 ml":  { "q": 30, "d": "2026-02-28" },
+            "20 ml": { "q": 25, "d": "2026-02-28" }
+          }
+        },
+        "Tiroir Immobilisation": {
+          "Attelles cervico-dorsales": { "q": 2, "d": "2029-01-15" },
+          "Colliers cervicaux adulte": { "q": 3, "d": "2028-06-20" },
+          "Colliers cervicaux enfant": { "q": 2, "d": "2028-06-20" },
+          "Attelles de membre":        { "q": 4, "d": "2029-03-10" },
+          "Matelas immobilisateur (MID)": { "q": 1, "d": "2029-05-12" }
+        },
+        "Défibrillateur": {
+          "Électrodes adulte":   { "q": 2, "d": "2026-01-20" },
+          "Électrodes pédiatrique": { "q": 2, "d": "2027-03-05" },
+          "Batterie de rechange": { "q": 2, "d": "2026-04-30" },
+          "Rasoir jetable":      { "q": 4 }
+        }
+      },
+      "manquants": ["Glucomètre (Tiroir Bilan)"],
+      "checks": [],
+      "logs": [
+        { "n": "555555555555", "t": "2026-07-15T09:12:00.000Z", "a": "Nouvelle date pour Tensionmètre électronique (Tiroir Bilan) : 2027-06-15" },
+        { "n": "777777777777", "t": "2026-07-20T18:45:00.000Z", "a": "Finalisation de l'inventaire (1 manquants)" }
+      ],
+      "finalise": true,
+      "finaliseDate": "2026-07-20T18:45:00.000Z",
+      "finalisePar": "777777777777"
+    },
+
+    "vsa-1": {
+      "nom": "VSA – Véhicule de Secours et d'Assistance",
+      "objets": {
+        "Tiroir Bilan": {
+          "Tensionmètre manuel":      { "q": 1, "d": "2027-05-20" },
+          "Stéthoscope":              { "q": 2 },
+          "Saturomètre":              { "q": 2, "d": "2026-10-15" },
+          "Bandes de tensiomètre":    { "q": 8,  "d": "2028-04-10" }
+        },
+        "Tiroir Pansements": {
+          "Compresses stériles 10x10": { "q": 30, "d": "2028-08-01" },
+          "Pansements américains":     { "q": 15, "d": "2027-12-30" },
+          "Bandes extensibles":        { "q": 12, "d": "2027-09-15" }
+        },
+        "Tiroir Oxygène": {
+          "Masques simples":           { "q": 5, "d": "2027-06-10" },
+          "Lunettes à oxygène":        { "q": 6, "d": "2027-03-28" },
+          "BAVU adulte":               { "q": 1, "d": "2026-07-14" }
+        },
+        "Tiroir Immobilisation": {
+          "Colliers cervicaux adulte": { "q": 2, "d": "2028-02-08" },
+          "Attelles de membre":        { "q": 2, "d": "2029-01-05" }
+        }
+      },
+      "manquants": [],
+      "checks": ["Tiroir Bilan|Stéthoscope", "Tiroir Bilan|Bandes de tensiomètre"],
+      "logs": [
+        { "n": "888888888888", "t": "2026-07-22T10:30:00.000Z", "a": "Début d'inventaire" }
+      ]
+    },
+
+    "sac-urgence": {
+      "nom": "Sac d'urgence (SMUR)",
+      "objets": {
+        "Médicaments d'urgence": {
+          "Adrénaline 1mg":       { "q": 4, "d": "2026-01-10" },
+          "Amiodarone 150mg":     { "q": 3, "d": "2026-09-30" },
+          "Atropine 1mg":         { "q": 3, "d": "2026-05-18" },
+          "Chlorure de calcium":  { "q": 2, "d": "2027-02-14" },
+          "Diazépam 10mg":        { "q": 2, "d": "2026-03-22" },
+          "Furosémide 20mg":      { "q": 2, "d": "2026-11-08" },
+          "Glucagon 1mg":         { "q": 2, "d": "2026-06-25" },
+          "Isoprénaline":         { "q": 1, "d": "2026-04-12" },
+          "Midazolam 5mg":        { "q": 3, "d": "2026-08-17" },
+          "Naloxone 0,4mg":       { "q": 2, "d": "2026-10-04" },
+          "Noradrénaline":        { "q": 1, "d": "2026-02-09" }
+        },
+        "Matériel d'intubation": {
+          "Sonde d'intubation 7.0": { "q": 2, "d": "2029-06-30" },
+          "Sonde d'intubation 7.5": { "q": 2, "d": "2029-06-30" },
+          "Sonde d'intubation 8.0": { "q": 2, "d": "2029-06-30" },
+          "Laryngoscope":            { "q": 1 },
+          "Lames Miller 2, 3, 4":    { "q": 1, "d": "2029-01-01" },
+          "Masque laryngé taille 4": { "q": 2, "d": "2028-11-15" }
+        },
+        "Perfusion": {
+          "Cathéters 14G":  { "q": 4, "d": "2028-05-12" },
+          "Cathéters 16G":  { "q": 4, "d": "2028-05-12" },
+          "Cathéters 18G":  { "q": 6, "d": "2028-05-12" },
+          "Cathéters 20G":  { "q": 6, "d": "2028-05-12" },
+          "Sérum physiologique 500ml": { "q": 6, "d": "2027-03-20" },
+          "Ringer Lactate 500ml":      { "q": 4, "d": "2027-01-14" },
+          "Prolongateurs":             { "q": 10, "d": "2029-02-01" }
+        }
+      },
+      "manquants": ["Noradrénaline (Médicaments d'urgence)", "Isoprénaline (Médicaments d'urgence)"],
+      "checks": [],
+      "logs": [
+        { "n": "111111111111", "t": "2026-07-10T08:00:00.000Z", "a": "Création de l'inventaire \"Sac d'urgence (SMUR)\"" }
+      ],
+      "finalise": true,
+      "finaliseDate": "2026-07-18T16:20:00.000Z",
+      "finalisePar": "111111111111"
+    },
+
+    "poste-secours": {
+      "nom": "Lot A - Poste de secours",
+      "objets": {
+        "Trousse de secours principale": {
+          "Compresses stériles 10x10":  { "q": 50, "d": "2028-09-01" },
+          "Compresses brûlures":        { "q": 10, "d": "2027-05-05" },
+          "Bandes extensibles":         { "q": 20, "d": "2027-08-10" },
+          "Pansements américains":      { "q": 25, "d": "2027-06-12" },
+          "Sparadrap microporeux":      { "q": 8,  "d": "2026-10-30" },
+          "Sérum physiologique 20ml":   { "q": 30, "d": "2026-03-15" },
+          "Antiseptique":               { "q": 4,  "d": "2026-12-20" },
+          "Gants nitrile (boîte 100)":  { "q": 4 }
+        },
+        "Matériel immobilisation": {
+          "Colliers cervicaux adulte":  { "q": 4, "d": "2028-04-01" },
+          "Attelles à dépression adulte": { "q": 2, "d": "2029-06-10" },
+          "Attelles à dépression enfant": { "q": 2, "d": "2029-06-10" },
+          "Plan dur":                   { "q": 1 }
+        },
+        "Trousse pédiatrique": {
+          "Attelles enfant":            { "q": 2, "d": "2028-12-01" },
+          "Compresses stériles 5x5":    { "q": 20, "d": "2028-03-15" },
+          "Couverture de survie":       { "q": 6 }
+        },
+        "Défibrillateur grand public": {
+          "Électrodes adulte":          { "q": 1, "d": "2026-06-30" },
+          "Électrodes pédiatrique":     { "q": 1, "d": "2026-09-12" },
+          "Batterie":                   { "q": 1, "d": "2027-01-01" }
+        }
+      },
+      "manquants": [],
+      "checks": [],
+      "logs": []
+    },
+
+    "ambulance-private": {
+      "nom": "Ambulance privée (conventionnée)",
+      "objets": {
+        "Brancardage": {
+          "Brancard principal":         { "q": 1 },
+          "Chaise portoir":             { "q": 1 },
+          "Sangles de brancard":        { "q": 4 }
+        },
+        "Oxygénothérapie": {
+          "Bouteille O2 portative 2L":  { "q": 2, "d": "2027-06-01" },
+          "Masques haute concentration": { "q": 4, "d": "2027-09-20" },
+          "Lunettes à oxygène":         { "q": 6, "d": "2027-02-10" },
+          "BAVU adulte":                { "q": 1, "d": "2026-05-15" }
+        },
+        "Trousse de premiers secours": {
+          "Compresses stériles":        { "q": 30, "d": "2028-07-10" },
+          "Bandes extensibles":         { "q": 10, "d": "2027-11-30" },
+          "Pansements américains":      { "q": 15, "d": "2027-06-20" }
+        }
+      },
+      "manquants": [],
+      "checks": [],
+      "logs": []
+    }
+  },
+
+  "P": {
+    "AB_123_CD": {
+      "im": "AB-123-CD",
+      "n": "VPSP 1",
+      "car": "Diesel",
+      "km": 87250,
+      "ass": "2026-11-15",
+      "ct": "2026-12-20",
+      "fn": 30,
+      "fd": 30,
+      "dn": "2026-10-05T07:30:00.000Z",
+      "dnp": "777777777777",
+      "dd": "2026-10-12T19:15:00.000Z",
+      "ddp": "888888888888",
+      "ddt": "complete",
+      "ddh": [
+        { "type": "rapide",   "date": "2026-09-20T10:00:00.000Z", "par": "777777777777" },
+        { "type": "complete", "date": "2026-09-28T15:30:00.000Z", "par": "999999999999" },
+        { "type": "total",    "date": "2026-10-02T18:45:00.000Z", "par": "111111111111" },
+        { "type": "rapide",   "date": "2026-10-08T08:20:00.000Z", "par": "777777777777" },
+        { "type": "complete", "date": "2026-10-12T19:15:00.000Z", "par": "888888888888" }
+      ],
+      "en": [
+        {
+          "type": "Vidange",
+          "desc": "",
+          "date": "2026-05-10",
+          "recType": "km",
+          "rec": 10000,
+          "kmDeclencheur": 100000,
+          "cree": "2026-05-10T09:00:00.000Z",
+          "creePar": "555555555555"
+        },
+        {
+          "type": "Contrôle technique",
+          "desc": "",
+          "date": "2026-12-20",
+          "recType": "jour",
+          "rec": 365,
+          "cree": "2025-12-20T08:00:00.000Z",
+          "creePar": "555555555555"
+        },
+        {
+          "type": "Pneus",
+          "desc": "Permutation",
+          "date": "2027-01-05",
+          "recType": "jour",
+          "rec": 180,
+          "cree": "2026-07-05T08:00:00.000Z",
+          "creePar": "555555555555"
+        }
+      ],
+      "inc": [
+        {
+          "id": "inc_1728900000_abc123",
+          "t": "Rétroviseur droit cassé",
+          "d": "Rétroviseur accroché lors d'un stationnement en intervention.",
+          "p": "Moyenne",
+          "dt": "2026-10-14T14:30:00.000Z",
+          "n": "777777777777"
+        },
+        {
+          "id": "inc_1728950000_def456",
+          "t": "Voyant moteur allumé",
+          "d": "Le voyant moteur est apparu lors du dernier trajet.",
+          "p": "Haute",
+          "dt": "2026-10-18T17:05:00.000Z",
+          "n": "888888888888"
+        }
+      ],
+      "h": [
+        { "n": "555555555555", "t": "2026-01-10T09:00:00.000Z", "a": "Création du véhicule \"VPSP 1\"" },
+        { "n": "777777777777", "t": "2026-10-05T07:30:00.000Z", "a": "Nettoyage effectué" },
+        { "n": "888888888888", "t": "2026-10-12T19:15:00.000Z", "a": "Désinfection effectuée (complete)" }
+      ]
+    },
+
+    "EF_456_GH": {
+      "im": "EF-456-GH",
+      "n": "VSA 2",
+      "car": "Électrique",
+      "km": 32100,
+      "ass": "2026-10-22",
+      "ct": "2027-03-10",
+      "fn": 60,
+      "fd": 45,
+      "dn": "2026-09-15T08:00:00.000Z",
+      "dnp": "999999999999",
+      "dd": "2026-09-30T16:00:00.000Z",
+      "ddp": "888888888888",
+      "ddt": "rapide",
+      "ddh": [
+        { "type": "rapide",   "date": "2026-09-15T12:00:00.000Z", "par": "999999999999" },
+        { "type": "complete", "date": "2026-09-22T14:30:00.000Z", "par": "101010101010" },
+        { "type": "rapide",   "date": "2026-09-30T16:00:00.000Z", "par": "888888888888" }
+      ],
+      "en": [
+        {
+          "type": "Révision générale",
+          "desc": "",
+          "date": "2026-04-15",
+          "recType": "jour",
+          "rec": 365,
+          "cree": "2026-04-15T08:00:00.000Z",
+          "creePar": "555555555555"
+        }
+      ],
+      "inc": [],
+      "h": [
+        { "n": "555555555555", "t": "2026-03-01T09:00:00.000Z", "a": "Création du véhicule \"VSA 2\"" }
+      ]
+    },
+
+    "IJ_789_KL": {
+      "im": "IJ-789-KL",
+      "n": "Ambulance 3",
+      "car": "Diesel",
+      "km": 145300,
+      "ass": "2026-04-10",
+      "ct": "2026-11-05",
+      "fn": 45,
+      "fd": 30,
+      "dn": "2026-10-08T07:15:00.000Z",
+      "dnp": "777777777777",
+      "dd": "2026-10-15T11:40:00.000Z",
+      "ddp": "101010101010",
+      "ddt": "total",
+      "ddh": [
+        { "type": "complete", "date": "2026-09-25T10:00:00.000Z", "par": "999999999999" },
+        { "type": "total",    "date": "2026-10-15T11:40:00.000Z", "par": "101010101010" }
+      ],
+      "en": [
+        {
+          "type": "Vidange",
+          "desc": "Diesel",
+          "date": "2026-06-20",
+          "recType": "km",
+          "rec": 15000,
+          "kmDeclencheur": 160000,
+          "cree": "2026-06-20T08:00:00.000Z",
+          "creePar": "555555555555"
+        },
+        {
+          "type": "Freins",
+          "desc": "Plaquettes avant",
+          "date": "2026-11-20",
+          "recType": "",
+          "rec": "",
+          "cree": "2026-07-10T08:00:00.000Z",
+          "creePar": "555555555555"
+        }
+      ],
+      "inc": [
+        {
+          "id": "inc_1728800000_ghi789",
+          "t": "Feu arrière gauche défectueux",
+          "d": "Ampoule à remplacer.",
+          "p": "Basse",
+          "dt": "2026-10-12T18:20:00.000Z",
+          "n": "101010101010"
+        }
+      ],
+      "h": [
+        { "n": "555555555555", "t": "2025-06-01T09:00:00.000Z", "a": "Création du véhicule \"Ambulance 3\"" }
+      ]
+    },
+
+    "MN_012_OP": {
+      "im": "MN-012-OP",
+      "n": "VL Logistique",
+      "car": "Essence",
+      "km": 42300,
+      "ass": "2027-02-28",
+      "ct": "2027-08-15",
+      "fn": 90,
+      "fd": 90,
+      "dn": "2026-08-20T09:00:00.000Z",
+      "dnp": "202020202020",
+      "dd": "2026-08-20T09:30:00.000Z",
+      "ddp": "202020202020",
+      "ddt": "rapide",
+      "ddh": [
+        { "type": "rapide", "date": "2026-08-20T09:30:00.000Z", "par": "202020202020" }
+      ],
+      "en": [],
+      "inc": [],
+      "h": [
+        { "n": "555555555555", "t": "2026-02-01T09:00:00.000Z", "a": "Création du véhicule \"VL Logistique\"" }
+      ]
+    }
+  },
+
+  "UT": [
+    {
+      "id": "u_1729000000_aaa111",
+      "inventaireId": "vpsp-1",
+      "path": "Tiroir Bilan.Tensionmètre électronique",
+      "objetNom": "Tensionmètre électronique",
+      "quantite": 1,
+      "par": "777777777777",
+      "nomPar": "Camille Roux",
+      "createdAt": "2026-10-16T08:30:00.000Z"
+    },
+    {
+      "id": "u_1729000000_bbb222",
+      "inventaireId": "vpsp-1",
+      "path": "Tiroir Pansements.Compresses stériles 10x10",
+      "objetNom": "Compresses stériles 10x10",
+      "quantite": 5,
+      "par": "777777777777",
+      "nomPar": "Camille Roux",
+      "createdAt": "2026-10-16T08:30:00.000Z"
+    },
+    {
+      "id": "u_1729050000_ccc333",
+      "inventaireId": "sac-urgence",
+      "path": "Médicaments d'urgence.Adrénaline 1mg",
+      "objetNom": "Adrénaline 1mg",
+      "quantite": 2,
+      "par": "888888888888",
+      "nomPar": "Antoine Faure",
+      "createdAt": "2026-10-17T14:15:00.000Z"
+    },
+    {
+      "id": "u_1729050000_ddd444",
+      "inventaireId": "sac-urgence",
+      "path": "Perfusion.Cathéters 18G",
+      "objetNom": "Cathéters 18G",
+      "quantite": 3,
+      "par": "888888888888",
+      "nomPar": "Antoine Faure",
+      "createdAt": "2026-10-17T14:15:00.000Z"
+    },
+    {
+      "id": "u_1729100000_eee555",
+      "inventaireId": "poste-secours",
+      "path": "Trousse de secours principale.Compresses stériles 10x10",
+      "objetNom": "Compresses stériles 10x10",
+      "quantite": 10,
+      "par": "999999999999",
+      "nomPar": "Élodie Girard",
+      "createdAt": "2026-10-19T09:00:00.000Z"
+    }
+  ]
+}
