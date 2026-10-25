@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thot – Utilisation</title>
+  <style>
+    :root {
+      --red: #e60000;
+      --red-hover: #b30000;
+      --bg: #f5f5f5;
+      --card-bg: #ffffff;
+      --border: #ddd;
+      --text: #333;
+      --text-light: #666;
+      --radius: 12px;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08);
+      --ok: #4caf50;
+      --warning: #f5a623;
+      --danger: #e60000;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Header */
+    .header {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    .header-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .header-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .btn-back, .btn-logout {
+      background: transparent;
+      border: 1.5px solid #ccc;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-back:hover { background: #eee; }
+    .btn-logout { color: var(--red); border-color: var(--red); }
+    .btn-logout:hover { background: var(--red); color: #fff; }
+
+    /* Info bar */
+    .info-bar {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    .info-bar-label { font-size: 0.9rem; color: var(--text-light); }
+    .info-bar-label strong { color: var(--text); }
+
+    .btn-select-inv {
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-select-inv:hover { background: #f0f0f0; border-color: #bbb; }
+
+    /* Sections */
+    .section {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .section-header {
+      padding: 14px 18px;
+      background: #fafafa;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      background: #f0f0f0;
+      padding: 3px 8px;
+      border-radius: 10px;
+      color: var(--text-light);
+      white-space: nowrap;
+    }
+    .badge.ok { background: #e8f5e9; color: #2e7d32; }
+    .badge.warning { background: #fff8f0; color: var(--warning); }
+    .badge.danger { background: #fff0f0; color: var(--danger); }
+
+    /* Listes */
+    .list { list-style: none; }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      border-bottom: 1px solid #f0f0f0;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .list-item:last-child { border-bottom: none; }
+
+    .user-info { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
+    .user-avatar {
+      width: 36px; height: 36px; border-radius: 50%; background: #eee;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 0.9rem; flex-shrink: 0; color: #666;
+    }
+    .user-name { font-weight: 600; font-size: 0.95rem; }
+    .user-nivol { color: var(--text-light); font-size: 0.8rem; }
+
+    /* Boutons d'action */
+    .action-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    .btn-action {
+      flex: 1;
+      min-width: 180px;
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: all 0.2s;
+      text-align: center;
+      border: none;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .btn-action.primary { background: var(--red); }
+    .btn-action.primary:hover { background: var(--red-hover); }
+    .btn-action.success { background: var(--ok); }
+    .btn-action.success:hover { background: #388e3c; }
+    .btn-action.secondary { background: #666; }
+    .btn-action.secondary:hover { background: #555; }
+    .btn-action:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-action .btn-badge {
+      background: rgba(255,255,255,0.25);
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000; padding: 16px;
+    }
+    .modal {
+      background: #fff; border-radius: var(--radius); padding: 24px;
+      width: 100%; max-width: 600px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      display: flex; flex-direction: column; gap: 14px;
+      max-height: 95vh;
+    }
+    .modal h3 { font-size: 1.1rem; }
+    .modal label { font-weight: 600; display: block; margin-bottom: 4px; font-size: 0.9rem; }
+    .modal input {
+      width: 100%; padding: 10px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-size: 0.95rem;
+    }
+    .modal .hint { font-size: 0.8rem; color: var(--text-light); margin-top: 4px; }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-top: 8px; }
+
+    .btn {
+      padding: 10px 18px; border: none; border-radius: 8px;
+      cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.2s;
+    }
+    .btn-cancel { background: #eee; color: #333; }
+    .btn-cancel:hover { background: #ddd; }
+    .btn-save { background: var(--red); color: #fff; }
+    .btn-save:hover { background: var(--red-hover); }
+    .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-danger { background: #c00; color: #fff; }
+    .btn-danger:hover { background: #a00; }
+
+    /* Sélecteur inventaires */
+    .inv-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 4px 0;
+    }
+    .inv-chip {
+      padding: 8px 14px;
+      border-radius: 16px;
+      background: #f0f0f0;
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .inv-chip:hover { background: #e8e8e8; }
+    .inv-chip.selected {
+      background: var(--red);
+      color: #fff;
+      border-color: var(--red);
+    }
+
+    /* ============ ARBORESCENCE (style cartes) ============ */
+    .tree-view {
+      background: #f7f7f7;
+      border: 1px solid #eee;
+      border-radius: 10px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      /* PAS de max-height : la page peut devenir longue */
+      overflow: visible;
+    }
+
+    .tree-inv-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .tree-inv-header {
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+      background: #fafafa;
+      border-bottom: 1px solid #f0f0f0;
+      transition: background 0.15s;
+    }
+    .tree-inv-header:hover { background: #f0f0f0; }
+    .tree-inv-header .arrow {
+      font-size: 0.75rem; color: #999; transition: transform 0.2s;
+      width: 12px; display: inline-block;
+    }
+    .tree-inv-header .arrow.expanded { transform: rotate(90deg); }
+    .tree-inv-header .label { flex: 1; font-weight: 700; font-size: 0.95rem; color: var(--text); }
+    .tree-inv-header .count {
+      font-size: 0.75rem; background: #f0f0f0; padding: 3px 8px;
+      border-radius: 10px; color: var(--text-light);
+    }
+
+    .tree-inv-body {
+      display: none;
+      padding: 10px;
+      flex-direction: column;
+      gap: 8px;
+      background: #fafafa;
+    }
+    .tree-inv-body.expanded { display: flex; }
+
+    .tree-cat-card {
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-left: 3px solid var(--red);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .tree-cat-header {
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+      background: #fff;
+    }
+    .tree-cat-header:hover { background: #fafafa; }
+    .tree-cat-header .arrow {
+      font-size: 0.7rem; color: #999; transition: transform 0.2s;
+      width: 12px; display: inline-block;
+    }
+    .tree-cat-header .arrow.expanded { transform: rotate(90deg); }
+    .tree-cat-header .label { flex: 1; font-weight: 600; font-size: 0.9rem; color: var(--text); }
+    .tree-cat-header .count { font-size: 0.7rem; color: var(--text-light); }
+
+    .tree-cat-body {
+      display: none;
+      padding: 6px 10px 10px 10px;
+      flex-direction: column;
+      gap: 6px;
+      background: #fafafa;
+      border-top: 1px solid #f0f0f0;
+    }
+    .tree-cat-body.expanded { display: flex; }
+
+    .tree-subcat-card {
+      background: #fff;
+      border: 1px solid #eee;
+      border-left: 3px solid #ddd;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-left: 6px;
+    }
+
+    .tree-subcat-header {
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+    }
+    .tree-subcat-header:hover { background: #fafafa; }
+    .tree-subcat-header .arrow {
+      font-size: 0.65rem; color: #bbb; transition: transform 0.2s;
+      width: 10px; display: inline-block;
+    }
+    .tree-subcat-header .arrow.expanded { transform: rotate(90deg); }
+    .tree-subcat-header .label { flex: 1; font-weight: 600; font-size: 0.85rem; }
+    .tree-subcat-header .count { font-size: 0.7rem; color: var(--text-light); }
+
+    .tree-subcat-body {
+      display: none;
+      padding: 4px 8px 8px 8px;
+      flex-direction: column;
+      gap: 4px;
+      background: #fafafa;
+      border-top: 1px solid #f2f2f2;
+    }
+    .tree-subcat-body.expanded { display: flex; }
+
+    .tree-obj {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      margin-left: 6px;
+      transition: all 0.15s;
+    }
+    .tree-obj:hover { background: #fafafa; border-color: #ddd; }
+    .tree-obj.selected { background: #e8f5e9; border-color: var(--ok); }
+    .tree-obj .obj-label { flex: 1; font-size: 0.85rem; font-weight: 500; color: var(--text); }
+    .tree-obj .obj-qty {
+      font-size: 0.7rem; background: #f0f0f0; padding: 2px 8px;
+      border-radius: 8px; color: var(--text-light);
+    }
+    .tree-obj.selected .obj-qty { background: #c8e6c9; color: #2e7d32; }
+    .tree-add-btn {
+      background: var(--red); color: #fff; border: none;
+      width: 26px; height: 26px; border-radius: 50%;
+      cursor: pointer; font-size: 0.9rem; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-weight: 700; transition: background 0.15s;
+    }
+    .tree-add-btn:hover { background: var(--red-hover); }
+    .tree-obj.selected .tree-add-btn { background: var(--ok); }
+    .tree-obj.selected .tree-add-btn:hover { background: #388e3c; }
+
+    /* Panier */
+    .cart-panel {
+      background: #f5f5f5;
+      border-radius: 8px;
+      padding: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .cart-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      background: #fff;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      gap: 8px;
+      font-size: 0.85rem;
+      border: 1px solid #eee;
+    }
+    .cart-item:last-child { margin-bottom: 0; }
+    .cart-item-info { flex: 1; min-width: 0; }
+    .cart-item-name { font-weight: 600; }
+    .cart-item-path { font-size: 0.75rem; color: var(--text-light); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .cart-item-qty { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+    .cart-item-qty input {
+      width: 55px; padding: 4px; border: 1px solid #ccc;
+      border-radius: 4px; text-align: center; font-size: 0.85rem;
+    }
+    .cart-item-remove {
+      background: none; border: none; color: var(--danger);
+      cursor: pointer; font-size: 1.1rem; padding: 0 4px; flex-shrink: 0;
+    }
+
+    /* Vue récapitulative groupée (liste de réappro) */
+    .inventory-summary {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .inventory-summary:last-child { margin-bottom: 0; }
+
+    .inv-summary-header {
+      padding: 12px 14px;
+      background: #fafafa;
+      border-bottom: 1px solid #f0f0f0;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .cat-summary-block {
+      margin: 10px;
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-left: 3px solid var(--red);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .cat-summary-header {
+      padding: 10px 12px; background: #fff; font-weight: 600; font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .subcat-summary-block {
+      margin: 0 8px 8px 8px;
+      background: #fff;
+      border: 1px solid #eee;
+      border-left: 3px solid #ddd;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .subcat-summary-header {
+      padding: 8px 10px; font-weight: 600; font-size: 0.85rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .obj-summary-item {
+      padding: 8px 10px; display: flex; align-items: center;
+      justify-content: space-between; gap: 8px;
+      border-top: 1px solid #f5f5f5; font-size: 0.85rem;
+    }
+    .obj-summary-item:first-of-type { border-top: 1px solid #f0f0f0; }
+    .obj-summary-info { flex: 1; display: flex; align-items: center; gap: 8px; }
+    .obj-summary-name { font-weight: 500; }
+    .obj-summary-qty {
+      background: #fff3e0; color: #e65100; padding: 2px 10px;
+      border-radius: 10px; font-weight: 700; font-size: 0.8rem; flex-shrink: 0;
+    }
+
+    /* Empty / Loading */
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-light); }
+    .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
+    .loading { text-align: center; padding: 20px; color: var(--text-light); }
+
+    @media (max-width: 480px) {
+      .header { flex-direction: column; align-items: flex-start; }
+      .header-buttons { width: 100%; justify-content: flex-end; }
+      .action-buttons { flex-direction: column; }
+      .btn-action { width: 100%; }
+      .tree-subcat-card { margin-left: 0; }
+      .tree-obj { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <span style="font-weight: 600;">📦 Utilisation des inventaires</span>
+      </div>
+      <div class="header-buttons">
+        <button class="btn-back" id="btn-home">← Menu</button>
+        <button class="btn-logout" id="btn-logout">Déconnexion</button>
+      </div>
+    </div>
+
+    <!-- Info bar -->
+    <div class="info-bar">
+      <div class="info-bar-label" id="inv-info-label">
+        <strong>Filtre d'ajout :</strong> Tous les inventaires
+      </div>
+      <button class="btn-select-inv" id="btn-select-inv">⚙️ Sélectionner</button>
+    </div>
+
+    <!-- Contenu -->
+    <div id="content">
+      <div class="loading">Chargement...</div>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div class="action-buttons" id="action-buttons" style="display:none;">
+      <button class="btn-action primary" id="btn-add-usage">➕ Ajouter du matériel utilisé</button>
+      <button class="btn-action success" id="btn-rearm">🔄 Réarmer les inventaires</button>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal-overlay" style="display:none;">
+    <div class="modal" id="modal-content"></div>
+  </div>
+
+  <script src="../local-store.js"></script>
+  <script>
+    const { initializeLocalApp, getLocalSession, onDemoSessionChanged, clearDemoSession, getLocalStore, localDoc, readDoc, readCollection, localCollection, writeDoc, patchDoc, removeDoc, onLocalChange } = window.THOTLocal;
+    
+    
+    
+
+    const app = initializeLocalApp({});
+    const auth = getLocalSession(app);
+    const db = getLocalStore(app);
+
+    const USAGE_COLLECTION = 'UT';
+
+    let currentUser = null;
+    let userRole = null;
+
+    let inventories = [];
+    let usages = [];
+    let unsubscribeUsages = null;
+
+    let selectedInventories = [];
+    let allInventoriesSelected = true;
+
+    let rearmMode = false;
+    let rearmChecked = {};
+
+    let cart = {};
+
+    const contentEl = document.getElementById('content');
+    const invInfoLabel = document.getElementById('inv-info-label');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalContent = document.getElementById('modal-content');
+    const actionButtons = document.getElementById('action-buttons');
+    const btnAddUsage = document.getElementById('btn-add-usage');
+    const btnRearm = document.getElementById('btn-rearm');
+
+    // ===== AUTH =====
+    onDemoSessionChanged(auth, async (user) => {
+      if (!user) { redirectToLogin(); return; }
+      const nivol = user.displayName;
+      if (!nivol) { await clearDemoSession(user).catch(() => {}); redirectToLogin(); return; }
+
+      try {
+        const adminSnap = await readDoc(localDoc(db, 'A', nivol));
+        if (adminSnap.exists()) {
+          userRole = 'admin';
+          currentUser = { nivol, nom: adminSnap.data().I || 'Inconnu' };
+        } else {
+          const userSnap = await readDoc(localDoc(db, 'U', nivol));
+          if (userSnap.exists()) {
+            userRole = 'user';
+            currentUser = { nivol, nom: userSnap.data().I || 'Inconnu' };
+          } else {
+            await clearDemoSession(user).catch(() => {});
+            redirectToLogin();
+            return;
+          }
+        }
+
+        document.getElementById('btn-home').onclick = () => {
+          window.location.href = userRole === 'admin' ? '../admin.html' : '../user.html';
+        };
+
+        await loadInventories();
+        loadSelectedInventoriesFromUrl();
+        updateInfoBar();
+        setupRealtimeUsages();
+        renderMain();
+
+      } catch (err) {
+        console.error(err);
+        if (auth.currentUser) await clearDemoSession(auth.currentUser).catch(() => {});
+        redirectToLogin();
+      }
+    });
+
+    function redirectToLogin() {
+      const currentUrl = encodeURIComponent(window.location.href);
+      window.location.href = `../login.html?redirect=${currentUrl}`;
+    }
+
+    document.getElementById('btn-logout').addEventListener('click', async () => {
+      const user = auth.currentUser;
+      if (user) { await clearDemoSession(user).catch(() => {}); window.location.href = '../login.html'; }
+    });
+
+    // ===== SÉLECTION INVENTAIRES =====
+    function loadSelectedInventoriesFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const invParam = params.get('inv');
+      if (invParam) {
+        selectedInventories = invParam.split(',').filter(Boolean);
+        allInventoriesSelected = selectedInventories.length === 0;
+      } else {
+        selectedInventories = [];
+        allInventoriesSelected = true;
+      }
+    }
+
+    function updateUrlWithSelectedInventories() {
+      const params = new URLSearchParams(window.location.search);
+      if (allInventoriesSelected || selectedInventories.length === 0) {
+        params.delete('inv');
+      } else {
+        params.set('inv', selectedInventories.join(','));
+      }
+      const newUrl = params.toString()
+        ? `${window.location.pathname}?${params.toString()}`
+        : window.location.pathname;
+      window.history.replaceState({}, '', newUrl);
+    }
+
+    function updateInfoBar() {
+      if (allInventoriesSelected || selectedInventories.length === 0) {
+        invInfoLabel.innerHTML = '<strong>Filtre d\'ajout :</strong> Tous les inventaires';
+      } else {
+        const names = selectedInventories.map(id => getInventoryName(id)).join(', ');
+        invInfoLabel.innerHTML = `<strong>Filtre d'ajout :</strong> ${escapeHtml(names)}`;
+      }
+    }
+
+    function isInventoryActive(invId) {
+      if (allInventoriesSelected) return true;
+      return selectedInventories.includes(invId);
+    }
+
+    // ===== CHARGEMENT =====
+    async function loadInventories() {
+      try {
+        const snap = await readCollection(localCollection(db, 'I'));
+        inventories = [];
+        snap.forEach(docSnap => {
+          const data = docSnap.data();
+          inventories.push({
+            id: docSnap.id,
+            nom: data.nom || docSnap.id,
+            objets: data.objets || {}
+          });
+        });
+        inventories.sort((a, b) => a.nom.localeCompare(b.nom, 'fr'));
+      } catch (e) {
+        console.error('Erreur loadInventories:', e);
+      }
+    }
+
+    function setupRealtimeUsages() {
+      if (unsubscribeUsages) unsubscribeUsages();
+      unsubscribeUsages = onLocalChange(localCollection(db, USAGE_COLLECTION), (snap) => {
+        usages = [];
+        snap.forEach(d => {
+          usages.push({ id: d.id, ...d.data() });
+        });
+        usages.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+        renderMain();
+      }, (err) => {
+        console.error('Realtime error:', err);
+      });
+    }
+
+    // ===== HELPERS =====
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function getInventoryName(invId) {
+      const inv = inventories.find(i => i.id === invId);
+      return inv ? inv.nom : invId;
+    }
+
+    function isSubCategory(item) {
+      return item && typeof item === 'object' && item._sub === true;
+    }
+
+    // ===== RENDU PRINCIPAL =====
+    function renderMain() {
+      actionButtons.style.display = 'flex';
+
+      if (rearmMode) {
+        renderRearmMode();
+        return;
+      }
+
+      renderSummaryOnly();
+    }
+
+    // ===== RÉSUMÉ COMPACT (mode normal) =====
+    function renderSummaryOnly() {
+      // Calculer le nombre total d'objets uniques utilisés (tous inventaires confondus)
+      const uniqueItems = new Set();
+      usages.forEach(u => {
+        uniqueItems.add(`${u.inventaireId}|${u.path}`);
+      });
+      const totalObjects = uniqueItems.size;
+
+      // Calculer le nombre d'inventaires concernés
+      const invSet = new Set();
+      usages.forEach(u => invSet.add(u.inventaireId));
+      const totalInventories = invSet.size;
+
+      if (totalObjects === 0) {
+        contentEl.innerHTML = `
+          <div class="section">
+            <div class="section-header">
+              <span>📋 Matériel utilisé</span>
+              <span class="badge ok">Aucun</span>
+            </div>
+            <div class="empty-state">
+              <div class="icon">📦</div>
+              <p>Aucun matériel utilisé pour le moment.</p>
+            </div>
+          </div>
+        `;
+        btnRearm.disabled = true;
+        btnRearm.style.opacity = '0.5';
+        btnRearm.style.cursor = 'not-allowed';
+        btnRearm.innerHTML = '🔄 Réarmer les inventaires';
+        return;
+      }
+
+      contentEl.innerHTML = `
+        <div class="section">
+          <div class="section-header">
+            <span>📋 Matériel utilisé</span>
+            <span class="badge warning">${totalObjects} objet(s)</span>
+          </div>
+          <div class="empty-state" style="padding:30px 20px;">
+            <div class="icon">📦</div>
+            <p style="margin-bottom:8px;">
+              <strong>${totalObjects}</strong> objet(s) utilisé(s) dans 
+              <strong>${totalInventories}</strong> inventaire(s).
+            </p>
+            <p style="font-size:0.85rem;">
+              Cliquez sur « Réarmer les inventaires » pour démarrer le réapprovisionnement.
+            </p>
+          </div>
+        </div>
+      `;
+
+      btnRearm.disabled = false;
+      btnRearm.style.opacity = '1';
+      btnRearm.style.cursor = 'pointer';
+      btnRearm.innerHTML = `🔄 Réarmer les inventaires <span class="btn-badge">${totalObjects}</span>`;
+    }
+
+    // ===== CONSTRUCTION ARBRE =====
+    function buildTree(items) {
+      const tree = {};
+      Object.values(items).forEach(item => {
+        const parts = item.path.split('.');
+        const objName = parts.pop();
+        const catPath = parts.join('.');
+        if (!tree[catPath]) tree[catPath] = {};
+        tree[catPath][objName] = item;
+      });
+
+      const root = {};
+      Object.keys(tree).forEach(catPath => {
+        if (catPath === '') {
+          if (!root.__root__) root.__root__ = {};
+          Object.assign(root.__root__, tree[catPath]);
+        } else {
+          const parts = catPath.split('.');
+          let current = root;
+          parts.forEach((part, idx) => {
+            if (!current[part]) current[part] = { __children__: {}, __objs__: {} };
+            if (idx === parts.length - 1) Object.assign(current[part].__objs__, tree[catPath]);
+            current = current[part].__children__;
+          });
+        }
+      });
+      return root;
+    }
+
+    function countObjsInNode(node) {
+      let count = Object.keys(node.__objs__ || {}).length;
+      Object.keys(node.__children__ || {}).forEach(k => {
+        if (k === '__root__') return;
+        const child = node.__children__[k];
+        if (child && typeof child === 'object') count += countObjsInNode(child);
+      });
+      if (node.__root__) count += Object.keys(node.__root__).length;
+      return count;
+    }
+
+    // ===== RENDU EN CARTES (liste de réappro + réarmement) =====
+    function renderItemsAsCards(items, isRearm) {
+      const root = buildTree(items);
+      return renderCardsFromNode(root, 0, isRearm);
+    }
+
+    function renderCardsFromNode(node, depth, isRearm) {
+      let html = '';
+
+      if (node.__root__) {
+        Object.values(node.__root__).forEach(obj => {
+          html += isRearm ? renderRearmObjCard(obj) : renderObjCard(obj);
+        });
+      }
+
+      Object.keys(node).forEach(key => {
+        if (key === '__root__') return;
+        const subNode = node[key];
+        if (!subNode || typeof subNode !== 'object') return;
+
+        const children = subNode.__children__ || {};
+        const objs = subNode.__objs__ || {};
+        const totalObjs = countObjsInNode(subNode);
+
+        const blockClass = depth === 0 ? 'cat-summary-block' : 'subcat-summary-block';
+        const headerClass = depth === 0 ? 'cat-summary-header' : 'subcat-summary-header';
+
+        html += `<div class="${blockClass}">
+          <div class="${headerClass}">
+            <span>📂 ${escapeHtml(key)}</span>
+            <span class="badge">${totalObjs} objet(s)</span>
+          </div>`;
+
+        Object.values(objs).forEach(obj => {
+          html += isRearm ? renderRearmObjCard(obj) : renderObjCard(obj);
+        });
+
+        html += renderCardsFromNode(children, depth + 1, isRearm);
+        html += `</div>`;
+      });
+
+      return html;
+    }
+
+    function renderObjCard(obj) {
+      return `<div class="obj-summary-item">
+        <div class="obj-summary-info">
+          <span class="obj-summary-name">${escapeHtml(obj.objetNom)}</span>
+        </div>
+        <span class="obj-summary-qty">×${obj.quantite}</span>
+      </div>`;
+    }
+
+    function renderRearmObjCard(obj) {
+      const key = `${obj.inventaireId}|${obj.path}`;
+      const checked = rearmChecked[key] ? 'checked' : '';
+      return `<div class="obj-summary-item">
+        <div class="obj-summary-info">
+          <input type="checkbox" class="rearm-checkbox" data-key="${escapeHtml(key)}" ${checked} style="width:20px;height:20px;cursor:pointer;">
+          <span class="obj-summary-name">${escapeHtml(obj.objetNom)}</span>
+        </div>
+        <span class="obj-summary-qty">×${obj.quantite}</span>
+      </div>`;
+    }
+
+    // ===== RÉARMEMENT (vue détaillée complète) =====
+    function renderRearmMode() {
+      const groupedByInv = {};
+      usages.forEach(u => {
+        const key = `${u.inventaireId}|${u.path}`;
+        if (!groupedByInv[u.inventaireId]) {
+          groupedByInv[u.inventaireId] = { nom: getInventoryName(u.inventaireId), items: {} };
+        }
+        if (!groupedByInv[u.inventaireId].items[key]) {
+          groupedByInv[u.inventaireId].items[key] = {
+            inventaireId: u.inventaireId, path: u.path, objetNom: u.objetNom, quantite: 0
+          };
+        }
+        groupedByInv[u.inventaireId].items[key].quantite += u.quantite || 0;
+      });
+
+      const invIds = Object.keys(groupedByInv);
+      const checkedCount = Object.keys(rearmChecked).filter(k => rearmChecked[k]).length;
+      const totalItems = Object.values(groupedByInv).reduce((sum, inv) => sum + Object.keys(inv.items).length, 0);
+
+      let html = `
+        <div class="section">
+          <div class="section-header">
+            <span>🔄 Réarmer les inventaires</span>
+            <span class="badge ok">${checkedCount}/${totalItems} réarmés</span>
+          </div>
+          <div style="padding:12px 18px;background:#fff8f0;border-bottom:1px solid #f0f0f0;font-size:0.85rem;color:#666;">
+            Cochez chaque objet réarmé. Les non cochés seront marqués <strong>absents</strong>.
+          </div>
+          <div style="padding:16px;">
+      `;
+
+      invIds.forEach(invId => {
+        const invData = groupedByInv[invId];
+        html += `<div class="inventory-summary">
+          <div class="inv-summary-header">
+            <span>📋 ${escapeHtml(invData.nom)}</span>
+            <span class="badge warning">${Object.keys(invData.items).length} objet(s)</span>
+          </div>`;
+        html += renderItemsAsCards(invData.items, true);
+        html += `</div>`;
+      });
+
+      html += `
+          </div>
+        </div>
+        <div class="action-buttons" style="margin-top:12px;">
+          <button class="btn-action secondary" id="btn-cancel-rearm">✖ Annuler</button>
+          <button class="btn-action success" id="btn-validate-rearm">✅ Valider</button>
+        </div>
+      `;
+
+      contentEl.innerHTML = html;
+      actionButtons.style.display = 'none';
+
+      document.querySelectorAll('.rearm-checkbox').forEach(cb => {
+        cb.addEventListener('change', () => {
+          rearmChecked[cb.dataset.key] = cb.checked;
+          const total = document.querySelectorAll('.rearm-checkbox').length;
+          const checked = document.querySelectorAll('.rearm-checkbox:checked').length;
+          const badge = document.querySelector('.section-header .badge');
+          if (badge) badge.textContent = `${checked}/${total} réarmés`;
+        });
+      });
+
+      document.getElementById('btn-cancel-rearm').addEventListener('click', () => {
+        rearmMode = false; rearmChecked = {}; renderMain();
+      });
+
+      document.getElementById('btn-validate-rearm').addEventListener('click', () => {
+        validateRearm(groupedByInv);
+      });
+    }
+
+    async function validateRearm(groupedByInv) {
+      const allItems = [];
+      Object.values(groupedByInv).forEach(inv => {
+        Object.values(inv.items).forEach(item => allItems.push(item));
+      });
+      if (allItems.length === 0) return;
+
+      const missingItems = allItems.filter(item => !rearmChecked[`${item.inventaireId}|${item.path}`]);
+
+      modalContent.innerHTML = `
+        <h3>Confirmer le réarmement</h3>
+        <p>${missingItems.length > 0 ? `${missingItems.length} objet(s) non réarmé(s) seront marqués <strong>absents</strong>.` : 'Tous les objets ont été réarmés.'}</p>
+        ${missingItems.length > 0 ? `
+          <div style="background:#fff0f0;padding:12px;border-radius:8px;max-height:200px;overflow-y:auto;font-size:0.85rem;">
+            ${missingItems.map(i => `<div style="padding:4px 0;border-bottom:1px solid #f5e5e5;">❌ ${escapeHtml(i.objetNom)} ×${i.quantite} (${escapeHtml(getInventoryName(i.inventaireId))})</div>`).join('')}
+          </div>
+        ` : ''}
+        <div class="modal-actions">
+          <button class="btn btn-cancel" id="modal-cancel">Annuler</button>
+          <button class="btn btn-save" id="modal-confirm">Confirmer</button>
+        </div>
+      `;
+      modalOverlay.style.display = 'flex';
+
+      document.getElementById('modal-cancel').addEventListener('click', closeModal);
+      document.getElementById('modal-confirm').addEventListener('click', async () => {
+        try {
+          const invIds = new Set(allItems.map(i => i.inventaireId));
+          for (const invId of invIds) {
+            const invItems = allItems.filter(i => i.inventaireId === invId);
+            const invMissing = invItems.filter(i => !rearmChecked[`${i.inventaireId}|${i.path}`]);
+            if (invMissing.length === 0) continue;
+            const manquantsSnap = await readDoc(localDoc(db, 'I', invId));
+            const currentManquants = manquantsSnap.data().manquants || [];
+            const newEntries = invMissing.map(i => `${i.objetNom} (${i.path})`);
+            const newManquants = [...new Set([...currentManquants, ...newEntries])];
+            await patchDoc(localDoc(db, 'I', invId), { manquants: newManquants });
+          }
+          for (const u of usages) await removeDoc(localDoc(db, USAGE_COLLECTION, u.id));
+          rearmMode = false; rearmChecked = {};
+          closeModal(); renderMain();
+        } catch (e) { console.error(e); alert('Erreur : ' + e.message); }
+      });
+    }
+
+    // ===== BOUTONS =====
+    btnAddUsage.addEventListener('click', () => openAddUsageModal());
+    btnRearm.addEventListener('click', () => {
+      if (usages.length === 0) return;
+      rearmMode = true; rearmChecked = {}; renderMain();
+    });
+
+    // ===== MODAL SÉLECTION =====
+    document.getElementById('btn-select-inv').addEventListener('click', () => openInventorySelectorModal());
+
+    function openInventorySelectorModal() {
+      modalContent.innerHTML = `
+        <h3>Inventaires à utiliser pour l'ajout</h3>
+        <p class="hint">Ces inventaires seront proposés dans la recherche lors de l'ajout de matériel.</p>
+        <div class="inv-selector" id="inv-selector-modal"></div>
+        <div class="modal-actions">
+          <button class="btn btn-cancel" id="modal-cancel">Annuler</button>
+          <button class="btn btn-save" id="modal-save">Valider</button>
+        </div>
+      `;
+      modalOverlay.style.display = 'flex';
+
+      const container = document.getElementById('inv-selector-modal');
+      let tempAll = allInventoriesSelected;
+      let tempSelected = [...selectedInventories];
+
+      function renderChips() {
+        container.innerHTML = '';
+        const allChip = document.createElement('div');
+        allChip.className = 'inv-chip' + (tempAll ? ' selected' : '');
+        allChip.textContent = 'Tous';
+        allChip.addEventListener('click', () => { tempAll = true; tempSelected = []; renderChips(); });
+        container.appendChild(allChip);
+
+        inventories.forEach(inv => {
+          const chip = document.createElement('div');
+          const isSel = !tempAll && tempSelected.includes(inv.id);
+          chip.className = 'inv-chip' + (isSel ? ' selected' : '');
+          chip.textContent = inv.nom;
+          chip.addEventListener('click', () => {
+            tempAll = false;
+            if (tempSelected.includes(inv.id)) tempSelected = tempSelected.filter(i => i !== inv.id);
+            else tempSelected.push(inv.id);
+            if (tempSelected.length === 0) tempAll = true;
+            renderChips();
+          });
+          container.appendChild(chip);
+        });
+      }
+      renderChips();
+
+      document.getElementById('modal-cancel').addEventListener('click', closeModal);
+      document.getElementById('modal-save').addEventListener('click', () => {
+        allInventoriesSelected = tempAll;
+        selectedInventories = tempSelected;
+        updateUrlWithSelectedInventories();
+        updateInfoBar();
+        closeModal();
+      });
+    }
+
+    // ===== MODAL AJOUT (arbre en cartes, sans limite de hauteur) =====
+    function openAddUsageModal() {
+      cart = {};
+      const activeInvs = inventories.filter(inv => isInventoryActive(inv.id));
+
+      if (activeInvs.length === 0) {
+        modalContent.innerHTML = `
+          <h3>Aucun inventaire sélectionné</h3>
+          <p>Sélectionnez au moins un inventaire via le bouton "Sélectionner".</p>
+          <div class="modal-actions">
+            <button class="btn btn-cancel" id="modal-cancel">Fermer</button>
+          </div>
+        `;
+        modalOverlay.style.display = 'flex';
+        document.getElementById('modal-cancel').addEventListener('click', closeModal);
+        return;
+      }
+
+      modalContent.innerHTML = `
+        <h3>➕ Ajouter du matériel utilisé</h3>
+        <div>
+          <label>Rechercher (optionnel)</label>
+          <input type="text" id="modal-search" placeholder="Filtrer par nom d'objet, catégorie ou inventaire...">
+        </div>
+        <div>
+          <label>Parcourir les inventaires</label>
+          <div class="tree-view" id="modal-tree-view"></div>
+        </div>
+        <div>
+          <label id="cart-label">Objets sélectionnés (0)</label>
+          <div class="cart-panel" id="modal-cart">
+            <div style="text-align:center;color:#999;font-size:0.85rem;padding:12px;">Aucun objet sélectionné</div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-cancel" id="modal-cancel">Annuler</button>
+          <button class="btn btn-save" id="modal-save" disabled>Ajouter tout</button>
+        </div>
+      `;
+      modalOverlay.style.display = 'flex';
+
+      const modalSearch = document.getElementById('modal-search');
+      const treeView = document.getElementById('modal-tree-view');
+
+      function refreshTree() {
+        const q = (modalSearch.value || '').toLowerCase().trim();
+        treeView.innerHTML = renderFullTree(activeInvs, q);
+        attachTreeEvents();
+      }
+
+      modalSearch.addEventListener('input', refreshTree);
+      document.getElementById('modal-cancel').addEventListener('click', closeModal);
+      document.getElementById('modal-save').addEventListener('click', () => saveCartToLocalStorage());
+
+      refreshTree();
+      updateCartUI();
+    }
+
+    function renderFullTree(activeInvs, searchQuery) {
+      const q = (searchQuery || '').toLowerCase().trim();
+      let html = '';
+
+      activeInvs.forEach(inv => {
+        const objets = inv.objets || {};
+        const catKeys = Object.keys(objets);
+        if (catKeys.length === 0) return;
+
+        if (q) {
+          const invMatches = inv.nom.toLowerCase().includes(q);
+          const hasMatch = catKeys.some(catKey => {
+            if (catKey.toLowerCase().includes(q)) return true;
+            return objectTreeContainsMatch(objets[catKey], q);
+          });
+          if (!invMatches && !hasMatch) return;
+        }
+
+        html += renderInventoryCard(inv.id, inv.nom, objets, q);
+      });
+
+      if (!html) html = '<div style="padding:20px;text-align:center;color:#999;">Aucun résultat.</div>';
+      return html;
+    }
+
+    function objectTreeContainsMatch(data, q) {
+      if (!data || typeof data !== 'object') return false;
+      return Object.keys(data).some(key => {
+        if (key === '_sub') return false;
+        if (key.toLowerCase().includes(q)) return true;
+        const item = data[key];
+        if (item && typeof item === 'object') return objectTreeContainsMatch(item, q);
+        return false;
+      });
+    }
+
+    function renderInventoryCard(invId, invName, objets, q) {
+      const catKeys = Object.keys(objets);
+      const autoExpand = !!q;
+      const totalObjs = countObjsInInventory(objets);
+
+      let bodyHtml = '';
+      catKeys.forEach(catKey => {
+        if (catKey === '_sub') return;
+        const cat = objets[catKey];
+        if (!cat || typeof cat !== 'object') return;
+        bodyHtml += renderCategoryCard(invId, catKey, cat, catKey, q, autoExpand);
+      });
+
+      if (!bodyHtml) return '';
+
+      return `
+        <div class="tree-inv-card">
+          <div class="tree-inv-header" data-toggle-inv="true">
+            <span class="arrow ${autoExpand ? 'expanded' : ''}">▶</span>
+            <span class="label">📋 ${escapeHtml(invName)}</span>
+            <span class="count">${totalObjs} objet(s)</span>
+          </div>
+          <div class="tree-inv-body ${autoExpand ? 'expanded' : ''}">
+            ${bodyHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    function countObjsInInventory(objets) {
+      let count = 0;
+      Object.keys(objets).forEach(k => {
+        if (k === '_sub') return;
+        const item = objets[k];
+        if (!item || typeof item !== 'object') return;
+        if (isSubCategory(item)) count += countObjsInInventory(item);
+        else count++;
+      });
+      return count;
+    }
+
+    function renderCategoryCard(invId, name, data, path, q, autoExpand) {
+      const keys = Object.keys(data).filter(k => k !== '_sub');
+      const objKeys = keys.filter(k => !isSubCategory(data[k])).filter(k => !q || k.toLowerCase().includes(q));
+      const subCatKeys = keys.filter(k => isSubCategory(data[k]));
+
+      const filteredSubCats = subCatKeys.filter(k => {
+        if (!q) return true;
+        if (k.toLowerCase().includes(q)) return true;
+        return objectTreeContainsMatch(data[k], q);
+      });
+
+      if (q && objKeys.length === 0 && filteredSubCats.length === 0) return '';
+
+      let bodyHtml = '';
+
+      objKeys.forEach(objKey => {
+        const obj = data[objKey];
+        const fullPath = `${path}.${objKey}`;
+        const cartKey = `${invId}|${fullPath}`;
+        const selected = !!cart[cartKey];
+        const qty = obj.q !== undefined ? obj.q : (obj.quantite !== undefined ? obj.quantite : 0);
+        bodyHtml += `
+          <div class="tree-obj ${selected ? 'selected' : ''}" data-obj-inv="${escapeHtml(invId)}" data-obj-path="${escapeHtml(fullPath)}" data-obj-nom="${escapeHtml(objKey)}">
+            <span class="obj-label">${escapeHtml(objKey)}</span>
+            <span class="obj-qty">×${qty}</span>
+            <button class="tree-add-btn" data-add-obj="true" title="Ajouter">${selected ? '✓' : '+'}</button>
+          </div>
+        `;
+      });
+
+      filteredSubCats.forEach(subKey => {
+        const subData = data[subKey];
+        const subPath = `${path}.${subKey}`;
+        const innerHtml = renderCategoryCard(invId, subKey, subData, subPath, q, autoExpand);
+        if (q && !innerHtml) return;
+
+        const totalObjs = countObjsInInventory(subData);
+
+        bodyHtml += `
+          <div class="tree-subcat-card">
+            <div class="tree-subcat-header" data-toggle-subcat="true">
+              <span class="arrow ${autoExpand ? 'expanded' : ''}">▶</span>
+              <span class="label">📂 ${escapeHtml(subKey)}</span>
+              <span class="count">${totalObjs}</span>
+            </div>
+            <div class="tree-subcat-body ${autoExpand ? 'expanded' : ''}">
+              ${innerHtml}
+            </div>
+          </div>
+        `;
+      });
+
+      const isRoot = path === name;
+
+      if (isRoot) {
+        return `
+          <div class="tree-cat-card">
+            <div class="tree-cat-header" data-toggle-cat="true">
+              <span class="arrow ${autoExpand ? 'expanded' : ''}">▶</span>
+              <span class="label">📂 ${escapeHtml(name)}</span>
+              <span class="count">${countObjsInInventory(data)} objet(s)</span>
+            </div>
+            <div class="tree-cat-body ${autoExpand ? 'expanded' : ''}">
+              ${bodyHtml}
+            </div>
+          </div>
+        `;
+      }
+      return bodyHtml;
+    }
+
+    function attachTreeEvents() {
+      document.querySelectorAll('#modal-tree-view .tree-inv-header[data-toggle-inv="true"]').forEach(header => {
+        header.addEventListener('click', () => {
+          const card = header.closest('.tree-inv-card');
+          const body = card.querySelector(':scope > .tree-inv-body');
+          const arrow = header.querySelector('.arrow');
+          if (body) body.classList.toggle('expanded');
+          if (arrow) arrow.classList.toggle('expanded');
+        });
+      });
+
+      document.querySelectorAll('#modal-tree-view .tree-cat-header[data-toggle-cat="true"]').forEach(header => {
+        header.addEventListener('click', () => {
+          const card = header.closest('.tree-cat-card');
+          const body = card.querySelector(':scope > .tree-cat-body');
+          const arrow = header.querySelector('.arrow');
+          if (body) body.classList.toggle('expanded');
+          if (arrow) arrow.classList.toggle('expanded');
+        });
+      });
+
+      document.querySelectorAll('#modal-tree-view .tree-subcat-header[data-toggle-subcat="true"]').forEach(header => {
+        header.addEventListener('click', () => {
+          const card = header.closest('.tree-subcat-card');
+          const body = card.querySelector(':scope > .tree-subcat-body');
+          const arrow = header.querySelector('.arrow');
+          if (body) body.classList.toggle('expanded');
+          if (arrow) arrow.classList.toggle('expanded');
+        });
+      });
+
+      document.querySelectorAll('#modal-tree-view .tree-add-btn[data-add-obj="true"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const objEl = btn.closest('.tree-obj');
+          const invId = objEl.dataset.objInv;
+          const path = objEl.dataset.objPath;
+          const nom = objEl.dataset.objNom;
+          const key = `${invId}|${path}`;
+
+          if (cart[key]) cart[key].quantite++;
+          else cart[key] = {
+            inventaireId: invId,
+            inventaireNom: getInventoryName(invId),
+            path, objetNom: nom, quantite: 1
+          };
+          objEl.classList.add('selected');
+          btn.textContent = '✓';
+          updateCartUI();
+        });
+      });
+    }
+
+    function updateCartUI() {
+      const cartEl = document.getElementById('modal-cart');
+      const cartLabel = document.getElementById('cart-label');
+      const saveBtn = document.getElementById('modal-save');
+      const items = Object.values(cart);
+
+      if (cartLabel) cartLabel.textContent = `Objets sélectionnés (${items.length})`;
+
+      if (items.length === 0) {
+        cartEl.innerHTML = '<div style="text-align:center;color:#999;font-size:0.85rem;padding:12px;">Aucun objet sélectionné</div>';
+        if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Ajouter tout'; }
+        return;
+      }
+
+      let html = '';
+      items.forEach(item => {
+        const key = `${item.inventaireId}|${item.path}`;
+        html += `
+          <div class="cart-item">
+            <div class="cart-item-info">
+              <div class="cart-item-name">${escapeHtml(item.objetNom)}</div>
+              <div class="cart-item-path">${escapeHtml(item.inventaireNom)} · ${escapeHtml(item.path)}</div>
+            </div>
+            <div class="cart-item-qty">
+              <input type="number" min="1" value="${item.quantite}" data-qty-input="${escapeHtml(key)}">
+            </div>
+            <button class="cart-item-remove" data-remove="${escapeHtml(key)}" title="Retirer">✖</button>
+          </div>
+        `;
+      });
+      cartEl.innerHTML = html;
+
+      cartEl.querySelectorAll('[data-qty-input]').forEach(input => {
+        input.addEventListener('change', () => {
+          const key = input.dataset.qtyInput;
+          const val = parseInt(input.value) || 1;
+          if (cart[key]) cart[key].quantite = Math.max(1, val);
+        });
+      });
+
+      cartEl.querySelectorAll('[data-remove]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const key = btn.dataset.remove;
+          delete cart[key];
+          const [invId, ...pathParts] = key.split('|');
+          const path = pathParts.join('|');
+          const objEl = document.querySelector(`#modal-tree-view .tree-obj[data-obj-inv="${CSS.escape(invId)}"][data-obj-path="${CSS.escape(path)}"]`);
+          if (objEl) {
+            objEl.classList.remove('selected');
+            const b = objEl.querySelector('.tree-add-btn');
+            if (b) b.textContent = '+';
+          }
+          updateCartUI();
+        });
+      });
+
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.textContent = `Ajouter tout (${items.length})`;
+      }
+    }
+
+    async function saveCartToLocalStorage() {
+      const items = Object.values(cart);
+      if (items.length === 0) return;
+      try {
+        for (const item of items) {
+          const usageRef = localDoc(localCollection(db, USAGE_COLLECTION));
+          await writeDoc(usageRef, {
+            inventaireId: item.inventaireId,
+            path: item.path,
+            objetNom: item.objetNom,
+            quantite: item.quantite,
+            par: currentUser.nivol,
+            nomPar: currentUser.nom,
+            createdAt: new Date().toISOString()
+          });
+        }
+        cart = {};
+        closeModal();
+      } catch (e) { alert('Erreur : ' + e.message); }
+    }
+
+    function closeModal() {
+      modalOverlay.style.display = 'none';
+      modalContent.innerHTML = '';
+      cart = {};
+    }
+
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) closeModal();
+    });
+  </script>
+</body>
+</html>

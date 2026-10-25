@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thot – Parc Auto (Admin)</title>
+  <style>
+    :root {
+      --red: #e60000;
+      --red-hover: #b30000;
+      --bg: #f5f5f5;
+      --card-bg: #ffffff;
+      --border: #ddd;
+      --text: #333;
+      --text-light: #666;
+      --radius: 12px;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08);
+      --warning: #f5a623;
+      --danger: #e60000;
+      --ok: #4caf50;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Header */
+    .header {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-back {
+      background: transparent;
+      border: 1.5px solid #ccc;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .btn-back:hover { background: #eee; }
+
+    .btn-logout {
+      background: transparent;
+      color: var(--red);
+      border: 1.5px solid var(--red);
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .btn-logout:hover { background: var(--red); color: #fff; }
+
+    .btn-add {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .btn-add:hover { background: var(--red-hover); }
+
+    /* Sélecteur de véhicule */
+    .vehicle-selector {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      box-shadow: var(--shadow);
+    }
+
+    .vehicle-selector select {
+      padding: 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    /* Sections */
+    .section {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .section:last-child { margin-bottom: 0; }
+
+    .section-header {
+      padding: 14px 18px;
+      background: #fafafa;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s;
+    }
+
+    .section-header:hover { background: #f0f0f0; }
+
+    .section-header .collapse-icon {
+      font-size: 1.2rem;
+      transition: transform 0.3s;
+      display: inline-block;
+    }
+
+    .section-header.collapsed .collapse-icon {
+      transform: rotate(-90deg);
+    }
+
+    .section-body {
+      transition: max-height 0.3s ease, opacity 0.3s ease;
+      overflow: hidden;
+      max-height: 100000px;
+      opacity: 1;
+    }
+
+    .section-body.collapsed {
+      max-height: 0;
+      opacity: 0;
+    }
+
+    .list { list-style: none; }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      border-bottom: 1px solid #f0f0f0;
+      flex-wrap: wrap;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+
+    .list-item:last-child { border-bottom: none; }
+    .list-item:hover { background: #fafafa; }
+
+    .list-item-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .list-item-title { font-weight: 600; font-size: 0.95rem; }
+    .list-item-sub { font-size: 0.8rem; color: var(--text-light); }
+    .list-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+    .obj-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .obj-name { font-weight: 600; }
+
+    .obj-date {
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .date-ok { color: var(--ok); }
+    .date-warning { color: var(--warning); font-weight: 600; }
+    .date-danger { color: var(--danger); font-weight: 700; }
+
+    .item-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .btn-icon {
+      background: none;
+      border: 1.5px solid #ccc;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .btn-icon:hover { background: #f0f0f0; }
+    .btn-icon.delete:hover { color: var(--red); border-color: var(--red); background: #fff0f0; }
+
+    .badge {
+      font-size: 0.75rem;
+      background: #f0f0f0;
+      padding: 3px 8px;
+      border-radius: 10px;
+      color: var(--text-light);
+      white-space: nowrap;
+    }
+    .badge.ok { background: #e8f5e9; color: #2e7d32; }
+    .badge.warning { background: #fff8f0; color: var(--warning); }
+    .badge.danger { background: #fff0f0; color: var(--danger); }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-light);
+    }
+
+    .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
+
+    /* Logs */
+    .logs-section { margin-top: 8px; }
+    .logs-section summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text-light);
+      font-size: 0.9rem;
+      padding: 8px 0;
+    }
+    .log-item {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      padding: 4px 0;
+      border-bottom: 1px solid #f5f5f5;
+    }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+
+    .modal {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 24px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal h3 { font-size: 1.1rem; }
+    .modal label { font-weight: 600; display: block; margin-bottom: 4px; font-size: 0.9rem; }
+    .modal input, .modal select, .modal textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+    .modal textarea { min-height: 80px; resize: vertical; }
+    .modal .hint { font-size: 0.8rem; color: var(--text-light); margin-top: 4px; }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+
+    .btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .btn-cancel { background: #eee; color: #333; }
+    .btn-cancel:hover { background: #ddd; }
+    .btn-save { background: var(--red); color: #fff; }
+    .btn-save:hover { background: var(--red-hover); }
+    .btn-danger { background: #c00; color: #fff; }
+    .btn-danger:hover { background: #a00; }
+
+    /* Confirm modal */
+    .confirm-modal {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      text-align: center;
+      border-top: 4px solid var(--red);
+    }
+    .confirm-modal .confirm-icon { font-size: 3rem; line-height: 1; }
+    .confirm-modal h3 { font-size: 1.2rem; font-weight: 700; }
+    .confirm-modal p { font-size: 0.95rem; color: var(--text-light); line-height: 1.5; }
+    .confirm-modal .confirm-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .confirm-modal .btn { flex: 1; min-width: 120px; padding: 12px 18px; font-size: 0.95rem; }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .list-item { flex-direction: column; align-items: flex-start; }
+      .item-actions { align-self: flex-end; }
+      .header { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <span style="font-weight:600;">🚗 Gestion du parc auto</span>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-back" id="btn-admin">← Administration</button>
+        <button class="btn-logout" id="btn-logout">Déconnexion</button>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+      <div class="vehicle-selector">
+        <select id="vehicle-select">
+          <option value="">— Choisir un véhicule —</option>
+        </select>
+        <button class="btn-back" id="btn-edit-vehicle" title="Modifier" style="display:none;">✏️</button>
+        <button class="btn-icon delete" id="btn-delete-vehicle" title="Supprimer" style="display:none;">🗑️</button>
+        <button class="btn-add" id="btn-qrcode" style="display:none; margin-left:8px;">📱 QR Code</button>
+      </div>
+      <button class="btn-add" id="btn-create">+ Créer</button>
+    </div>
+
+    <!-- Contenu du véhicule sélectionné -->
+    <div id="vehicle-content">
+      <div class="empty-state">
+        <div class="icon">🚗</div>
+        <p>Sélectionnez un véhicule pour voir ses informations.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal-overlay" style="display:none;">
+    <div class="modal" id="modal-content"></div>
+  </div>
+
+  <script src="../local-store.js"></script>
+  <script>
+    const { initializeLocalApp, getLocalSession, onDemoSessionChanged, clearDemoSession, getLocalStore, localDoc, readDoc, readCollection, localCollection, writeDoc, patchDoc, removeDoc, removeField } = window.THOTLocal;
+    
+    
+    
+
+    const app = initializeLocalApp({});
+    const auth = getLocalSession(app);
+    const db = getLocalStore(app);
+
+    const COLLECTION = 'P';
+
+    let currentAdmin = null;
+    let vehicles = [];
+    let currentVehicleId = null;
+    let currentVehicleData = null;
+
+    const vehicleSelect = document.getElementById('vehicle-select');
+    const vehicleContent = document.getElementById('vehicle-content');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalContent = document.getElementById('modal-content');
+    const btnEditVehicle = document.getElementById('btn-edit-vehicle');
+    const btnDeleteVehicle = document.getElementById('btn-delete-vehicle');
+    const btnQRCode = document.getElementById('btn-qrcode');
+
+    // Vérification connexion
+    onDemoSessionChanged(auth, async (user) => {
+      if (!user) { window.location.href = '../login.html'; return; }
+      const nivol = user.displayName;
+      if (!nivol) {
+        await clearDemoSession(user).catch(() => {});
+        window.location.href = '../login.html';
+        return;
+      }
+
+      try {
+        const adminSnap = await readDoc(localDoc(db, 'A', nivol));
+        if (!adminSnap.exists()) {
+          await clearDemoSession(user).catch(() => {});
+          window.location.href = '../login.html';
+          return;
+        }
+
+        currentAdmin = {
+          nivol,
+          nom: adminSnap.data().I || 'Inconnu',
+          fonction: adminSnap.data().F || ''
+        };
+
+        await loadVehicles();
+
+      } catch (err) {
+        console.error(err);
+        if (auth.currentUser) await clearDemoSession(auth.currentUser).catch(() => {});
+        window.location.href = '../login.html';
+      }
+    });
+
+    document.getElementById('btn-logout').addEventListener('click', async () => {
+      const user = auth.currentUser;
+      if (user) {
+        await clearDemoSession(user).catch(() => {});
+        window.location.href = '../login.html';
+      }
+    });
+
+    document.getElementById('btn-admin').addEventListener('click', () => {
+      window.location.href = '../admin.html';
+    });
+
+    document.getElementById('btn-create').addEventListener('click', () => openCreateModal());
+
+    btnQRCode.addEventListener('click', () => {
+      if (currentVehicleId) {
+        window.location.href = `./qr.html?type=vehicule&id=${encodeURIComponent(currentVehicleId)}`;
+      }
+    });
+
+    btnEditVehicle.addEventListener('click', () => {
+      if (currentVehicleId && currentVehicleData) openEditVehicleModal();
+    });
+
+    btnDeleteVehicle.addEventListener('click', () => {
+      if (currentVehicleId && currentVehicleData) openDeleteVehicleModal();
+    });
+
+    vehicleSelect.addEventListener('change', () => {
+      const id = vehicleSelect.value;
+      if (id) {
+        selectVehicle(id);
+      } else {
+        currentVehicleId = null;
+        currentVehicleData = null;
+        btnEditVehicle.style.display = 'none';
+        btnDeleteVehicle.style.display = 'none';
+        btnQRCode.style.display = 'none';
+        vehicleContent.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">🚗</div>
+            <p>Sélectionnez un véhicule pour voir ses informations.</p>
+          </div>
+        `;
+      }
+    });
+
+    // ========== FONCTIONS ==========
+
+    async function loadVehicles() {
+      try {
+        const snap = await readCollection(localCollection(db, COLLECTION));
+        vehicles = [];
+        snap.forEach(d => {
+          const data = d.data();
+          vehicles.push({ id: d.id, ...data });
+        });
+        // Tri alphabétique par nom uniquement
+        vehicles.sort((a, b) => (a.n || a.id).localeCompare(b.n || b.id, 'fr'));
+
+        const currentVal = vehicleSelect.value;
+        vehicleSelect.innerHTML = '<option value="">— Choisir un véhicule —</option>';
+        vehicles.forEach(v => {
+          // Affichage : nom uniquement (pas d'immatriculation)
+          const label = v.n || v.id;
+          vehicleSelect.innerHTML += `<option value="${v.id}"${v.id === currentVal ? ' selected' : ''}>${escapeHtml(label)}</option>`;
+        });
+
+        if (currentVehicleId) {
+          const still = vehicles.find(v => v.id === currentVehicleId);
+          if (still) {
+            currentVehicleData = still;
+            renderVehicleContent();
+          } else {
+            currentVehicleId = null;
+            currentVehicleData = null;
+            btnEditVehicle.style.display = 'none';
+            btnDeleteVehicle.style.display = 'none';
+            btnQRCode.style.display = 'none';
+            vehicleContent.innerHTML = '<div class="empty-state"><p>Ce véhicule n\'existe plus.</p></div>';
+          }
+        }
+      } catch(e) {
+        console.error(e);
+      }
+    }
+
+    function selectVehicle(id) {
+      const v = vehicles.find(x => x.id === id);
+      if (!v) return;
+      currentVehicleId = id;
+      currentVehicleData = v;
+      btnEditVehicle.style.display = 'inline-block';
+      btnDeleteVehicle.style.display = 'inline-block';
+      btnQRCode.style.display = 'inline-block';
+      renderVehicleContent();
+    }
+
+    // ===== HELPERS =====
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function formatDate(iso) {
+      if (!iso) return '—';
+      return new Date(iso).toLocaleString('fr-FR');
+    }
+
+    function getDateStatus(dateStr) {
+      if (!dateStr) return null;
+      const now = new Date();
+      const date = new Date(dateStr);
+      const diffDays = Math.ceil((date - now) / (1000 * 60 * 60 * 24));
+      if (diffDays <= 0) return 'danger';
+      if (diffDays <= 30) return 'warning';
+      return 'ok';
+    }
+
+    function getKmStatus(targetKm, currentKm) {
+      if (!targetKm) return null;
+      const diff = targetKm - currentKm;
+      if (diff <= 0) return 'danger';
+      if (diff <= 1000) return 'warning';
+      return 'ok';
+    }
+
+    function getDateLabel(dateStr) {
+      if (!dateStr) return '';
+      const status = getDateStatus(dateStr);
+      const formatted = new Date(dateStr).toLocaleDateString('fr-FR');
+      if (status === 'danger') return `⚠️ ${formatted} — PÉRIMÉ`;
+      if (status === 'warning') return `🟠 ${formatted} — Proche`;
+      return `🟢 ${formatted}`;
+    }
+
+    function getDateClass(dateStr) {
+      const status = getDateStatus(dateStr);
+      if (status === 'danger') return 'date-danger';
+      if (status === 'warning') return 'date-warning';
+      return 'date-ok';
+    }
+
+    function getKmLabel(targetKm, currentKm) {
+      if (!targetKm) return '';
+      const status = getKmStatus(targetKm, currentKm);
+      const diff = targetKm - currentKm;
+      if (status === 'danger') return `⚠️ ${targetKm} km (dépassé de ${Math.abs(diff)} km)`;
+      if (status === 'warning') return `🟠 ${targetKm} km (dans ${diff} km)`;
+      return `🟢 ${targetKm} km (dans ${diff} km)`;
+    }
+
+    function getKmClass(targetKm, currentKm) {
+      const status = getKmStatus(targetKm, currentKm);
+      if (status === 'danger') return 'date-danger';
+      if (status === 'warning') return 'date-warning';
+      return 'date-ok';
+    }
+
+    function computeNextOccurrence(entretien, currentKm) {
+      if (!entretien.rec) return null;
+      if (entretien.recType === 'jour') {
+        const baseDate = entretien.date ? new Date(entretien.date) : new Date();
+        if (isNaN(baseDate.getTime())) return null;
+        const nextDate = new Date(baseDate);
+        nextDate.setDate(nextDate.getDate() + parseInt(entretien.rec));
+        return { date: nextDate.toISOString().split('T')[0] };
+      } else if (entretien.recType === 'km') {
+        const baseKm = entretien.kmDeclencheur || currentKm || 0;
+        return { kmDeclencheur: baseKm + parseInt(entretien.rec) };
+      }
+      return null;
+    }
+
+    // ===== CONFIRMATION STYLÉE =====
+    function showConfirm({ icon = '⚠️', title = 'Confirmation', message = '', confirmLabel = 'Confirmer', confirmClass = 'btn-danger', onConfirm }) {
+      modalContent.innerHTML = `
+        <div class="confirm-modal" style="border:none;padding:0;box-shadow:none;max-width:none;">
+          <div class="confirm-icon">${icon}</div>
+          <h3>${escapeHtml(title)}</h3>
+          <p>${message}</p>
+          <div class="confirm-actions">
+            <button class="btn btn-cancel" id="confirm-cancel">Annuler</button>
+            <button class="btn ${confirmClass}" id="confirm-ok">${escapeHtml(confirmLabel)}</button>
+          </div>
+        </div>
+      `;
+      modalOverlay.style.display = 'flex';
+      document.getElementById('confirm-cancel').addEventListener('click', closeModal);
+      document.getElementById('confirm-ok').addEventListener('click', async () => {
+        closeModal();
+        if (onConfirm) await onConfirm();
+      });
+    }
+
+    // ===== RENDU =====
+    function renderVehicleContent() {
+      if (!currentVehicleData) return;
+      const v = currentVehicleData;
+      const currentKm = v.km || 0;
+
+      // ===== SECTION INFORMATIONS (style original restauré) =====
+      let html = `
+        <div class="section">
+          <div class="section-header">
+            <span>🚗 Informations générales</span>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <span class="badge">${escapeHtml(v.im || '')}</span>
+              <button class="btn-icon" id="btn-edit-vehicle-info" title="Modifier les informations">✏️</button>
+            </div>
+          </div>
+          <div class="section-body">
+            <ul class="list">
+              <li class="list-item">
+                <div class="obj-info">
+                  <span class="obj-name">Immatriculation</span>
+                </div>
+                <span style="font-weight:600;">${escapeHtml(v.im || '—')}</span>
+              </li>
+              <li class="list-item">
+                <div class="obj-info">
+                  <span class="obj-name">Nom</span>
+                </div>
+                <span style="font-weight:600;">${escapeHtml(v.n || '—')}</span>
+              </li>
+              <li class="list-item">
+                <div class="obj-info">
+                  <span class="obj-name">Type de carburant</span>
+                </div>
+                <span style="font-weight:600;">${escapeHtml(v.car || '—')}</span>
+              </li>
+              <li class="list-item">
+                <div class="obj-info">
+                  <span class="obj-name">Kilométrage</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="font-weight:600;">${currentKm} km</span>
+                  <button class="btn-icon" id="btn-edit-km" title="Modifier">✏️</button>
+                </div>
+              </li>
+              <li class="list-item">
+                <div class="obj-info">
+                  <span class="obj-name">Assurance</span>
+                </div>
+                <span class="obj-date ${getDateClass(v.ass)}">${getDateLabel(v.ass)}</span>
+              </li>
+              <li class="list-item">
+                <div class="obj-info">
+                  <span class="obj-name">Contrôle technique</span>
+                </div>
+                <span class="obj-date ${getDateClass(v.ct)}">${getDateLabel(v.ct)}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      `;
+
+      // ===== SECTION NETTOYAGE & DÉSINFECTION (nouveau style) =====
+      const derniereNettoyage = v.dn ? `${formatDate(v.dn)} par ${escapeHtml(v.dnp || '?')}` : 'Jamais';
+      const derniereDesinfection = v.dd ? `${formatDate(v.dd)} (${escapeHtml(v.ddt || '?')}) par ${escapeHtml(v.ddp || '?')}` : 'Jamais';
+
+      html += `
+        <div class="section">
+          <div class="section-header">
+            <span>🧽 Nettoyage & Désinfection</span>
+            <button class="btn-icon" id="btn-edit-clean-freq" title="Configurer les fréquences">⚙️</button>
+          </div>
+          <div class="section-body">
+            <ul class="list">
+              <li class="list-item">
+                <div class="obj-info">
+                  <span class="obj-name">Fréquence nettoyage</span>
+                  <span class="obj-date" style="color:var(--text-light);">Tous les</span>
+                </div>
+                <span class="badge">${v.fn ? v.fn + ' jour(s)' : 'Non définie'}</span>
+              </li>
+              <li class="list-item">
+                <div class="obj-info">
+                  <span class="obj-name">Fréquence désinfection</span>
+                  <span class="obj-date" style="color:var(--text-light);">Tous les</span>
+                </div>
+                <span class="badge">${v.fd ? v.fd + ' jour(s)' : 'Non définie'}</span>
+              </li>
+              <li class="list-item">
+                <div class="obj-info">
+                  <span class="obj-name">Dernier nettoyage</span>
+                  <span class="obj-date ${v.dn ? 'date-ok' : ''}">${derniereNettoyage}</span>
+                </div>
+              </li>
+              <li class="list-item">
+                <div class="obj-info">
+                  <span class="obj-name">Dernière désinfection</span>
+                  <span class="obj-date ${v.dd ? 'date-ok' : ''}">${derniereDesinfection}</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      `;
+
+      // ===== SECTION ENTRETIENS =====
+      const entretiens = v.en || [];
+      html += `
+        <div class="section">
+          <div class="section-header">
+            <span>🔧 Entretiens</span>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <span class="badge">${entretiens.length}</span>
+              <button class="btn-add" id="btn-add-entretien" style="padding:6px 12px;font-size:0.85rem;">+ Ajouter</button>
+            </div>
+          </div>
+          <div class="section-body">
+            <ul class="list">
+              ${entretiens.length === 0 ? '<li class="empty-state" style="padding:20px;"><p>Aucun entretien enregistré.</p></li>' : ''}
+              ${entretiens.slice().reverse().map((e, i) => {
+                const realIdx = entretiens.length - 1 - i;
+                let statutHtml = '';
+                if (e.recType === 'km' && e.kmDeclencheur) {
+                  statutHtml = `<span class="obj-date ${getKmClass(e.kmDeclencheur, currentKm)}">${getKmLabel(e.kmDeclencheur, currentKm)}</span>`;
+                } else if (e.date) {
+                  statutHtml = `<span class="obj-date ${getDateClass(e.date)}">${getDateLabel(e.date)}</span>`;
+                }
+                const recLabel = e.rec ? (e.recType === 'jour' ? `tous les ${e.rec}j` : `tous les ${e.rec}km`) : 'sans récurrence';
+                return `
+                  <li class="list-item">
+                    <div class="obj-info">
+                      <span class="obj-name">${escapeHtml(e.type || '—')} ${e.desc ? '· ' + escapeHtml(e.desc) : ''}</span>
+                      <span class="obj-date" style="color:var(--text-light);">
+                        ${e.date ? 'Date : ' + new Date(e.date).toLocaleDateString('fr-FR') : 'Pas de date'}
+                        · ${recLabel}
+                        ${e.recType === 'km' && e.kmDeclencheur ? ' · Déclencheur : ' + e.kmDeclencheur + ' km' : ''}
+                      </span>
+                      ${statutHtml}
+                    </div>
+                    <div class="item-actions">
+                      <button class="btn-icon valider-entretien" data-idx="${realIdx}" title="Valider">✅</button>
+                      <button class="btn-icon edit-entretien" data-idx="${realIdx}" title="Modifier">✏️</button>
+                      <button class="btn-icon delete delete-entretien" data-idx="${realIdx}" title="Supprimer">🗑️</button>
+                    </div>
+                  </li>`;
+              }).join('')}
+            </ul>
+          </div>
+        </div>
+      `;
+
+      // ===== SECTION INCIDENTS =====
+      const incidents = v.inc || [];
+      html += `
+        <div class="section">
+          <div class="section-header">
+            <span>⚠️ Incidents signalés</span>
+            <span class="badge">${incidents.length}</span>
+          </div>
+          <div class="section-body">
+            <ul class="list">
+              ${incidents.length === 0 ? '<li class="empty-state" style="padding:20px;"><p>Aucun incident.</p></li>' : ''}
+              ${incidents.slice().reverse().map(inc => {
+                const prioCls = inc.p === 'Haute' ? 'danger' : inc.p === 'Moyenne' ? 'warning' : '';
+                return `
+                  <li class="list-item">
+                    <div class="obj-info">
+                      <span class="obj-name">${escapeHtml(inc.t || '—')} <span class="badge ${prioCls}">${escapeHtml(inc.p || '—')}</span></span>
+                      <span class="obj-date" style="color:var(--text-light);">${escapeHtml(inc.d || '')}</span>
+                      <span class="obj-date" style="font-size:0.75rem;color:#999;">${formatDate(inc.dt)} · par ${escapeHtml(inc.n || '?')}</span>
+                    </div>
+                    <div class="item-actions">
+                      <button class="btn-icon delete delete-incident" data-id="${escapeHtml(inc.id || '')}" title="Supprimer">🗑️</button>
+                    </div>
+                  </li>`;
+              }).join('')}
+            </ul>
+          </div>
+        </div>
+      `;
+
+      // ===== SECTION HISTORIQUE =====
+      const logs = v.h || [];
+      if (logs.length > 0) {
+        html += `
+          <details class="logs-section">
+            <summary>Historique (${logs.length})</summary>
+            ${logs.slice().reverse().map(l => `
+              <div class="log-item">${formatDate(l.t)} — ${escapeHtml(l.n || '?')} — ${escapeHtml(l.a || '')}</div>
+            `).join('')}
+          </details>
+        `;
+      }
+
+      vehicleContent.innerHTML = html;
+      attachContentEvents();
+    }
+
+    function attachContentEvents() {
+      // Bouton modifier les informations générales
+      document.getElementById('btn-edit-vehicle-info')?.addEventListener('click', () => openEditVehicleModal());
+      document.getElementById('btn-edit-km')?.addEventListener('click', () => openEditKmModal());
+      document.getElementById('btn-edit-clean-freq')?.addEventListener('click', () => openCleanFreqModal());
+      document.getElementById('btn-add-entretien')?.addEventListener('click', () => openEntretienModal());
+
+      document.querySelectorAll('.edit-entretien').forEach(btn => {
+        btn.addEventListener('click', () => openEntretienModal(parseInt(btn.dataset.idx)));
+      });
+      document.querySelectorAll('.delete-entretien').forEach(btn => {
+        btn.addEventListener('click', () => deleteEntretien(parseInt(btn.dataset.idx)));
+      });
+      document.querySelectorAll('.valider-entretien').forEach(btn => {
+        btn.addEventListener('click', () => validerEntretien(parseInt(btn.dataset.idx)));
+      });
+      document.querySelectorAll('.delete-incident').forEach(btn => {
+        btn.addEventListener('click', () => deleteIncident(btn.dataset.id));
+      });
+    }
+
+    // ===== LOG =====
+    async function addLog(action) {
+      const log = { n: currentAdmin.nivol, t: new Date().toISOString(), a: action };
+      try {
+        const ref = localDoc(db, COLLECTION, currentVehicleId);
+        const snap = await readDoc(ref);
+        const logs = snap.data().h || [];
+        logs.push(log);
+        await patchDoc(ref, { h: logs.slice(-100) });
+        if (currentVehicleData) currentVehicleData.h = logs.slice(-100);
+      } catch (e) { console.error('Log error:', e); }
+    }
+
+    // ===== MODALS =====
+    function openCreateModal() {
+      modalContent.innerHTML = `
+        <h3>Nouveau véhicule</h3>
+        <div><label>Immatriculation</label><input type="text" id="modal-im" placeholder="AB-123-CD"></div>
+        <div><label>Nom</label><input type="text" id="modal-nom" placeholder="Nom du véhicule"></div>
+        <div><label>Type de carburant</label>
+          <select id="modal-car">
+            <option value="">— Choisir —</option>
+            <option>Essence</option><option>Diesel</option><option>Électrique</option><option>Hybride</option><option>GPL</option>
+          </select>
+        </div>
+        <div><label>Kilométrage initial</label><input type="number" id="modal-km" value="0" min="0"></div>
+        <div><label>Assurance (date d'échéance)</label><input type="date" id="modal-ass"></div>
+        <div><label>Contrôle technique (date d'échéance)</label><input type="date" id="modal-ct"></div>
+        <div class="modal-actions">
+          <button class="btn btn-cancel" id="modal-cancel">Annuler</button>
+          <button class="btn btn-save" id="modal-save">Créer</button>
+        </div>
+      `;
+      modalOverlay.style.display = 'flex';
+      document.getElementById('modal-cancel').addEventListener('click', closeModal);
+      document.getElementById('modal-save').addEventListener('click', async () => {
+        const im = document.getElementById('modal-im').value.trim();
+        const n = document.getElementById('modal-nom').value.trim();
+        if (!im) { showInlineError('Immatriculation requise.'); return; }
+        if (!n) { showInlineError('Nom requis.'); return; }
+
+        const docId = im.replace(/[^a-zA-Z0-9]/g, '_');
+        const exists = await readDoc(localDoc(db, COLLECTION, docId));
+        if (exists.exists()) { showInlineError('Un véhicule avec cette immatriculation existe déjà.'); return; }
+
+        const data = {
+          im: im,
+          n: n,
+          car: document.getElementById('modal-car').value,
+          km: parseInt(document.getElementById('modal-km').value) || 0,
+          ass: document.getElementById('modal-ass').value || '',
+          ct: document.getElementById('modal-ct').value || '',
+          en: [],
+          inc: [],
+          h: [{ n: currentAdmin.nivol, t: new Date().toISOString(), a: `Création du véhicule "${n}"` }]
+        };
+        try {
+          await writeDoc(localDoc(db, COLLECTION, docId), data);
+          closeModal();
+          await loadVehicles();
+          vehicleSelect.value = docId;
+          selectVehicle(docId);
+        } catch (e) { showInlineError('Erreur : ' + e.message); }
+      });
+    }
+
+    function openEditVehicleModal() {
+      const v = currentVehicleData;
+      modalContent.innerHTML = `
+        <h3>Modifier "${escapeHtml(v.n)}"</h3>
+        <div><label>Immatriculation</label><input type="text" id="modal-im" value="${escapeHtml(v.im || '')}"></div>
+        <div><label>Nom</label><input type="text" id="modal-nom" value="${escapeHtml(v.n || '')}"></div>
+        <div><label>Type de carburant</label>
+          <select id="modal-car">
+            ${['Essence','Diesel','Électrique','Hybride','GPL'].map(c => `<option ${v.car === c ? 'selected' : ''}>${c}</option>`).join('')}
+          </select>
+        </div>
+        <div><label>Assurance (date d'échéance)</label><input type="date" id="modal-ass" value="${v.ass || ''}"></div>
+        <div><label>Contrôle technique (date d'échéance)</label><input type="date" id="modal-ct" value="${v.ct || ''}"></div>
+        <div class="modal-actions">
+          <button class="btn btn-cancel" id="modal-cancel">Annuler</button>
+          <button class="btn btn-save" id="modal-save">Enregistrer</button>
+        </div>
+      `;
+      modalOverlay.style.display = 'flex';
+      document.getElementById('modal-cancel').addEventListener('click', closeModal);
+      document.getElementById('modal-save').addEventListener('click', async () => {
+        const im = document.getElementById('modal-im').value.trim();
+        const n = document.getElementById('modal-nom').value.trim();
+        if (!im || !n) { showInlineError('Immatriculation et nom requis.'); return; }
+        try {
+          await patchDoc(localDoc(db, COLLECTION, currentVehicleId), {
+            im: im,
+            n: n,
+            car: document.getElementById('modal-car').value,
+            ass: document.getElementById('modal-ass').value || '',
+            ct: document.getElementById('modal-ct').value || ''
+          });
+          await addLog(`Modification des informations du véhicule`);
+          closeModal();
+          await loadVehicles();
+        } catch (e) { showInlineError('Erreur : ' + e.message); }
+      });
+    }
+
+    function openDeleteVehicleModal() {
+      const v = currentVehicleData;
+      showConfirm({
+        icon: '🗑️',
+        title: 'Supprimer le véhicule',
+        message: `Voulez-vous vraiment supprimer <strong>${escapeHtml(v.n)}</strong> (${escapeHtml(v.im || '')}) ?<br><br><span style="color:var(--red);font-weight:600;">Cette action est irréversible.</span>`,
+        confirmLabel: 'Supprimer',
+        confirmClass: 'btn-danger',
+        onConfirm: async () => {
+          try {
+            await removeDoc(localDoc(db, COLLECTION, currentVehicleId));
+            currentVehicleId = null;
+            currentVehicleData = null;
+            btnEditVehicle.style.display = 'none';
+            btnDeleteVehicle.style.display = 'none';
+            btnQRCode.style.display = 'none';
+            await loadVehicles();
+            vehicleSelect.value = '';
+            vehicleContent.innerHTML = '<div class="empty-state"><p>Sélectionnez un véhicule.</p></div>';
+          } catch (e) { showInlineError('Erreur : ' + e.message); }
+        }
+      });
+    }
+
+    function openEditKmModal() {
+      const v = currentVehicleData;
+      modalContent.innerHTML = `
+        <h3>Modifier le kilométrage</h3>
+        <div><label>Kilométrage (km)</label><input type="number" id="modal-km" value="${v.km || 0}" min="0"></div>
+        <div class="modal-actions">
+          <button class="btn btn-cancel" id="modal-cancel">Annuler</button>
+          <button class="btn btn-save" id="modal-save">Enregistrer</button>
+        </div>
+      `;
+      modalOverlay.style.display = 'flex';
+      document.getElementById('modal-cancel').addEventListener('click', closeModal);
+      document.getElementById('modal-save').addEventListener('click', async () => {
+        const km = parseInt(document.getElementById('modal-km').value) || 0;
+        try {
+          await patchDoc(localDoc(db, COLLECTION, currentVehicleId), { km: km });
+          await addLog(`Kilométrage mis à jour : ${km} km`);
+          closeModal();
+          await loadVehicles();
+        } catch (e) { showInlineError('Erreur : ' + e.message); }
+      });
+    }
+
+    function openCleanFreqModal() {
+      const v = currentVehicleData;
+      modalContent.innerHTML = `
+        <h3>Fréquences de nettoyage / désinfection</h3>
+        <div><label>Nettoyage tous les X jours</label><input type="number" id="modal-fn" value="${v.fn || ''}" min="0" placeholder="Laisser vide pour désactiver"></div>
+        <div><label>Désinfection tous les X jours</label><input type="number" id="modal-fd" value="${v.fd || ''}" min="0" placeholder="Laisser vide pour désactiver"></div>
+        <div class="modal-actions">
+          <button class="btn btn-cancel" id="modal-cancel">Annuler</button>
+          <button class="btn btn-save" id="modal-save">Enregistrer</button>
+        </div>
+      `;
+      modalOverlay.style.display = 'flex';
+      document.getElementById('modal-cancel').addEventListener('click', closeModal);
+      document.getElementById('modal-save').addEventListener('click', async () => {
+        const f1 = parseInt(document.getElementById('modal-fn').value) || 0;
+        const f2 = parseInt(document.getElementById('modal-fd').value) || 0;
+        try {
+          await patchDoc(localDoc(db, COLLECTION, currentVehicleId), {
+            fn: f1 > 0 ? f1 : removeField(),
+            fd: f2 > 0 ? f2 : removeField()
+          });
+          await addLog(`Fréquences mises à jour (nettoyage:${f1}j, désinfection:${f2}j)`);
+          closeModal();
+          await loadVehicles();
+        } catch (e) { showInlineError('Erreur : ' + e.message); }
+      });
+    }
+
+    // ===== ENTRETIENS =====
+    function openEntretienModal(editIdx = null) {
+      const v = currentVehicleData;
+      const isEdit = editIdx !== null;
+      const e = isEdit ? v.en[editIdx] : {};
+      const types = ['Vidange', 'Contrôle technique', 'Révision générale', 'Pneus', 'Freins', 'Climatisation', 'Autre'];
+
+      modalContent.innerHTML = `
+        <h3>${isEdit ? 'Modifier' : 'Nouvel'} entretien</h3>
+        <div><label>Date</label><input type="date" id="modal-date" value="${e.date || ''}"></div>
+        <div><label>Récurrence</label>
+          <select id="modal-rec-type">
+            <option value="">— Aucune —</option>
+            <option value="jour" ${e.recType === 'jour' ? 'selected' : ''}>En jours</option>
+            <option value="km" ${e.recType === 'km' ? 'selected' : ''}>En kilométrage</option>
+          </select>
+        </div>
+        <div id="modal-rec-value-wrap" style="display:none;">
+          <label>Valeur de la récurrence</label>
+          <input type="number" id="modal-rec-value" value="${e.rec || ''}" min="1" placeholder="ex: 62 (jours ou km)">
+        </div>
+        <div><label>Type</label>
+          <select id="modal-type">
+            ${types.map(t => `<option ${e.type === t ? 'selected' : ''}>${t}</option>`).join('')}
+          </select>
+        </div>
+        <div id="modal-desc-wrap" style="display:none;"><label>Description (type Autre)</label><input type="text" id="modal-desc" value="${escapeHtml(e.desc || '')}"></div>
+        <div class="modal-actions">
+          <button class="btn btn-cancel" id="modal-cancel">Annuler</button>
+          <button class="btn btn-save" id="modal-save">${isEdit ? 'Enregistrer' : 'Ajouter'}</button>
+        </div>
+      `;
+      modalOverlay.style.display = 'flex';
+
+      const recTypeSel = document.getElementById('modal-rec-type');
+      const recValueWrap = document.getElementById('modal-rec-value-wrap');
+      const typeSel = document.getElementById('modal-type');
+      const descWrap = document.getElementById('modal-desc-wrap');
+
+      const toggleRec = () => { recValueWrap.style.display = recTypeSel.value ? 'block' : 'none'; };
+      const toggleDesc = () => { descWrap.style.display = typeSel.value === 'Autre' ? 'block' : 'none'; };
+      recTypeSel.addEventListener('change', toggleRec);
+      typeSel.addEventListener('change', toggleDesc);
+      toggleRec();
+      toggleDesc();
+
+      document.getElementById('modal-cancel').addEventListener('click', closeModal);
+      document.getElementById('modal-save').addEventListener('click', async () => {
+        const date = document.getElementById('modal-date').value;
+        const recType = recTypeSel.value;
+        const recValue = parseInt(document.getElementById('modal-rec-value').value) || 0;
+        const type = typeSel.value;
+        const desc = document.getElementById('modal-desc').value.trim();
+
+        const data = {
+          date,
+          recType: recType || '',
+          rec: recValue > 0 ? recValue : '',
+          type,
+          desc: type === 'Autre' ? desc : ''
+        };
+        if (recType === 'km' && recValue > 0) {
+          data.kmDeclencheur = (v.km || 0) + recValue;
+        }
+
+        try {
+          let entretiens = v.en ? [...v.en] : [];
+          if (isEdit) {
+            entretiens[editIdx] = { ...entretiens[editIdx], ...data };
+          } else {
+            entretiens.push({ ...data, cree: new Date().toISOString(), creePar: currentAdmin.nivol });
+          }
+          await patchDoc(localDoc(db, COLLECTION, currentVehicleId), { en: entretiens });
+          await addLog(`${isEdit ? 'Modification' : 'Ajout'} entretien "${type}"`);
+          closeModal();
+          await loadVehicles();
+        } catch (e) { showInlineError('Erreur : ' + e.message); }
+      });
+    }
+
+    function validerEntretien(idx) {
+      const v = currentVehicleData;
+      const e = (v.en || [])[idx];
+      if (!e) return;
+
+      showConfirm({
+        icon: '✅',
+        title: 'Valider l\'entretien',
+        message: `Valider l'entretien <strong>${escapeHtml(e.type)}</strong> ?<br><br>Il sera supprimé${e.rec ? ' et reprogrammé automatiquement' : ''}.`,
+        confirmLabel: 'Valider',
+        confirmClass: 'btn-save',
+        onConfirm: async () => {
+          try {
+            const entretiens = [...(v.en || [])];
+            let newEntretiens = entretiens.filter((_, i) => i !== idx);
+
+            if (e.rec && e.recType) {
+              const next = computeNextOccurrence(e, v.km || 0);
+              if (next) {
+                const newE = {
+                  type: e.type,
+                  desc: e.desc || '',
+                  recType: e.recType,
+                  rec: e.rec,
+                  cree: new Date().toISOString(),
+                  creePar: currentAdmin.nivol
+                };
+                if (e.recType === 'jour') {
+                  newE.date = next.date;
+                } else if (e.recType === 'km') {
+                  newE.kmDeclencheur = next.kmDeclencheur;
+                  newE.date = e.date || '';
+                }
+                newEntretiens.push(newE);
+              }
+            }
+
+            await patchDoc(localDoc(db, COLLECTION, currentVehicleId), { en: newEntretiens });
+            await addLog(`Validation et suppression de l'entretien "${e.type}"${e.rec ? ' (reprogrammé)' : ''}`);
+            await loadVehicles();
+          } catch (err) { showInlineError('Erreur : ' + err.message); }
+        }
+      });
+    }
+
+    function deleteEntretien(idx) {
+      const e = (currentVehicleData.en || [])[idx];
+      if (!e) return;
+      showConfirm({
+        icon: '🗑️',
+        title: 'Supprimer l\'entretien',
+        message: `Supprimer l'entretien <strong>${escapeHtml(e.type)}</strong> ?`,
+        confirmLabel: 'Supprimer',
+        confirmClass: 'btn-danger',
+        onConfirm: async () => {
+          try {
+            const entretiens = [...(currentVehicleData.en || [])];
+            entretiens.splice(idx, 1);
+            await patchDoc(localDoc(db, COLLECTION, currentVehicleId), { en: entretiens });
+            await addLog(`Suppression de l'entretien "${e.type}"`);
+            await loadVehicles();
+          } catch (err) { showInlineError('Erreur : ' + err.message); }
+        }
+      });
+    }
+
+    function deleteIncident(incId) {
+      showConfirm({
+        icon: '🗑️',
+        title: 'Supprimer l\'incident',
+        message: 'Voulez-vous vraiment supprimer cet incident ?',
+        confirmLabel: 'Supprimer',
+        confirmClass: 'btn-danger',
+        onConfirm: async () => {
+          try {
+            const incidents = (currentVehicleData.inc || []).filter(i => i.id !== incId);
+            await patchDoc(localDoc(db, COLLECTION, currentVehicleId), { inc: incidents });
+            await addLog(`Suppression d'un incident`);
+            await loadVehicles();
+          } catch (err) { showInlineError('Erreur : ' + err.message); }
+        }
+      });
+    }
+
+    // ===== ERREUR INLINE =====
+    function showInlineError(msg) {
+      let errEl = document.getElementById('modal-inline-error');
+      if (!errEl) {
+        errEl = document.createElement('div');
+        errEl.id = 'modal-inline-error';
+        errEl.style.cssText = 'background:#fff0f0;color:#c00;padding:10px 14px;border-radius:8px;font-size:0.9rem;font-weight:600;text-align:center;';
+        modalContent.appendChild(errEl);
+      }
+      errEl.textContent = '⚠️ ' + msg;
+      setTimeout(() => { if (errEl && errEl.parentNode) errEl.parentNode.removeChild(errEl); }, 4000);
+    }
+
+    function closeModal() {
+      modalOverlay.style.display = 'none';
+      modalContent.innerHTML = '';
+    }
+
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) closeModal();
+    });
+  </script>
+</body>
+</html>
