@@ -118,7 +118,7 @@ Accessible uniquement aux adminsitrateurs depuis `admin.html` → **« Modifier 
 - **Historique** repliable en bas de page : toutes les actions effectuées sur l'inventaire (auteur, date, action).
 - Les modifications sont **enregistrées immédiatement** dans la base de données.
 
-### 6. Gestion du parc automobile (`parc-auto/admin.html`)
+### 6. Gestion du parc automobile
 
 Accessible uniquement aux adminsitrateurs depuis `admin.html` → **« Gérer les véhicules »**.
 
